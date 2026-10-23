@@ -1,0 +1,52 @@
+{
+  "id": "womens_day",
+  "title": "Международный женский день",
+  "aliases": [
+    "8 марта"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "fixed",
+    "value": "03-08",
+    "note": "Ежегодно, 8 марта"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Воспитание уважения к женщинам",
+    "Развитие культуры благодарности — без гендерных стереотипов",
+    "Знакомство с вкладом женщин в историю и культуру"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Не сводить праздник к внешности и домашним обязанностям; подчеркнуть уважение и достижения.",
+    "5-8": "Не закреплять стереотипы «женских» и «мужских» профессий; говорить о равных возможностях.",
+    "9-11": "Опираясь на источники, обсуждать исторический контекст и гендерное равенство без уничижительных обобщений."
+  },
+  "prompt_block": "events/womens_day.md",
+  "source_collection": "womens_day",
+  "source_ids": [
+    "src_womens_day_audit_01",
+    "src_womens_day_audit_02",
+    "src_womens_day_audit_03",
+    "src_womens_day_v19_03",
+    "src_womens_day_v19_historical_doc"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

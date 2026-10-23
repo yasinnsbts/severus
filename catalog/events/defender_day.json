@@ -1,0 +1,52 @@
+{
+  "id": "defender_day",
+  "title": "День защитника Отечества",
+  "aliases": [
+    "23 февраля"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "fixed",
+    "value": "02-23",
+    "note": "Ежегодно, 23 февраля"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Воспитание патриотизма и гражданской ответственности",
+    "Развитие уважения к защитникам Отечества",
+    "Формирование понятия долга и чести — без гендерных стереотипов"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Фокус на заботе, взаимопомощи и безопасности; не связывать мужество только с мальчиками.",
+    "5-8": "Избегать милитаризации и стереотипов о гендерных ролях; обсуждать службу и защиту граждан.",
+    "9-11": "Различать исторический контекст и современные оценки; избегать агитационных упрощений."
+  },
+  "prompt_block": "events/defender_day.md",
+  "source_collection": "defender_day",
+  "source_ids": [
+    "src_defender_day_audit_01",
+    "src_defender_day_audit_02",
+    "src_defender_day_audit_03",
+    "src_defender_day_v19_01",
+    "src_defender_day_v19_03"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

@@ -1,0 +1,50 @@
+{
+  "id": "sverdlovsk_oblast_day",
+  "title": "День образования Свердловской области",
+  "aliases": [
+    "День Свердловской области",
+    "17 января"
+  ],
+  "category": "regional",
+  "date_rule": {
+    "type": "fixed",
+    "value": "01-17",
+    "note": "17 января; дата указана в региональном нормативном акте и региональных публикациях."
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "interactive_lesson",
+    "school_event"
+  ],
+  "educational_goals": [
+    "Знакомство с историей и символами региона",
+    "Развитие интереса к краеведению",
+    "Формирование уважения к культурному и историческому наследию Среднего Урала"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Использовать карту, символы региона, короткие рассказы и локальные примеры.",
+    "5-8": "Добавить краеведческую викторину и работу с источниками о развитии области.",
+    "9-11": "Предложить исследовательские мини-проекты о людях, местах и истории региона."
+  },
+  "prompt_block": "events/sverdlovsk_oblast_day.md",
+  "source_collection": "sverdlovsk_oblast_day",
+  "source_ids": [
+    "src_sverdlovsk_oblast_day_regional_01",
+    "src_sverdlovsk_oblast_day_regional_02"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

@@ -1,0 +1,26 @@
+{
+  "audit_version": "2.1",
+  "date": "2026-10-21",
+  "status": "incomplete",
+  "new_source_rows": 6,
+  "new_verified_rows": 4,
+  "not_counted_rows": 2,
+  "last_bell": {
+    "date": "2026-05-26",
+    "regional_direct_open": "verified",
+    "independent_publishers_confirming_recommendation": 2,
+    "minimum_met": false
+  },
+  "graduation": {
+    "federal_recommended_date": "2026-06-27",
+    "regional_ekaterinburg_actual_event_date": "2026-06-26",
+    "school_specific_universal_date": false,
+    "minimum_met": false
+  },
+  "victory_day_additional_sources": "not pursued per user instruction",
+  "limitations": [
+    "remaining ordinary events not all at minimum 3 independent publishers",
+    "school-specific dates vary by municipality and school",
+    "two candidate URLs failed direct opening"
+  ]
+}

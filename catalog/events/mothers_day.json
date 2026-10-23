@@ -1,0 +1,53 @@
+{
+  "id": "mothers_day",
+  "title": "День матери",
+  "aliases": [
+    "Последнее воскресенье ноября"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "floating",
+    "value": "last_sunday_november",
+    "note": "Последнее воскресенье ноября"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Воспитание любви и уважения к матери",
+    "Развитие культуры благодарности в семье",
+    "Формирование семейных ценностей"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Не предполагать, что у каждого ребёнка есть мама в семье или безопасные отношения с ней; разрешить выбрать значимого взрослого.",
+    "5-8": "Избегать публичного раскрытия семейных обстоятельств и оценок «правильной» семьи.",
+    "9-11": "Обсуждать заботу и семейные роли без давления и гендерных стереотипов."
+  },
+  "prompt_block": "events/mothers_day.md",
+  "source_collection": "mothers_day",
+  "source_ids": [
+    "src_mothers_day_audit_01",
+    "src_mothers_day_audit_02",
+    "src_mothers_day_audit_03",
+    "src_mothers_day_v19_01",
+    "src_mothers_day_v19_02",
+    "src_mothers_day_v19_03"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

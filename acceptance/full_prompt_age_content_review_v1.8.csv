@@ -1,0 +1,121 @@
+﻿event_id;criterion;status;finding
+christmas;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+christmas;duration included in required output;PASS;Найдено по текстовому критерию
+christmas;alternative participation options;PASS;Найдено по текстовому критерию
+christmas;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+christmas;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+christmas;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+christmas;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+christmas;regional facts require direct support;PASS;Найдено по текстовому критерию
+christmas;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+christmas;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+defender_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+defender_day;duration included in required output;PASS;Найдено по текстовому критерию
+defender_day;alternative participation options;PASS;Найдено по текстовому критерию
+defender_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+defender_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+defender_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+defender_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+defender_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+defender_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+defender_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+graduation;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+graduation;duration included in required output;PASS;Найдено по текстовому критерию
+graduation;alternative participation options;PASS;Найдено по текстовому критерию
+graduation;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+graduation;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+graduation;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+graduation;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+graduation;regional facts require direct support;PASS;Найдено по текстовому критерию
+graduation;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+graduation;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+knowledge_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+knowledge_day;duration included in required output;PASS;Найдено по текстовому критерию
+knowledge_day;alternative participation options;PASS;Найдено по текстовому критерию
+knowledge_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+knowledge_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+knowledge_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+knowledge_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+knowledge_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+knowledge_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+knowledge_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+labour_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+labour_day;duration included in required output;PASS;Найдено по текстовому критерию
+labour_day;alternative participation options;PASS;Найдено по текстовому критерию
+labour_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+labour_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+labour_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+labour_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+labour_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+labour_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+labour_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+last_bell;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+last_bell;duration included in required output;PASS;Найдено по текстовому критерию
+last_bell;alternative participation options;PASS;Найдено по текстовому критерию
+last_bell;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+last_bell;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+last_bell;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+last_bell;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+last_bell;regional facts require direct support;PASS;Найдено по текстовому критерию
+last_bell;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+last_bell;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+mothers_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+mothers_day;duration included in required output;PASS;Найдено по текстовому критерию
+mothers_day;alternative participation options;PASS;Найдено по текстовому критерию
+mothers_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+mothers_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+mothers_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+mothers_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+mothers_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+mothers_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+mothers_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+new_year;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+new_year;duration included in required output;PASS;Найдено по текстовому критерию
+new_year;alternative participation options;PASS;Найдено по текстовому критерию
+new_year;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+new_year;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+new_year;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+new_year;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+new_year;regional facts require direct support;PASS;Найдено по текстовому критерию
+new_year;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+new_year;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+teachers_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+teachers_day;duration included in required output;PASS;Найдено по текстовому критерию
+teachers_day;alternative participation options;PASS;Найдено по текстовому критерию
+teachers_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+teachers_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+teachers_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+teachers_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+teachers_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+teachers_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+teachers_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+unity_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+unity_day;duration included in required output;PASS;Найдено по текстовому критерию
+unity_day;alternative participation options;PASS;Найдено по текстовому критерию
+unity_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+unity_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+unity_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+unity_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+unity_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+unity_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+unity_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+victory_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+victory_day;duration included in required output;PASS;Найдено по текстовому критерию
+victory_day;alternative participation options;PASS;Найдено по текстовому критерию
+victory_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+victory_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+victory_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+victory_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+victory_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+victory_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+victory_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию
+womens_day;explicit age groups / differentiation;PASS;Найдено по текстовому критерию
+womens_day;duration included in required output;PASS;Найдено по текстовому критерию
+womens_day;alternative participation options;PASS;Найдено по текстовому критерию
+womens_day;accessibility/inclusion considered;PASS;Найдено по текстовому критерию
+womens_day;emotional/sensitive content safeguards;PASS;Найдено по текстовому критерию
+womens_day;stereotype/non-discrimination safeguard;PASS;Найдено по текстовому критерию
+womens_day;claim-level source checking requirements;PASS;Найдено по текстовому критерию
+womens_day;regional facts require direct support;PASS;Найдено по текстовому критерию
+womens_day;unverified claims excluded/flagged;PASS;Найдено по текстовому критерию
+womens_day;religious/cultural respect where applicable;PASS;Найдено по текстовому критерию

@@ -1,0 +1,45 @@
+{
+  "event_id": "middle_urals_peoples_day",
+  "sources": [
+    {
+      "source_id": "src_middle_urals_peoples_day_regional_01",
+      "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
+      "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+      "url": "https://base.garant.ru/20926350/",
+      "retrieved_at": "2026-10-21",
+      "verification_status": "candidate_date_conflict_review",
+      "topics": [
+        "middle_urals_peoples_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "В тексте указа праздник указан как региональный; приведено правило «вторая суббота апреля».",
+      "note": "Дата расходится с сообщениями о проведении праздника в другие дни/месяцы. Не использовать для автоматической генерации даты без проверки актуального официального анонса.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_middle_urals_peoples_day_regional_02",
+      "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала за укрепление межнациональных отношений",
+      "publisher": "Министерство социальной политики Свердловской области",
+      "url": "https://msp.midural.ru/news/jiteli-sverdlovskoy-oblasti-otmecheny-nagradami-gubernatora-v-den-narodov-srednego-urala-za-ukreplenie-mejnacionalnyh-otnosheniy-137767/",
+      "retrieved_at": "2026-10-21",
+      "verification_status": "verified_event_occurrence_date_conflict",
+      "topics": [
+        "middle_urals_peoples_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Официальная региональная публикация описывает мероприятие 1 сентября 2024 года и подтверждает региональный характер праздника.",
+      "note": "Подтверждает проведение в конкретном году, но не отменяет необходимости проверить действующую нормативную дату и календарь текущего года.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 0,
+  "status": "incomplete",
+  "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки."
+}

@@ -1,13 +1,51 @@
 {
   "id": "teachers_day",
   "title": "День учителя",
+  "aliases": [
+    "5 октября"
+  ],
   "category": "federal",
-  "aliases": ["5 октября"],
-  "supported_age_groups": ["1-4", "5-8", "9-11"],
+  "date_rule": {
+    "type": "fixed",
+    "value": "10-05",
+    "note": "Ежегодно, 5 октября"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
   "supported_formats": [
     "class_hour",
     "school_event",
     "interactive_lesson"
   ],
-  "catalog_version": "0.1"
+  "educational_goals": [
+    "Воспитание уважения к труду педагога",
+    "Развитие культуры благодарности и признательности"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Благодарность без обязательных дорогих подарков и публичного выделения отдельных учителей.",
+    "5-8": "Не превращать поздравление в конкурс популярности; включать разнообразные формы благодарности.",
+    "9-11": "Допускается обсуждение педагогической профессии и условий труда с уважительным тоном."
+  },
+  "prompt_block": "events/teachers_day.md",
+  "source_collection": "teachers_day",
+  "source_ids": [
+    "src_teachers_day_audit_01",
+    "src_teachers_day_audit_02",
+    "src_teachers_day_audit_03",
+    "src_teachers_day_v19_01",
+    "src_teachers_day_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
 }

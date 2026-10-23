@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/catalog_schema.json",
+  "title": "School event catalog card",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "date_rule",
+    "supported_age_groups",
+    "supported_formats",
+    "educational_goals",
+    "age_appropriateness_notes",
+    "prompt_block",
+    "source_collection",
+    "source_ids",
+    "review",
+    "regional_variants",
+    "catalog_version",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "category": {
+      "type": "string"
+    },
+    "date_rule": {
+      "type": "object",
+      "required": [
+        "type",
+        "value",
+        "note"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "supported_age_groups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "1-4",
+          "5-8",
+          "9-11"
+        ]
+      }
+    },
+    "supported_formats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "educational_goals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "age_appropriateness_notes": {
+      "type": "object",
+      "required": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "properties": {
+        "1-4": {
+          "type": "string"
+        },
+        "5-8": {
+          "type": "string"
+        },
+        "9-11": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "prompt_block": {
+      "type": "string"
+    },
+    "source_collection": {
+      "type": "string"
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review": {
+      "type": "object"
+    },
+    "regional_variants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "catalog_version": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,54 @@
+{
+  "id": "new_year",
+  "title": "Новый год",
+  "aliases": [
+    "Новогодний праздник",
+    "Зимние каникулы"
+  ],
+  "category": "calendar",
+  "date_rule": {
+    "type": "fixed",
+    "value": "12-31",
+    "note": "Период 31.12 – 08.01; школьные мероприятия — до каникул"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Создание праздничной атмосферы в светском формате",
+    "Развитие творческих способностей",
+    "Сплочение коллектива"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Без пиротехники, пугающих персонажей и обязательного участия; учитывать сенсорную чувствительность.",
+    "5-8": "Обсуждать традиции как разнообразные семейные практики, не объявляя их обязательными.",
+    "9-11": "Различать исторические сведения, массовую культуру и личные семейные обычаи."
+  },
+  "prompt_block": "events/new_year.md",
+  "source_collection": "new_year",
+  "source_ids": [
+    "src_new_year_audit_01",
+    "src_new_year_audit_02",
+    "src_new_year_audit_03",
+    "src_new_year_v19_01",
+    "src_new_year_v19_02",
+    "src_new_year_v19_03"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

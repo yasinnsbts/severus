@@ -1,0 +1,73 @@
+{
+  "audit_version": "2.2",
+  "date": "2026-10-21",
+  "status": "incomplete",
+  "new_source_rows": 8,
+  "new_verified_rows": 8,
+  "direct_open_failures_added": 0,
+  "event_updates": {
+    "christmas": {
+      "new_verified_publishers": [
+        "Президентская библиотека имени Б.Н. Ельцина"
+      ],
+      "minimum_met": false
+    },
+    "defender_day": {
+      "new_verified_publishers": [
+        "КонсультантПлюс"
+      ],
+      "minimum_met": false
+    },
+    "new_year": {
+      "new_verified_publishers": [
+        "КонсультантПлюс"
+      ],
+      "minimum_met": false
+    },
+    "unity_day": {
+      "new_verified_publishers": [
+        "Президентская библиотека имени Б.Н. Ельцина"
+      ],
+      "minimum_met": false
+    },
+    "womens_day": {
+      "new_verified_publishers": [
+        "КонсультантПлюс"
+      ],
+      "minimum_met": false
+    },
+    "last_bell": {
+      "new_direct_open_sources": [
+        "Областная газета",
+        "Афиша Daily"
+      ],
+      "minimum_met": false,
+      "note": "Областная газета ссылается на региональный департамент/региональный портал; strict independence requires publisher lineage check. Afisha Daily supports federal recommendation only."
+    },
+    "graduation": {
+      "new_direct_open_sources": [
+        "Афиша Daily"
+      ],
+      "minimum_met": false,
+      "note": "Only recommendation confirmed; regional portal source from v2.1 reports Ekaterinburg city graduation on 26 June, but its URL did not open in this turn. No specific school document verified."
+    }
+  },
+  "remaining_events": [
+    "graduation",
+    "knowledge_day",
+    "last_bell",
+    "mothers_day",
+    "new_year",
+    "teachers_day",
+    "unity_day",
+    "womens_day",
+    "christmas",
+    "defender_day"
+  ],
+  "limitations": [
+    "Source counts must be recalculated against all existing rows by normalized publisher identity; the same publisher cannot count twice.",
+    "No direct-access document from an individual Sverdlovsk school confirming a school-specific graduation date was found.",
+    "E1 and AIF-Ural search results appeared relevant, but direct opening failed in this turn and they are not counted.",
+    "No new Victory Day sources were pursued per user instruction."
+  ]
+}

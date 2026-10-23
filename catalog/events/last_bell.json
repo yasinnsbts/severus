@@ -1,0 +1,51 @@
+{
+  "id": "last_bell",
+  "title": "Последний звонок",
+  "aliases": [
+    "Последний звонок"
+  ],
+  "category": "school",
+  "date_rule": {
+    "type": "floating",
+    "value": "late_may",
+    "note": "Конец мая, дата определяется школой"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event"
+  ],
+  "educational_goals": [
+    "Подведение итогов учебного года",
+    "Благодарность педагогам и школе",
+    "Торжественное завершение этапа обучения"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Не использовать тревожные формулировки о расставании; участие в выступлениях добровольное.",
+    "5-8": "Учитывать, что для младших классов событие может быть обычным школьным мероприятием; не имитировать выпускной экзамен.",
+    "9-11": "Избегать публичного ранжирования выпускников и раскрытия личных результатов; уважать разные планы после школы."
+  },
+  "prompt_block": "events/last_bell.md",
+  "source_collection": "last_bell",
+  "source_ids": [
+    "src_last_bell_audit_01",
+    "src_last_bell_audit_02",
+    "src_last_bell_audit_03",
+    "src_last_bell_v19_01",
+    "src_last_bell_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

@@ -1,0 +1,2412 @@
+{
+  "catalog_id": "RU-SVE-school-events",
+  "catalog_version": "2.5",
+  "region": {
+    "region_id": "RU-SVE",
+    "title": "Свердловская область",
+    "admin_center": "Екатеринбург"
+  },
+  "events": [
+    {
+      "id": "christmas",
+      "title": "Рождество Христово",
+      "aliases": [
+        "7 января",
+        "Рождество"
+      ],
+      "category": "cultural",
+      "date_rule": {
+        "type": "fixed",
+        "value": "01-07",
+        "note": "Ежегодно, 7 января"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Знакомство с культурной традицией в светском формате",
+        "Развитие уважения к культурному разнообразию",
+        "Расширение кругозора"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Культурно-познавательный формат, без религиозного принуждения",
+        "5-8": "Историко-культурный контекст, традиции разных народов",
+        "9-11": "Дискуссия о культурном наследии, сравнение традиций"
+      },
+      "prompt_block": "events/christmas.md",
+      "source_collection": "christmas",
+      "source_ids": [
+        "src_christmas_audit_01",
+        "src_christmas_audit_02",
+        "src_christmas_audit_03",
+        "src_christmas_v19_01",
+        "src_christmas_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "defender_day",
+      "title": "День защитника Отечества",
+      "aliases": [
+        "23 февраля"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "02-23",
+        "note": "Ежегодно, 23 февраля"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание патриотизма и гражданской ответственности",
+        "Развитие уважения к защитникам Отечества",
+        "Формирование понятия долга и чести — без гендерных стереотипов"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Рассказы о героизме, рисунки, песни, короткие поздравления близким",
+        "5-8": "Исторические примеры, встречи с ветеранами/военнослужащими, командные активности",
+        "9-11": "Дискуссия о гражданском долге, проектные работы, подготовка к службе"
+      },
+      "prompt_block": "events/defender_day.md",
+      "source_collection": "defender_day",
+      "source_ids": [
+        "src_defender_day_audit_01",
+        "src_defender_day_audit_02",
+        "src_defender_day_audit_03",
+        "src_defender_day_v19_01",
+        "src_defender_day_v19_03"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "graduation",
+      "title": "Выпускной вечер",
+      "aliases": [
+        "Выпускной"
+      ],
+      "category": "school",
+      "date_rule": {
+        "type": "floating",
+        "value": "june",
+        "note": "Июнь, дата определяется школой и региональным регламентом"
+      },
+      "supported_age_groups": [
+        "9-11"
+      ],
+      "supported_formats": [
+        "school_event",
+        "class_hour"
+      ],
+      "educational_goals": [
+        "Торжественное завершение этапа обучения",
+        "Благодарность педагогам, родителям, школе",
+        "Постановка целей на следующий жизненный этап"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "—",
+        "5-8": "—",
+        "9-11": "Торжественная часть, вальс, напутствия, вручение аттестатов"
+      },
+      "prompt_block": "events/graduation.md",
+      "source_collection": "graduation",
+      "source_ids": [
+        "src_graduation_audit_01",
+        "src_graduation_audit_02",
+        "src_graduation_audit_03",
+        "src_graduation_v19_01",
+        "src_graduation_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "knowledge_day",
+      "title": "День знаний",
+      "aliases": [
+        "1 сентября",
+        "День знаний"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "09-01",
+        "note": "Ежегодно, 1 сентября"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Мотивация к учебному году",
+        "Формирование чувства принадлежности к школьному сообществу",
+        "Постановка учебных целей"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Игровые механики, знакомство с правилами, короткие активности",
+        "5-8": "Командные задания, обсуждение целей года, творческие активности",
+        "9-11": "Дискуссия о планах, профориентационные элементы, наставничество младшим"
+      },
+      "prompt_block": "events/knowledge_day.md",
+      "source_collection": "knowledge_day",
+      "source_ids": [
+        "src_knowledge_day_audit_01",
+        "src_knowledge_day_audit_02",
+        "src_knowledge_day_audit_03",
+        "src_knowledge_day_v19_01",
+        "src_knowledge_day_v19_03"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "labour_day",
+      "title": "Праздник Весны и Труда",
+      "aliases": [
+        "1 мая",
+        "День труда"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "05-01",
+        "note": "Ежегодно, 1 мая"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание уважения к труду",
+        "Знакомство с историей праздника",
+        "Формирование понимания ценности профессионального мастерства"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Рассказы о профессиях, рисунки, игры",
+        "5-8": "Исторический контекст, встречи с представителями профессий",
+        "9-11": "Дискуссия о мире труда, профориентация, проекты"
+      },
+      "prompt_block": "events/labour_day.md",
+      "source_collection": "labour_day",
+      "source_ids": [
+        "src_labour_day_audit_01",
+        "src_labour_day_audit_02",
+        "src_labour_day_audit_03",
+        "src_labour_day_v19_01",
+        "src_labour_day_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "last_bell",
+      "title": "Последний звонок",
+      "aliases": [
+        "Последний звонок"
+      ],
+      "category": "school",
+      "date_rule": {
+        "type": "floating",
+        "value": "late_may",
+        "note": "Конец мая, дата определяется школой"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event"
+      ],
+      "educational_goals": [
+        "Подведение итогов учебного года",
+        "Благодарность педагогам и школе",
+        "Торжественное завершение этапа обучения"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Поздравление старших, короткие выступления, подарки",
+        "5-8": "Творческие номера, напутствия младшим",
+        "9-11": "Торжественная часть, напутствие выпускников, символический звонок"
+      },
+      "prompt_block": "events/last_bell.md",
+      "source_collection": "last_bell",
+      "source_ids": [
+        "src_last_bell_audit_01",
+        "src_last_bell_audit_02",
+        "src_last_bell_audit_03",
+        "src_last_bell_v19_01",
+        "src_last_bell_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "mothers_day",
+      "title": "День матери",
+      "aliases": [
+        "Последнее воскресенье ноября"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "floating",
+        "value": "last_sunday_november",
+        "note": "Последнее воскресенье ноября"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание любви и уважения к матери",
+        "Развитие культуры благодарности в семье",
+        "Формирование семейных ценностей"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Поделки, поздравления, тёплые слова",
+        "5-8": "Творческие номера, письма мамам, совместные активности",
+        "9-11": "Дискуссия о роли матери, эссе, проекты благодарности"
+      },
+      "prompt_block": "events/mothers_day.md",
+      "source_collection": "mothers_day",
+      "source_ids": [
+        "src_mothers_day_audit_01",
+        "src_mothers_day_audit_02",
+        "src_mothers_day_audit_03",
+        "src_mothers_day_v19_01",
+        "src_mothers_day_v19_02",
+        "src_mothers_day_v19_03"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "new_year",
+      "title": "Новый год",
+      "aliases": [
+        "Новогодний праздник",
+        "Зимние каникулы"
+      ],
+      "category": "calendar",
+      "date_rule": {
+        "type": "fixed",
+        "value": "12-31",
+        "note": "Период 31.12 – 08.01; школьные мероприятия — до каникул"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Создание праздничной атмосферы в светском формате",
+        "Развитие творческих способностей",
+        "Сплочение коллектива"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Игры, хороводы, короткие сценки, подарки",
+        "5-8": "Творческие номера, конкурсы, командные игры",
+        "9-11": "Организация праздника для младших, творческие мастерские"
+      },
+      "prompt_block": "events/new_year.md",
+      "source_collection": "new_year",
+      "source_ids": [
+        "src_new_year_audit_01",
+        "src_new_year_audit_02",
+        "src_new_year_audit_03",
+        "src_new_year_v19_01",
+        "src_new_year_v19_02",
+        "src_new_year_v19_03"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "teachers_day",
+      "title": "День учителя",
+      "aliases": [
+        "5 октября"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "10-05",
+        "note": "Ежегодно, 5 октября"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание уважения к труду педагога",
+        "Развитие культуры благодарности и признательности"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Тёплые слова, рисунки, короткие поздравления",
+        "5-8": "Творческие номера, интервью с учителями, совместные активности",
+        "9-11": "Дискуссия о роли учителя, проекты благодарности, организация праздника для младших"
+      },
+      "prompt_block": "events/teachers_day.md",
+      "source_collection": "teachers_day",
+      "source_ids": [
+        "src_teachers_day_audit_01",
+        "src_teachers_day_audit_02",
+        "src_teachers_day_audit_03",
+        "src_teachers_day_v19_01",
+        "src_teachers_day_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": false,
+        "age_appropriateness_required": true,
+        "cultural_review_required": false
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "unity_day",
+      "title": "День народного единства",
+      "aliases": [
+        "4 ноября"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "11-04",
+        "note": "Ежегодно, 4 ноября"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание гражданской идентичности",
+        "Знакомство с событиями 1612 года",
+        "Развитие уважения к многонациональному народу России"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Рассказы о дружбе народов, традиции, культура",
+        "5-8": "Исторический контекст Смутного времени, подвиг Минина и Пожарского",
+        "9-11": "Дискуссия о единстве и многообразии, работа с источниками"
+      },
+      "prompt_block": "events/unity_day.md",
+      "source_collection": "unity_day",
+      "source_ids": [
+        "src_unity_day_audit_01",
+        "src_unity_day_audit_02",
+        "src_unity_day_audit_03",
+        "src_unity_day_v19_01",
+        "src_unity_day_v19_02"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "victory_day",
+      "title": "День Победы",
+      "aliases": [
+        "9 мая"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "05-09",
+        "note": "Ежегодно, 9 мая"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Сохранение исторической памяти о Великой Отечественной войне",
+        "Воспитание уважения к подвигу ветеранов",
+        "Формирование чувства гражданской ответственности"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Бережное обращение с темой, акцент на мирной жизни, детях войны, без тяжёлых деталей",
+        "5-8": "Исторические факты, рассказы о героях, встречи с ветеранами/тружениками тыла",
+        "9-11": "Аналитическая работа с источниками, исследовательские проекты, волонтёрская деятельность"
+      },
+      "prompt_block": "events/victory_day.md",
+      "source_collection": "victory_day",
+      "source_ids": [
+        "src_victory_day_audit_01",
+        "src_victory_day_audit_02",
+        "src_victory_day_audit_03",
+        "src_victory_day_audit_04",
+        "src_victory_day_audit_05",
+        "src_victory_day_audit_06",
+        "src_victory_day_audit_07",
+        "src_victory_day_audit_08",
+        "src_victory_day_audit_09",
+        "src_victory_day_audit_10",
+        "src_victory_day_audit_11",
+        "src_victory_day_v19_01",
+        "src_victory_day_v19_02",
+        "src_victory_day_v19_03",
+        "src_victory_day_v19_04",
+        "src_victory_day_v19_05",
+        "src_victory_day_v19_06",
+        "src_victory_day_v19_07",
+        "src_victory_day_v19_08",
+        "src_victory_day_v19_09",
+        "src_victory_day_v19_10",
+        "src_victory_day_v19_11",
+        "src_victory_day_v19_12",
+        "src_victory_day_v19_13"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "womens_day",
+      "title": "Международный женский день",
+      "aliases": [
+        "8 марта"
+      ],
+      "category": "federal",
+      "date_rule": {
+        "type": "fixed",
+        "value": "03-08",
+        "note": "Ежегодно, 8 марта"
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "school_event",
+        "interactive_lesson"
+      ],
+      "educational_goals": [
+        "Воспитание уважения к женщинам",
+        "Развитие культуры благодарности — без гендерных стереотипов",
+        "Знакомство с вкладом женщин в историю и культуру"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Тёплые поздравления близким, поделки, стихи",
+        "5-8": "Рассказы о выдающихся женщинах, творческие номера",
+        "9-11": "Дискуссия о роли женщин в обществе, истории, науке"
+      },
+      "prompt_block": "events/womens_day.md",
+      "source_collection": "womens_day",
+      "source_ids": [
+        "src_womens_day_audit_01",
+        "src_womens_day_audit_02",
+        "src_womens_day_audit_03",
+        "src_womens_day_v19_03",
+        "src_womens_day_v19_historical_doc"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "1.2",
+      "updated_at": "2026-10-19"
+    },
+    {
+      "id": "sverdlovsk_oblast_day",
+      "title": "День образования Свердловской области",
+      "aliases": [
+        "День Свердловской области",
+        "17 января"
+      ],
+      "category": "regional",
+      "date_rule": {
+        "type": "fixed",
+        "value": "01-17",
+        "note": "17 января; дата указана в региональном нормативном акте и региональных публикациях."
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "interactive_lesson",
+        "school_event"
+      ],
+      "educational_goals": [
+        "Знакомство с историей и символами региона",
+        "Развитие интереса к краеведению",
+        "Формирование уважения к культурному и историческому наследию Среднего Урала"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Использовать карту, символы региона, короткие рассказы и локальные примеры.",
+        "5-8": "Добавить краеведческую викторину и работу с источниками о развитии области.",
+        "9-11": "Предложить исследовательские мини-проекты о людях, местах и истории региона."
+      },
+      "prompt_block": "events/sverdlovsk_oblast_day.md",
+      "source_collection": "sverdlovsk_oblast_day",
+      "source_ids": [
+        "src_sverdlovsk_oblast_day_regional_01",
+        "src_sverdlovsk_oblast_day_regional_02"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "2.5",
+      "updated_at": "2026-10-21"
+    },
+    {
+      "id": "middle_urals_peoples_day",
+      "title": "День народов Среднего Урала",
+      "aliases": [
+        "Праздник народов Среднего Урала"
+      ],
+      "category": "regional",
+      "date_rule": {
+        "type": "variable",
+        "value": "дата требует ежегодного подтверждения",
+        "note": "В тексте регионального указа указан второй субботний день апреля; региональные публикации фиксируют проведение в другие даты в отдельные годы. Для календарного планирования ежегодно сверять официальный анонс региона."
+      },
+      "supported_age_groups": [
+        "1-4",
+        "5-8",
+        "9-11"
+      ],
+      "supported_formats": [
+        "class_hour",
+        "interactive_lesson",
+        "school_event"
+      ],
+      "educational_goals": [
+        "Знакомство с культурным многообразием народов Среднего Урала",
+        "Развитие уважительного межкультурного диалога",
+        "Изучение традиций, языков, ремёсел и локальной истории"
+      ],
+      "age_appropriateness_notes": {
+        "1-4": "Использовать безопасные культурно-познавательные активности, сказки, ремёсла и музыку без стереотипизации.",
+        "5-8": "Сравнивать культурные традиции по проверенным источникам, избегать обобщений о людях по происхождению.",
+        "9-11": "Организовать исследовательские мини-проекты и обсуждение культурного наследия с уважением к различиям."
+      },
+      "prompt_block": "events/middle_urals_peoples_day.md",
+      "source_collection": "middle_urals_peoples_day",
+      "source_ids": [
+        "src_middle_urals_peoples_day_regional_01",
+        "src_middle_urals_peoples_day_regional_02"
+      ],
+      "review": {
+        "historical_accuracy_required": true,
+        "age_appropriateness_required": true,
+        "cultural_review_required": true
+      },
+      "regional_variants": [
+        "RU-SVE"
+      ],
+      "catalog_version": "2.5",
+      "updated_at": "2026-10-21"
+    }
+  ],
+  "sources": [
+    {
+      "event_id": "christmas",
+      "sources": [
+        {
+          "source_id": "src_christmas_audit_01",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "christmas"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает 7 января как нерабочий праздничный день.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_christmas_audit_02",
+          "title": "Богослужебные указания за 7 января 2026 г.",
+          "publisher": "Русская Православная Церковь / Патриархия.ru",
+          "url": "https://patriarchia.ru/bu/2026-01-07",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "christmas"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает религиозное значение даты для РПЦ; не обобщать на всех христиан.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_christmas_audit_03",
+          "title": "Обычаи и традиции России",
+          "publisher": "Культура.РФ",
+          "url": "https://www.culture.ru/events/4397307/obychai-i-tradicii-rossii",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "christmas"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Содержит краткое описание рождественских обычаев; для школьного применения обозначать как традиции части верующих.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_christmas_v19_01",
+          "title": "Президентская библиотека о праздновании Рождества Христова",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/news/2016531",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "christmas"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает празднование Рождества православными верующими в ночь с 6 на 7 января и описывает исторические обычаи.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_christmas_v19_02",
+          "title": "Рождество Христово в Евангелии — и в истории",
+          "publisher": "Православие.Ru / Фома.Ru",
+          "url": "https://www.pravoslavie.ru/67214.html",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "christmas"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историко-религиозный материал о празднике Рождества Христова.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 2,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "defender_day",
+      "sources": [
+        {
+          "source_id": "src_defender_day_audit_01",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "defender_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает официальное название и дату 23 февраля.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_defender_day_audit_02",
+          "title": "Федеральный закон № 32-ФЗ «О днях воинской славы и памятных датах России»",
+          "publisher": "Росгидромет",
+          "url": "https://www.meteorf.gov.ru/documents/6/27/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "defender_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Кандидат на подтверждение историко-правового контекста; требуется проверка актуальности и содержания страницы.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_defender_day_audit_03",
+          "title": "Нерабочие праздничные дни",
+          "publisher": "Роструд / КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "defender_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Перечисляет 23 февраля как нерабочий праздничный день.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_defender_day_v19_01",
+          "title": "День воинской славы России – День защитника Отечества",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/node/619051",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "defender_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историческая справка о дате 23 февраля и оформлении праздника в России в 1993 году.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_defender_day_v19_03",
+          "title": "Демобилизация старой армии и создание РККА",
+          "publisher": "Российская государственная библиотека / электронная библиотека исторических документов",
+          "url": "https://gwar.mil.ru/events/141/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "defender_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Исторический материал связывает 23 февраля 1918 года с созданием РККА; это отдельный исторический тезис, не универсальное объяснение происхождения праздника.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 2,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "graduation",
+      "sources": [
+        {
+          "source_id": "src_graduation_audit_01",
+          "title": "Региональный регламент выпускных мероприятий",
+          "publisher": "Министерство образования Свердловской области",
+          "url": "https://minobraz.egov66.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "graduation"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Нужен конкретный приказ/публикация на соответствующий год; главная страница не подтверждает дату.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_graduation_audit_02",
+          "title": "Поздравление выпускникам и окончание учебного года",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/11584/pozdravlenie-ministra-prosvescheniya-rossiyskoy-federacii-sergeya-kravcova-s-poslednim-zvonkom",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "graduation"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Материал о последнем звонке, не подтверждает дату выпускного вечера.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_graduation_audit_03",
+          "title": "Локальный акт образовательной организации",
+          "publisher": "Конкретная школа",
+          "url": "https://edu.gov.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "graduation"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Нужен локальный акт выбранной школы; общий портал не подтверждает расписание выпускного.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_graduation_v19_01",
+          "title": "Минпросвещения России определило единые дни проведения последнего звонка и выпускного в школах в 2026 году",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/10849/minprosvescheniya-rossii-opredelilo-edinye-dni-provedeniya-poslednego-zvonka-i-vypusknogo-v-shkolah-v-2026-godu/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "graduation"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Рекомендации на 2025/26 учебный год: выпускные вечера планировались на 27 июня 2026 года; это годоспецифичная рекомендация, а не постоянная дата.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_graduation_v19_02",
+          "title": "Сергей Кравцов поздравил псковских выпускников с последним звонком",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/11597/sergey-kravcov-pozdravil-pskovskih-vypusknikov-s-poslednim-zvonkom/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "graduation"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Источник касается последнего звонка, не даты выпускного вечера; для утверждений о выпускном не засчитывать.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 0,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "knowledge_day",
+      "sources": [
+        {
+          "source_id": "src_knowledge_day_audit_01",
+          "title": "Минпросвещения России: рекомендации по проведению Дня знаний в 2026 году",
+          "publisher": "Министерство просвещения РФ",
+          "url": "https://edu.gov.ru/press/11872/minprosvescheniya-rossii-podgotovilo-rekomendacii-po-provedeniyu-dnya-znaniy-v-god-edinstva-narodov-rossii",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "knowledge_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает дату 1 сентября 2026 и рекомендации для школ; годоспецифично.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_knowledge_day_audit_02",
+          "title": "Рекомендации по проведению Дня знаний для школьников и студентов колледжей",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/10339/razrabotany-rekomendacii-po-provedeniyu-dnya-znaniy-dlya-shkolnikov-i-studentov-kolledzhey/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "knowledge_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает применение даты 1 сентября и школьный формат; материал 2025 года.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_knowledge_day_audit_03",
+          "title": "День знаний: начало учебного года",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/3739/minprosvescheniya-rossii-podpisalo-soglashenie-s-centralnoy-izbiratelnoy-komissiey/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "knowledge_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает традицию начала учебного года 1 сентября в контексте 2021 года; не использовать как единственное основание.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_knowledge_day_v19_01",
+          "title": "День знаний – начало учебного года",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/history/619500",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "knowledge_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историческая справка подтверждает 1 сентября как День знаний и рассказывает об установлении праздника в 1984 году.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_knowledge_day_v19_03",
+          "title": "4. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс / Роструд",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "knowledge_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Этот источник не устанавливает День знаний; оставлен только как календарный контекст и не должен считаться подтверждением 1 сентября.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 1,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "labour_day",
+      "sources": [
+        {
+          "source_id": "src_labour_day_audit_01",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "labour_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает официальное название и дату 1 мая.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_labour_day_audit_02",
+          "title": "Нерабочие праздничные дни",
+          "publisher": "Роструд / КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "labour_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает статус 1 мая как нерабочего праздничного дня.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_labour_day_audit_03",
+          "title": "Праздник Весны и Труда: история и традиции",
+          "publisher": "Кандидат для поиска официальной культурно-исторической публикации",
+          "url": "https://www.culture.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "labour_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "URL ведёт на портал, а не на конкретную страницу; не засчитывать до замены точным материалом.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_labour_day_v19_01",
+          "title": "1 мая в нашей стране отмечается Праздник Весны и Труда",
+          "publisher": "Российское историческое общество",
+          "url": "https://historyrussia.org/sobytiya/1-maya-v-nashej-strane-otmechaetsya-prazdnik-vesny-i-truda.html",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "labour_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историческая статья описывает традицию 1 Мая и переименование в 1992 году.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_labour_day_v19_02",
+          "title": "May Day: The International Day of Labour: Day of labour and solidarity",
+          "publisher": "Международная организация труда",
+          "url": "https://www.ilo.org/resource/statement/may-day-international-day-labour-day-labour-and-solidarity",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "labour_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Материал МОТ связывает 1 мая с международным днём труда и историей борьбы за рабочее время.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 3,
+      "status": "verified_minimum_met",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "last_bell",
+      "sources": [
+        {
+          "source_id": "src_last_bell_audit_01",
+          "title": "Поздравление Министра просвещения РФ с последним звонком",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/11584/pozdravlenie-ministra-prosvescheniya-rossiyskoy-federacii-sergeya-kravcova-s-poslednim-zvonkom",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "last_bell"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает проведение последних звонков в конце мая в 2026 году; не устанавливает единую ежегодную дату.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_last_bell_audit_02",
+          "title": "Календарь учебных событий школы",
+          "publisher": "Школа / локальный акт",
+          "url": "https://edu.gov.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "last_bell"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Общий портал не подтверждает дату конкретной школы; не засчитывать как источник точной даты.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_last_bell_audit_03",
+          "title": "Региональный приказ о завершении учебного года",
+          "publisher": "Министерство образования Свердловской области",
+          "url": "https://minobraz.egov66.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "last_bell"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Региональный портал, но без указания точного приказа и страницы; нужен конкретный документ.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_last_bell_v19_01",
+          "title": "Минпросвещения России определило единые дни проведения последнего звонка и выпускного в школах в 2026 году",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/10849/minprosvescheniya-rossii-opredelilo-edinye-dni-provedeniya-poslednego-zvonka-i-vypusknogo-v-shkolah-v-2026-godu/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "last_bell"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Рекомендации на 2025/26 учебный год: последний звонок планировался на 26 мая 2026 года; дата не универсальна для всех лет и школ.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_last_bell_v19_02",
+          "title": "Сергей Кравцов поздравил псковских выпускников с последним звонком",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/11597/sergey-kravcov-pozdravil-pskovskih-vypusknikov-s-poslednim-zvonkom/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "last_bell"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Описывает конкретное проведение последнего звонка в Пскове 26 мая 2026 года.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 0,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "mothers_day",
+      "sources": [
+        {
+          "source_id": "src_mothers_day_audit_01",
+          "title": "Указ Президента РФ от 30.01.1998 № 120 «О Дне матери»",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_118978/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Прямо устанавливает последнее воскресенье ноября.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_mothers_day_audit_02",
+          "title": "День матери в России: дата и значение",
+          "publisher": "Кандидат для поиска официального источника",
+          "url": "https://мультимедиа.президент.рф/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Главная страница без конкретного материала; не засчитывать до проверки точной публикации.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_mothers_day_audit_03",
+          "title": "Семья и семейные ценности",
+          "publisher": "Минтруд России",
+          "url": "https://mintrud.gov.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Главная страница ведомства не подтверждает конкретный факт Дня матери; заменить конкретным материалом.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_mothers_day_v19_01",
+          "title": "День матери в России",
+          "publisher": "Росстат (Белгородстат)",
+          "url": "https://31.rosstat.gov.ru/folder/149733/document/249092",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Региональное статистическое ведомство указывает, что День матери отмечается в последнее воскресенье ноября.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_mothers_day_v19_02",
+          "title": "День матери в России",
+          "publisher": "Росстат (Самарастат)",
+          "url": "https://63.rosstat.gov.ru/infografica/document/188685",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает последнее воскресенье ноября и связь праздника с Указом Президента 1998 года.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_mothers_day_v19_03",
+          "title": "Указ Президента РФ от 30.01.1998 N 120 «О Дне матери»",
+          "publisher": "ГАРАНТ",
+          "url": "https://base.garant.ru/1573720/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "mothers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Текст указа устанавливает праздник в последнее воскресенье ноября; прямое открытие в этой проверке блокировалось.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 6,
+      "verified_count": 0,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "new_year",
+      "sources": [
+        {
+          "source_id": "src_new_year_audit_01",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает новогодние каникулы 1–8 января; не подтверждает все традиции праздника.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_new_year_audit_02",
+          "title": "Когда в России начали отмечать Новый год",
+          "publisher": "Культура.РФ",
+          "url": "https://www.culture.ru/s/vopros/pervyi-novyi-god",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Исторический материал о смене дат Нового года и традициях в России.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_new_year_audit_03",
+          "title": "Обычаи и традиции России",
+          "publisher": "Культура.РФ",
+          "url": "https://www.culture.ru/events/4397307/obychai-i-tradicii-rossii",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Описывает некоторые современные новогодние традиции; страница события, требуется осторожная оценка авторства.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_new_year_v19_01",
+          "title": "От Петра Великого до Сталина: история Нового года как летопись государства",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/news/659263",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Исторический обзор новогодних обычаев; материал описывает перенос начала года на 1 января при Петре I.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_new_year_v19_02",
+          "title": "1 января объявлено праздничным и выходным днём",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/node/619836",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историческая справка об изменении даты начала года в России.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_new_year_v19_03",
+          "title": "Новый год",
+          "publisher": "Большая российская энциклопедия",
+          "url": "https://old.bigenc.ru/ethnology/text/2668984",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "new_year"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Энциклопедическая статья о календарном празднике и его традициях.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 6,
+      "verified_count": 1,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "teachers_day",
+      "sources": [
+        {
+          "source_id": "src_teachers_day_audit_01",
+          "title": "Указ Президента РФ от 03.10.1994 № 1961 «О праздновании Дня учителя»",
+          "publisher": "ГАРАНТ",
+          "url": "https://base.garant.ru/1565723/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "teachers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Текст указа прямо устанавливает празднование 5 октября.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_teachers_day_audit_02",
+          "title": "5 октября — День учителя",
+          "publisher": "Росстат",
+          "url": "https://77.rosstat.gov.ru/folder/70751/document/101211",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "teachers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает дату и нормативное основание; публикация статистического ведомства.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_teachers_day_audit_03",
+          "title": "Поздравление педагогов с Днём учителя",
+          "publisher": "Минпросвещения России",
+          "url": "https://edu.gov.ru/press/12161/dmitriy-chernyshenko-i-sergey-kravcov-pozdravili-pedagogov-s-dnem-uchitelya/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "teachers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает современное употребление даты 5 октября; новостной материал 2026 года.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_teachers_day_v19_01",
+          "title": "Всемирный день учителя",
+          "publisher": "ЮНЕСКО",
+          "url": "https://www.unesco.org/ru/days/teachers",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "teachers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает ежегодную дату 5 октября и связь с рекомендацией МОТ/ЮНЕСКО 1966 года.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_teachers_day_v19_02",
+          "title": "Президентская библиотека – школе",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/news/1910794",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "teachers_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Материал подтверждает дату 5 октября и историю празднования Дня учителя в России.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 2,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "unity_day",
+      "sources": [
+        {
+          "source_id": "src_unity_day_audit_01",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "unity_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает официальное название и дату 4 ноября.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_unity_day_audit_02",
+          "title": "Федеральный закон № 32-ФЗ «О днях воинской славы и памятных датах России»",
+          "publisher": "Росгидромет",
+          "url": "https://www.meteorf.gov.ru/documents/6/27/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "unity_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Кандидат на историко-правовое основание; требует проверки конкретной статьи.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_unity_day_audit_03",
+          "title": "Нерабочие праздничные дни",
+          "publisher": "Роструд / КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "unity_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает статус 4 ноября как нерабочего праздничного дня.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_unity_day_v19_01",
+          "title": "История Дня народного единства – в материалах Президентской библиотеки",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/news/1326449",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "unity_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Материал подтверждает дату 4 ноября, исторический контекст 1612 года и начало празднования в 2005 году.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_unity_day_v19_02",
+          "title": "День воинской славы России – День народного единства",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/history/619688",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "unity_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Историческая справка о введении праздника и событиях 1612 года.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 2,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "victory_day",
+      "sources": [
+        {
+          "source_id": "src_victory_day_audit_01",
+          "title": "Федеральный закон № 80-ФЗ, статья 1. День Победы",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_6643/8a8e891488eecfbef23f8e1f2781011d05708ddc/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Прямо подтверждает 9 мая как День Победы.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_audit_02",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает 9 мая как нерабочий праздничный день.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_03",
+          "title": "Сайт «Победа. 1941–1945» пополнился новыми материалами",
+          "publisher": "Росархив",
+          "url": "https://archives.gov.ru/press/09-05-2023-victory.shtml",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Подтверждает наличие архивных фотодокументов по войне в государственном архивном проекте.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_04",
+          "title": "Сайт «Победа. 1941–1945»: новые фото- и кинодокументы",
+          "publisher": "Росархив",
+          "url": "https://archives.gov.ru/press/09-05-2024-09-05-2024-sayt-pobeda-1941-1945-novye-foto-i-kinodokumenty.shtml",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Подтверждает архивные фото- и кинодокументы о войне.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_05",
+          "title": "История Уральского добровольческого танкового корпуса в документах ЦДООСО",
+          "publisher": "Государственный архив социально-политической истории Свердловской области",
+          "url": "https://gaspi-so.ru/images/expo/udtk-75-years/project/index.html",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Региональный архивный интернет-проект о создании и истории УДТК.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_audit_06",
+          "title": "Подборка документов: Уральский добровольческий танковый корпус",
+          "publisher": "Государственный архив социально-политической истории Свердловской области",
+          "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/editions/limited-editions",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Подтверждает наличие публикации документов по истории УДТК в региональном архиве.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_07",
+          "title": "Памятные даты: 9 мая 1945 года в Свердловской области",
+          "publisher": "Государственный архив социально-политической истории Свердловской области",
+          "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/memory-days/1567-anniversary-calendar-2025",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Содержит региональные сведения о праздновании Победы и вкладе области; отдельные количественные цифры проверять по первичным публикациям.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_08",
+          "title": "Важнейшие документы войны: Свердловская область",
+          "publisher": "Государственный архив социально-политической истории Свердловской области",
+          "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/editions/compilations-of-documents",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Региональный сборник архивных документов о жизни области в годы войны.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_09",
+          "title": "Письма Уральского добровольческого танкового корпуса как исторический источник",
+          "publisher": "Государственный архив социально-политической истории Свердловской области",
+          "url": "https://cdooso.ru/editions/staff-publications/1323-pisma-uralskogo-dobrovolcheskogo-tankovogo-korpusa-kak-istoricheskij-istochnik-po-materialam-iz-fondov-tsdooso",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Публикация архивиста на основе документов фондов ЦДООСО.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_10",
+          "title": "Боевой путь Уральского добровольческого танкового корпуса",
+          "publisher": "Музей истории УрГПУ",
+          "url": "https://museum.uspu.ru/newssite/191-boevoj-put",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Региональный музейный материал о создании и боевом пути корпуса; проверять точные числа при использовании.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_audit_11",
+          "title": "Вклад Среднего Урала в Великую Победу: архивные публикации",
+          "publisher": "ГАСИ Свердловской области",
+          "url": "https://gaspi-so.ru/found-publications-by-tag/velikaya-otechestvennaya-vojna",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Подборка публикаций по теме; как агрегатор не подтверждает любой конкретный факт без открытия отдельной статьи.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_01",
+          "title": "День воинской славы России – День Победы советского народа в Великой Отечественной войне 1941–1945 годов",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/history/619229",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает подписание акта о капитуляции и указ об объявлении 9 мая Днём Победы.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_v19_02",
+          "title": "«Двадцать восемь мгновений весны 1945-го». День Победы",
+          "publisher": "Российское историческое общество",
+          "url": "https://historyrussia.org/sobytiya/dvadtsat-vosem-mgnovenij-vesny-1945-go-den-pobedy.html",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Исторический материал описывает события 9 мая 1945 года и объявление Дня Победы.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_v19_03",
+          "title": "День Победы",
+          "publisher": "Государственный архив Российской Федерации",
+          "url": "https://statearchive.ru/478",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Страница архива представляет документы о празднике и связанных указах 1945–1947 годов.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_v19_04",
+          "title": "Музей Победы — экспозиция «Путь к Победе»",
+          "publisher": "Музей Победы",
+          "url": "https://www.victorymuseum.ru/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Официальная страница музея описывает экспозицию по истории Великой Отечественной войны; источник годится для музейно-образовательного контекста, не как единственное основание точных дат.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_v19_05",
+          "title": "Указ Президиума Верховного Совета СССР от 8 мая 1945 г. «Об объявлении 9 мая Праздником Победы»",
+          "publisher": "КонсультантПлюс",
+          "url": "https://base.garant.ru/198106/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Текст исторического указа объявляет 9 мая Праздником Победы; прямое открытие блокировалось, поэтому не засчитывать в строгий минимум.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_06",
+          "title": "Указ Президиума Верховного Совета СССР об объявлении 9 мая Праздником Победы",
+          "publisher": "Электронная библиотека исторических документов",
+          "url": "https://www.docs.historyrussia.org/ru/nodes/209585-ukaz-prezidiuma-verhovnogo-soveta-sssr-ob-obyavlenii-9-maya-prazdnikom-pobedy-moskva-8-maya-1945-g",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Каталожная запись исторического документа 8 мая 1945 года; прямое открытие вернуло 502, поэтому не засчитывать в строгий минимум.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_07",
+          "title": "День Победы в Великой Отечественной войне 1941–1945 годов",
+          "publisher": "Росгвардия",
+          "url": "https://www.rosguard.gov.ru/ru/page/index/den-pobedy-v-velikoj-otechestvennoj-vojne-19411945-godov",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Поисковый индекс подтверждает 9 мая и указ 1945 года; при повторном открытии URL вернул 404, источник не засчитывать.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_08",
+          "title": "Указ Президиума ВС СССР от 08.05.1945 № 121/57",
+          "publisher": "Викитека",
+          "url": "https://ru.wikisource.org/wiki/Указ_Президиума_ВС_СССР_от_08.05.1945_№_121/57",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Публикация текста указа об объявлении 9 мая Праздником Победы; независимая вторичная публикация первичного документа.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_09",
+          "title": "Документы: Великая Отечественная война завершилась нашей полной победой",
+          "publisher": "Федеральный историко-документальный просветительский портал / ЭБИД",
+          "url": "https://docs.historyrussia.org/ru/nodes/181249-dokumenty",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Коллекция включает акт о капитуляции, приказ от 9 мая и указ об объявлении праздника; домен отличается от архивных источников, но принадлежит тому же историко-документальному порталу.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_10",
+          "title": "Указ о переводе 9 мая в рабочие дни (документальный PDF)",
+          "publisher": "Государственный архив Российской Федерации",
+          "url": "https://statearchive.ru/assets/files/GARF_90.pdf",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Архивный PDF подтверждает изменение статуса 9 мая в 1947 году; релевантен хронологии статуса праздника.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_11",
+          "title": "4. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс / Роструд",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает современный статус 9 мая как Дня Победы и нерабочего праздничного дня.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_victory_day_v19_12",
+          "title": "Указ Президиума Верховного Совета СССР «Об объявлении 9 мая праздником Победы»",
+          "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+          "url": "https://www.prlib.ru/item/2037371",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Карточка первичного документа с датой 8 мая 1945 года и указанием Государственного архива РФ как места хранения оригинала.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_victory_day_v19_13",
+          "title": "Указ Президиума Верховного Совета СССР об объявлении 9 мая Праздником Победы",
+          "publisher": "Российское историческое общество / ЭБИД",
+          "url": "https://www.docs.historyrussia.org/ru/nodes/181405",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "rejected",
+          "topics": [
+            "victory_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Каталожная запись исторического документа; близкая копия уже представлена на ЭБИД, поэтому не считать независимым издателем от других записей этого портала.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        }
+      ],
+      "source_count": 24,
+      "verified_count": 7,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "womens_day",
+      "sources": [
+        {
+          "source_id": "src_womens_day_audit_01",
+          "title": "Основные сведения — Международный женский день",
+          "publisher": "Организация Объединённых Наций",
+          "url": "https://www.un.org/ru/observances/womens-day/background",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "womens_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает историю и международный контекст 8 марта.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_womens_day_audit_02",
+          "title": "Международный женский день",
+          "publisher": "ЮНЕСКО",
+          "url": "https://www.unesco.org/ru/days/women",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "womens_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает международное тематическое значение даты; годовая тема меняется.",
+          "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        },
+        {
+          "source_id": "src_womens_day_audit_03",
+          "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+          "publisher": "КонсультантПлюс",
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "womens_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Подтверждает правовой статус 8 марта в России.",
+          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_womens_day_v19_03",
+          "title": "Список международных дней",
+          "publisher": "ЮНЕСКО",
+          "url": "https://www.unesco.org/ru/days/list",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "needs_content_review",
+          "topics": [
+            "womens_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Календарь международных дней указывает 8 марта как Международный женский день.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_womens_day_v19_historical_doc",
+          "title": "Постановление о проведении международного коммунистического женского дня 8 марта 1931 г.",
+          "publisher": "Электронная библиотека исторических документов (ЭБИД)",
+          "url": "https://docs.historyrussia.org/ru/nodes/395420?query=%D0%BB%D0%B5%D0%BD%D0%B8%D0%BD+NOT+%D1%81%D1%82%D0%B0%D0%BB%D0%B8%D0%BD",
+          "retrieved_at": "2026-10-20",
+          "verification_status": "verified",
+          "topics": [
+            "womens_day"
+          ],
+          "regions": [
+            "RU"
+          ],
+          "text_excerpt": "Первичный документ 1931 года прямо относится к проведению международного женского дня 8 марта; применим к историческому контексту, но не подтверждает все современные формулировки праздника.",
+          "note": "Прямое открытие URL и релевантность историческому контексту проверены в веб-аудите v1.9.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 5,
+      "verified_count": 2,
+      "status": "incomplete",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз."
+    },
+    {
+      "event_id": "sverdlovsk_oblast_day",
+      "sources": [
+        {
+          "source_id": "src_sverdlovsk_oblast_day_regional_01",
+          "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
+          "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+          "url": "https://base.garant.ru/20926350/",
+          "retrieved_at": "2026-10-21",
+          "verification_status": "candidate_needs_direct_legal_check",
+          "topics": [
+            "sverdlovsk_oblast_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "В опубликованном тексте указа перечислен День образования Свердловской области — 17 января.",
+          "note": "Вторичный правовой ресурс; перед окончательной приёмкой проверить действующую редакцию на официальном портале правовой информации.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_sverdlovsk_oblast_day_regional_02",
+          "title": "Официальные новости Министерства социальной политики Свердловской области: материалы к годовщине образования области",
+          "publisher": "Министерство социальной политики Свердловской области",
+          "url": "https://msp.midural.ru/news/?page=all",
+          "retrieved_at": "2026-10-21",
+          "verification_status": "candidate_needs_article_level_check",
+          "topics": [
+            "sverdlovsk_oblast_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "В архиве регионального ведомства присутствуют публикации о годовщине образования Свердловской области, включая сообщение от 17 января 2019 года.",
+          "note": "Архивная страница не заменяет отдельную публикацию; требуется открыть и зафиксировать точный материал.",
+          "content_relevance_checked": false,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 2,
+      "verified_count": 0,
+      "status": "incomplete",
+      "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки."
+    },
+    {
+      "event_id": "middle_urals_peoples_day",
+      "sources": [
+        {
+          "source_id": "src_middle_urals_peoples_day_regional_01",
+          "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
+          "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+          "url": "https://base.garant.ru/20926350/",
+          "retrieved_at": "2026-10-21",
+          "verification_status": "candidate_date_conflict_review",
+          "topics": [
+            "middle_urals_peoples_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "В тексте указа праздник указан как региональный; приведено правило «вторая суббота апреля».",
+          "note": "Дата расходится с сообщениями о проведении праздника в другие дни/месяцы. Не использовать для автоматической генерации даты без проверки актуального официального анонса.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": false
+        },
+        {
+          "source_id": "src_middle_urals_peoples_day_regional_02",
+          "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала за укрепление межнациональных отношений",
+          "publisher": "Министерство социальной политики Свердловской области",
+          "url": "https://msp.midural.ru/news/jiteli-sverdlovskoy-oblasti-otmecheny-nagradami-gubernatora-v-den-narodov-srednego-urala-za-ukreplenie-mejnacionalnyh-otnosheniy-137767/",
+          "retrieved_at": "2026-10-21",
+          "verification_status": "verified_event_occurrence_date_conflict",
+          "topics": [
+            "middle_urals_peoples_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Официальная региональная публикация описывает мероприятие 1 сентября 2024 года и подтверждает региональный характер праздника.",
+          "note": "Подтверждает проведение в конкретном году, но не отменяет необходимости проверить действующую нормативную дату и календарь текущего года.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true
+        }
+      ],
+      "source_count": 2,
+      "verified_count": 0,
+      "status": "incomplete",
+      "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки."
+    }
+  ],
+  "source_quality_note": "source_count counts source records, not independent verified publishers; see acceptance report and source audits."
+}

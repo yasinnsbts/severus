@@ -1,0 +1,96 @@
+{
+  "run_date": "2026-10-20",
+  "version": "1.9",
+  "event_json_files": 12,
+  "json_files_parsed": 12,
+  "json_schema_errors": [],
+  "catalog_index_data_rows": 12,
+  "prompt_files": 12,
+  "full_prompt_review_rows": 120,
+  "prompt_review_pass": 120,
+  "prompt_review_required": 0,
+  "source_collection_audit": {
+    "womens_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "unity_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "new_year": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "victory_day": {
+      "rows": 11,
+      "verified_relevant": 2,
+      "distinct_verified_publishers": 2,
+      "minimum_met": false
+    },
+    "defender_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "graduation": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "teachers_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "knowledge_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "labour_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "christmas": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "last_bell": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    },
+    "mothers_day": {
+      "rows": 3,
+      "verified_relevant": 0,
+      "distinct_verified_publishers": 0,
+      "minimum_met": false
+    }
+  },
+  "ordinary_event_independent_source_minimums_met": false,
+  "victory_day_10_independent_sources_met": false,
+  "external_expertise": "NOT_CONDUCTED",
+  "overall_status": "NOT_ACCEPTED_SOURCE_MINIMUMS_NOT_MET",
+  "remaining_disputed_date_text_hits": [],
+  "udtk_disputed_date_references_removed": true,
+  "source_thresholds_met": false,
+  "acceptance_status": "NOT_ACCEPTED_SOURCE_MINIMUMS_NOT_MET",
+  "source_audit_updated": "acceptance/source_audit_v1.9.csv",
+  "source_threshold_summary": "acceptance/source_thresholds_v1.9.csv"
+}

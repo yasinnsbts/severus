@@ -1,0 +1,100 @@
+{
+  "event_id": "defender_day",
+  "sources": [
+    {
+      "source_id": "src_defender_day_audit_01",
+      "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "defender_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает официальное название и дату 23 февраля.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_defender_day_audit_02",
+      "title": "Федеральный закон № 32-ФЗ «О днях воинской славы и памятных датах России»",
+      "publisher": "Росгидромет",
+      "url": "https://www.meteorf.gov.ru/documents/6/27/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "defender_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Кандидат на подтверждение историко-правового контекста; требуется проверка актуальности и содержания страницы.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_defender_day_audit_03",
+      "title": "Нерабочие праздничные дни",
+      "publisher": "Роструд / КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "defender_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Перечисляет 23 февраля как нерабочий праздничный день.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_defender_day_v19_01",
+      "title": "День воинской славы России – День защитника Отечества",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/node/619051",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "defender_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Историческая справка о дате 23 февраля и оформлении праздника в России в 1993 году.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_defender_day_v19_03",
+      "title": "Демобилизация старой армии и создание РККА",
+      "publisher": "Российская государственная библиотека / электронная библиотека исторических документов",
+      "url": "https://gwar.mil.ru/events/141/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "defender_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Исторический материал связывает 23 февраля 1918 года с созданием РККА; это отдельный исторический тезис, не универсальное объяснение происхождения праздника.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 2,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

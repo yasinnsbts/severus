@@ -1,0 +1,118 @@
+{
+  "event_id": "mothers_day",
+  "sources": [
+    {
+      "source_id": "src_mothers_day_audit_01",
+      "title": "Указ Президента РФ от 30.01.1998 № 120 «О Дне матери»",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_118978/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Прямо устанавливает последнее воскресенье ноября.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_mothers_day_audit_02",
+      "title": "День матери в России: дата и значение",
+      "publisher": "Кандидат для поиска официального источника",
+      "url": "https://мультимедиа.президент.рф/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Главная страница без конкретного материала; не засчитывать до проверки точной публикации.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_mothers_day_audit_03",
+      "title": "Семья и семейные ценности",
+      "publisher": "Минтруд России",
+      "url": "https://mintrud.gov.ru/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Главная страница ведомства не подтверждает конкретный факт Дня матери; заменить конкретным материалом.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_mothers_day_v19_01",
+      "title": "День матери в России",
+      "publisher": "Росстат (Белгородстат)",
+      "url": "https://31.rosstat.gov.ru/folder/149733/document/249092",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Региональное статистическое ведомство указывает, что День матери отмечается в последнее воскресенье ноября.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_mothers_day_v19_02",
+      "title": "День матери в России",
+      "publisher": "Росстат (Самарастат)",
+      "url": "https://63.rosstat.gov.ru/infografica/document/188685",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает последнее воскресенье ноября и связь праздника с Указом Президента 1998 года.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_mothers_day_v19_03",
+      "title": "Указ Президента РФ от 30.01.1998 N 120 «О Дне матери»",
+      "publisher": "ГАРАНТ",
+      "url": "https://base.garant.ru/1573720/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "mothers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Текст указа устанавливает праздник в последнее воскресенье ноября; прямое открытие в этой проверке блокировалось.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 0,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

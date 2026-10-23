@@ -1,0 +1,100 @@
+{
+  "event_id": "unity_day",
+  "sources": [
+    {
+      "source_id": "src_unity_day_audit_01",
+      "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "unity_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает официальное название и дату 4 ноября.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_unity_day_audit_02",
+      "title": "Федеральный закон № 32-ФЗ «О днях воинской славы и памятных датах России»",
+      "publisher": "Росгидромет",
+      "url": "https://www.meteorf.gov.ru/documents/6/27/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "unity_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Кандидат на историко-правовое основание; требует проверки конкретной статьи.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_unity_day_audit_03",
+      "title": "Нерабочие праздничные дни",
+      "publisher": "Роструд / КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "unity_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает статус 4 ноября как нерабочего праздничного дня.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_unity_day_v19_01",
+      "title": "История Дня народного единства – в материалах Президентской библиотеки",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/news/1326449",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "unity_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Материал подтверждает дату 4 ноября, исторический контекст 1612 года и начало празднования в 2005 году.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_unity_day_v19_02",
+      "title": "День воинской славы России – День народного единства",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/history/619688",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "unity_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Историческая справка о введении праздника и событиях 1612 года.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 2,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

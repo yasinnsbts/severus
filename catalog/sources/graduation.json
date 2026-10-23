@@ -1,0 +1,100 @@
+{
+  "event_id": "graduation",
+  "sources": [
+    {
+      "source_id": "src_graduation_audit_01",
+      "title": "Региональный регламент выпускных мероприятий",
+      "publisher": "Министерство образования Свердловской области",
+      "url": "https://minobraz.egov66.ru/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "graduation"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Нужен конкретный приказ/публикация на соответствующий год; главная страница не подтверждает дату.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_graduation_audit_02",
+      "title": "Поздравление выпускникам и окончание учебного года",
+      "publisher": "Минпросвещения России",
+      "url": "https://edu.gov.ru/press/11584/pozdravlenie-ministra-prosvescheniya-rossiyskoy-federacii-sergeya-kravcova-s-poslednim-zvonkom",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "graduation"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Материал о последнем звонке, не подтверждает дату выпускного вечера.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_graduation_audit_03",
+      "title": "Локальный акт образовательной организации",
+      "publisher": "Конкретная школа",
+      "url": "https://edu.gov.ru/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "graduation"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Нужен локальный акт выбранной школы; общий портал не подтверждает расписание выпускного.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_graduation_v19_01",
+      "title": "Минпросвещения России определило единые дни проведения последнего звонка и выпускного в школах в 2026 году",
+      "publisher": "Минпросвещения России",
+      "url": "https://edu.gov.ru/press/10849/minprosvescheniya-rossii-opredelilo-edinye-dni-provedeniya-poslednego-zvonka-i-vypusknogo-v-shkolah-v-2026-godu/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "graduation"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Рекомендации на 2025/26 учебный год: выпускные вечера планировались на 27 июня 2026 года; это годоспецифичная рекомендация, а не постоянная дата.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_graduation_v19_02",
+      "title": "Сергей Кравцов поздравил псковских выпускников с последним звонком",
+      "publisher": "Минпросвещения России",
+      "url": "https://edu.gov.ru/press/11597/sergey-kravcov-pozdravil-pskovskih-vypusknikov-s-poslednim-zvonkom/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "graduation"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Источник касается последнего звонка, не даты выпускного вечера; для утверждений о выпускном не засчитывать.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 0,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

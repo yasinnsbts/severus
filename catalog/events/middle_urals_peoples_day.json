@@ -1,0 +1,49 @@
+{
+  "id": "middle_urals_peoples_day",
+  "title": "День народов Среднего Урала",
+  "aliases": [
+    "Праздник народов Среднего Урала"
+  ],
+  "category": "regional",
+  "date_rule": {
+    "type": "variable",
+    "value": "дата требует ежегодного подтверждения",
+    "note": "В тексте регионального указа указан второй субботний день апреля; региональные публикации фиксируют проведение в другие даты в отдельные годы. Для календарного планирования ежегодно сверять официальный анонс региона."
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "interactive_lesson",
+    "school_event"
+  ],
+  "educational_goals": [
+    "Знакомство с культурным многообразием народов Среднего Урала",
+    "Развитие уважительного межкультурного диалога",
+    "Изучение традиций, языков, ремёсел и локальной истории"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Использовать безопасные культурно-познавательные активности, сказки, ремёсла и музыку без стереотипизации.",
+    "5-8": "Сравнивать культурные традиции по проверенным источникам, избегать обобщений о людях по происхождению.",
+    "9-11": "Организовать исследовательские мини-проекты и обсуждение культурного наследия с уважением к различиям."
+  },
+  "prompt_block": "events/middle_urals_peoples_day.md",
+  "source_collection": "middle_urals_peoples_day",
+  "source_ids": [
+    "src_middle_urals_peoples_day_regional_01",
+    "src_middle_urals_peoples_day_regional_02"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

@@ -1,0 +1,442 @@
+{
+  "event_id": "victory_day",
+  "sources": [
+    {
+      "source_id": "src_victory_day_audit_01",
+      "title": "Федеральный закон № 80-ФЗ, статья 1. День Победы",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_6643/8a8e891488eecfbef23f8e1f2781011d05708ddc/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Прямо подтверждает 9 мая как День Победы.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_audit_02",
+      "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает 9 мая как нерабочий праздничный день.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_03",
+      "title": "Сайт «Победа. 1941–1945» пополнился новыми материалами",
+      "publisher": "Росархив",
+      "url": "https://archives.gov.ru/press/09-05-2023-victory.shtml",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Подтверждает наличие архивных фотодокументов по войне в государственном архивном проекте.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_04",
+      "title": "Сайт «Победа. 1941–1945»: новые фото- и кинодокументы",
+      "publisher": "Росархив",
+      "url": "https://archives.gov.ru/press/09-05-2024-09-05-2024-sayt-pobeda-1941-1945-novye-foto-i-kinodokumenty.shtml",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Подтверждает архивные фото- и кинодокументы о войне.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_05",
+      "title": "История Уральского добровольческого танкового корпуса в документах ЦДООСО",
+      "publisher": "Государственный архив социально-политической истории Свердловской области",
+      "url": "https://gaspi-so.ru/images/expo/udtk-75-years/project/index.html",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Региональный архивный интернет-проект о создании и истории УДТК.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_audit_06",
+      "title": "Подборка документов: Уральский добровольческий танковый корпус",
+      "publisher": "Государственный архив социально-политической истории Свердловской области",
+      "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/editions/limited-editions",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Подтверждает наличие публикации документов по истории УДТК в региональном архиве.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_07",
+      "title": "Памятные даты: 9 мая 1945 года в Свердловской области",
+      "publisher": "Государственный архив социально-политической истории Свердловской области",
+      "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/memory-days/1567-anniversary-calendar-2025",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Содержит региональные сведения о праздновании Победы и вкладе области; отдельные количественные цифры проверять по первичным публикациям.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_08",
+      "title": "Важнейшие документы войны: Свердловская область",
+      "publisher": "Государственный архив социально-политической истории Свердловской области",
+      "url": "https://sverdlovsk-obkom-1941-1945.gaspi-so.ru/editions/compilations-of-documents",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Региональный сборник архивных документов о жизни области в годы войны.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_09",
+      "title": "Письма Уральского добровольческого танкового корпуса как исторический источник",
+      "publisher": "Государственный архив социально-политической истории Свердловской области",
+      "url": "https://cdooso.ru/editions/staff-publications/1323-pisma-uralskogo-dobrovolcheskogo-tankovogo-korpusa-kak-istoricheskij-istochnik-po-materialam-iz-fondov-tsdooso",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Публикация архивиста на основе документов фондов ЦДООСО.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_10",
+      "title": "Боевой путь Уральского добровольческого танкового корпуса",
+      "publisher": "Музей истории УрГПУ",
+      "url": "https://museum.uspu.ru/newssite/191-boevoj-put",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Региональный музейный материал о создании и боевом пути корпуса; проверять точные числа при использовании.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_audit_11",
+      "title": "Вклад Среднего Урала в Великую Победу: архивные публикации",
+      "publisher": "ГАСИ Свердловской области",
+      "url": "https://gaspi-so.ru/found-publications-by-tag/velikaya-otechestvennaya-vojna",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "Подборка публикаций по теме; как агрегатор не подтверждает любой конкретный факт без открытия отдельной статьи.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_01",
+      "title": "День воинской славы России – День Победы советского народа в Великой Отечественной войне 1941–1945 годов",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/history/619229",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает подписание акта о капитуляции и указ об объявлении 9 мая Днём Победы.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_v19_02",
+      "title": "«Двадцать восемь мгновений весны 1945-го». День Победы",
+      "publisher": "Российское историческое общество",
+      "url": "https://historyrussia.org/sobytiya/dvadtsat-vosem-mgnovenij-vesny-1945-go-den-pobedy.html",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Исторический материал описывает события 9 мая 1945 года и объявление Дня Победы.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_v19_03",
+      "title": "День Победы",
+      "publisher": "Государственный архив Российской Федерации",
+      "url": "https://statearchive.ru/478",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Страница архива представляет документы о празднике и связанных указах 1945–1947 годов.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_v19_04",
+      "title": "Музей Победы — экспозиция «Путь к Победе»",
+      "publisher": "Музей Победы",
+      "url": "https://www.victorymuseum.ru/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Официальная страница музея описывает экспозицию по истории Великой Отечественной войны; источник годится для музейно-образовательного контекста, не как единственное основание точных дат.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_v19_05",
+      "title": "Указ Президиума Верховного Совета СССР от 8 мая 1945 г. «Об объявлении 9 мая Праздником Победы»",
+      "publisher": "КонсультантПлюс",
+      "url": "https://base.garant.ru/198106/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Текст исторического указа объявляет 9 мая Праздником Победы; прямое открытие блокировалось, поэтому не засчитывать в строгий минимум.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_06",
+      "title": "Указ Президиума Верховного Совета СССР об объявлении 9 мая Праздником Победы",
+      "publisher": "Электронная библиотека исторических документов",
+      "url": "https://www.docs.historyrussia.org/ru/nodes/209585-ukaz-prezidiuma-verhovnogo-soveta-sssr-ob-obyavlenii-9-maya-prazdnikom-pobedy-moskva-8-maya-1945-g",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Каталожная запись исторического документа 8 мая 1945 года; прямое открытие вернуло 502, поэтому не засчитывать в строгий минимум.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_07",
+      "title": "День Победы в Великой Отечественной войне 1941–1945 годов",
+      "publisher": "Росгвардия",
+      "url": "https://www.rosguard.gov.ru/ru/page/index/den-pobedy-v-velikoj-otechestvennoj-vojne-19411945-godov",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Поисковый индекс подтверждает 9 мая и указ 1945 года; при повторном открытии URL вернул 404, источник не засчитывать.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_08",
+      "title": "Указ Президиума ВС СССР от 08.05.1945 № 121/57",
+      "publisher": "Викитека",
+      "url": "https://ru.wikisource.org/wiki/Указ_Президиума_ВС_СССР_от_08.05.1945_№_121/57",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Публикация текста указа об объявлении 9 мая Праздником Победы; независимая вторичная публикация первичного документа.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_09",
+      "title": "Документы: Великая Отечественная война завершилась нашей полной победой",
+      "publisher": "Федеральный историко-документальный просветительский портал / ЭБИД",
+      "url": "https://docs.historyrussia.org/ru/nodes/181249-dokumenty",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Коллекция включает акт о капитуляции, приказ от 9 мая и указ об объявлении праздника; домен отличается от архивных источников, но принадлежит тому же историко-документальному порталу.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_10",
+      "title": "Указ о переводе 9 мая в рабочие дни (документальный PDF)",
+      "publisher": "Государственный архив Российской Федерации",
+      "url": "https://statearchive.ru/assets/files/GARF_90.pdf",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Архивный PDF подтверждает изменение статуса 9 мая в 1947 году; релевантен хронологии статуса праздника.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_11",
+      "title": "4. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс / Роструд",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает современный статус 9 мая как Дня Победы и нерабочего праздничного дня.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_victory_day_v19_12",
+      "title": "Указ Президиума Верховного Совета СССР «Об объявлении 9 мая праздником Победы»",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/item/2037371",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Карточка первичного документа с датой 8 мая 1945 года и указанием Государственного архива РФ как места хранения оригинала.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_victory_day_v19_13",
+      "title": "Указ Президиума Верховного Совета СССР об объявлении 9 мая Праздником Победы",
+      "publisher": "Российское историческое общество / ЭБИД",
+      "url": "https://www.docs.historyrussia.org/ru/nodes/181405",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "rejected",
+      "topics": [
+        "victory_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Каталожная запись исторического документа; близкая копия уже представлена на ЭБИД, поэтому не считать независимым издателем от других записей этого портала.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    }
+  ],
+  "required_minimum": 10,
+  "verified_count": 7,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

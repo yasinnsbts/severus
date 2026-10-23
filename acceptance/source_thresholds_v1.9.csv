@@ -1,0 +1,13 @@
+﻿event_id,required_minimum,accepted_verified_urls,accepted_distinct_publishers,candidate_records,status
+christmas,3,2,2,5,incomplete
+defender_day,3,2,2,5,incomplete
+graduation,3,0,0,5,incomplete
+knowledge_day,3,1,1,5,incomplete
+labour_day,3,3,3,5,verified_minimum_met
+last_bell,3,0,0,5,incomplete
+mothers_day,3,0,0,6,incomplete
+new_year,3,2,1,6,incomplete
+teachers_day,3,2,2,5,incomplete
+unity_day,3,3,2,5,incomplete
+victory_day,10,7,7,24,incomplete
+womens_day,3,2,2,5,incomplete

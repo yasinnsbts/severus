@@ -1,0 +1,52 @@
+{
+  "id": "christmas",
+  "title": "Рождество Христово",
+  "aliases": [
+    "7 января",
+    "Рождество"
+  ],
+  "category": "cultural",
+  "date_rule": {
+    "type": "fixed",
+    "value": "01-07",
+    "note": "Ежегодно, 7 января"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Знакомство с культурной традицией в светском формате",
+    "Развитие уважения к культурному разнообразию",
+    "Расширение кругозора"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Представлять праздник как религиозную и культурную традицию; участие в обрядах не обязательно.",
+    "5-8": "Не предполагать единой веры в классе; разделять сведения о традиции и личные убеждения.",
+    "9-11": "Рассматривать религиозную историю академически и уважительно, без миссионерского давления."
+  },
+  "prompt_block": "events/christmas.md",
+  "source_collection": "christmas",
+  "source_ids": [
+    "src_christmas_audit_01",
+    "src_christmas_audit_02",
+    "src_christmas_audit_03",
+    "src_christmas_v19_01",
+    "src_christmas_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

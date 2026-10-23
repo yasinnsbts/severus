@@ -1,0 +1,100 @@
+{
+  "event_id": "womens_day",
+  "sources": [
+    {
+      "source_id": "src_womens_day_audit_01",
+      "title": "Основные сведения — Международный женский день",
+      "publisher": "Организация Объединённых Наций",
+      "url": "https://www.un.org/ru/observances/womens-day/background",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "womens_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает историю и международный контекст 8 марта.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_womens_day_audit_02",
+      "title": "Международный женский день",
+      "publisher": "ЮНЕСКО",
+      "url": "https://www.unesco.org/ru/days/women",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "womens_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает международное тематическое значение даты; годовая тема меняется.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_womens_day_audit_03",
+      "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "womens_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает правовой статус 8 марта в России.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_womens_day_v19_03",
+      "title": "Список международных дней",
+      "publisher": "ЮНЕСКО",
+      "url": "https://www.unesco.org/ru/days/list",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "womens_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Календарь международных дней указывает 8 марта как Международный женский день.",
+      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_womens_day_v19_historical_doc",
+      "title": "Постановление о проведении международного коммунистического женского дня 8 марта 1931 г.",
+      "publisher": "Электронная библиотека исторических документов (ЭБИД)",
+      "url": "https://docs.historyrussia.org/ru/nodes/395420?query=%D0%BB%D0%B5%D0%BD%D0%B8%D0%BD+NOT+%D1%81%D1%82%D0%B0%D0%BB%D0%B8%D0%BD",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "womens_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Первичный документ 1931 года прямо относится к проведению международного женского дня 8 марта; применим к историческому контексту, но не подтверждает все современные формулировки праздника.",
+      "note": "Прямое открытие URL и релевантность историческому контексту проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 2,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

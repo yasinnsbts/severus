@@ -1,0 +1,17 @@
+{
+  "run_date": "2026-10-20",
+  "json_event_cards": 12,
+  "json_files_parsed": 12,
+  "schema_errors": [],
+  "catalog_index_data_rows": 12,
+  "prompt_files": 12,
+  "source_inventory_rows": 51,
+  "url_open_audit_records": 18,
+  "source_minimums_satisfied": false,
+  "victory_day_10_independent_sources_satisfied": false,
+  "internal_age_checklist_added": true,
+  "internal_age_checklist_fully_completed": false,
+  "expert_signoffs_received": false,
+  "overall_acceptance": "NOT_ACCEPTED",
+  "csv_event_count_matches_cards": true
+}

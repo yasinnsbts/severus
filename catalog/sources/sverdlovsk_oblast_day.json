@@ -1,0 +1,45 @@
+{
+  "event_id": "sverdlovsk_oblast_day",
+  "sources": [
+    {
+      "source_id": "src_sverdlovsk_oblast_day_regional_01",
+      "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
+      "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+      "url": "https://base.garant.ru/20926350/",
+      "retrieved_at": "2026-10-21",
+      "verification_status": "candidate_needs_direct_legal_check",
+      "topics": [
+        "sverdlovsk_oblast_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "В опубликованном тексте указа перечислен День образования Свердловской области — 17 января.",
+      "note": "Вторичный правовой ресурс; перед окончательной приёмкой проверить действующую редакцию на официальном портале правовой информации.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_sverdlovsk_oblast_day_regional_02",
+      "title": "Официальные новости Министерства социальной политики Свердловской области: материалы к годовщине образования области",
+      "publisher": "Министерство социальной политики Свердловской области",
+      "url": "https://msp.midural.ru/news/?page=all",
+      "retrieved_at": "2026-10-21",
+      "verification_status": "candidate_needs_article_level_check",
+      "topics": [
+        "sverdlovsk_oblast_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "В архиве регионального ведомства присутствуют публикации о годовщине образования Свердловской области, включая сообщение от 17 января 2019 года.",
+      "note": "Архивная страница не заменяет отдельную публикацию; требуется открыть и зафиксировать точный материал.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 0,
+  "status": "incomplete",
+  "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки."
+}

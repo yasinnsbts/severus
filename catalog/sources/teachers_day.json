@@ -1,0 +1,100 @@
+{
+  "event_id": "teachers_day",
+  "sources": [
+    {
+      "source_id": "src_teachers_day_audit_01",
+      "title": "Указ Президента РФ от 03.10.1994 № 1961 «О праздновании Дня учителя»",
+      "publisher": "ГАРАНТ",
+      "url": "https://base.garant.ru/1565723/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "teachers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Текст указа прямо устанавливает празднование 5 октября.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_teachers_day_audit_02",
+      "title": "5 октября — День учителя",
+      "publisher": "Росстат",
+      "url": "https://77.rosstat.gov.ru/folder/70751/document/101211",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "teachers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает дату и нормативное основание; публикация статистического ведомства.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_teachers_day_audit_03",
+      "title": "Поздравление педагогов с Днём учителя",
+      "publisher": "Минпросвещения России",
+      "url": "https://edu.gov.ru/press/12161/dmitriy-chernyshenko-i-sergey-kravcov-pozdravili-pedagogov-s-dnem-uchitelya/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "teachers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает современное употребление даты 5 октября; новостной материал 2026 года.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_teachers_day_v19_01",
+      "title": "Всемирный день учителя",
+      "publisher": "ЮНЕСКО",
+      "url": "https://www.unesco.org/ru/days/teachers",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "teachers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает ежегодную дату 5 октября и связь с рекомендацией МОТ/ЮНЕСКО 1966 года.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_teachers_day_v19_02",
+      "title": "Президентская библиотека – школе",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/news/1910794",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "teachers_day"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Материал подтверждает дату 5 октября и историю празднования Дня учителя в России.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 2,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

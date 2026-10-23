@@ -1,0 +1,52 @@
+{
+  "id": "unity_day",
+  "title": "День народного единства",
+  "aliases": [
+    "4 ноября"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "fixed",
+    "value": "11-04",
+    "note": "Ежегодно, 4 ноября"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Воспитание гражданской идентичности",
+    "Знакомство с событиями 1612 года",
+    "Развитие уважения к многонациональному народу России"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Объяснять единство через сотрудничество; избегать противопоставления народов и религий.",
+    "5-8": "Проверять историческую хронологию; не описывать сложные события как конфликт «хороших» и «плохих» народов.",
+    "9-11": "Сопоставлять источники о событиях 1612 года, отмечая сложность исторического контекста."
+  },
+  "prompt_block": "events/unity_day.md",
+  "source_collection": "unity_day",
+  "source_ids": [
+    "src_unity_day_audit_01",
+    "src_unity_day_audit_02",
+    "src_unity_day_audit_03",
+    "src_unity_day_v19_01",
+    "src_unity_day_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

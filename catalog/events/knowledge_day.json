@@ -1,13 +1,53 @@
 {
   "id": "knowledge_day",
   "title": "День знаний",
+  "aliases": [
+    "1 сентября",
+    "День знаний"
+  ],
   "category": "federal",
-  "aliases": ["1 сентября"],
-  "supported_age_groups": ["1-4", "5-8", "9-11"],
+  "date_rule": {
+    "type": "fixed",
+    "value": "09-01",
+    "note": "Ежегодно, 1 сентября"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
   "supported_formats": [
     "class_hour",
     "school_event",
     "interactive_lesson"
   ],
-  "catalog_version": "0.1"
+  "educational_goals": [
+    "Мотивация к учебному году",
+    "Формирование чувства принадлежности к школьному сообществу",
+    "Постановка учебных целей"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Короткий доброжелательный формат; избегать проверок знаний и сравнения успеваемости детей.",
+    "5-8": "Добавить цели на год и правила безопасного общения; не перегружать административными речами.",
+    "9-11": "Обсудить учебные цели, самостоятельность и планирование; уважать разные образовательные траектории."
+  },
+  "prompt_block": "events/knowledge_day.md",
+  "source_collection": "knowledge_day",
+  "source_ids": [
+    "src_knowledge_day_audit_01",
+    "src_knowledge_day_audit_02",
+    "src_knowledge_day_audit_03",
+    "src_knowledge_day_v19_01",
+    "src_knowledge_day_v19_03"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
 }

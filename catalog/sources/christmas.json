@@ -1,0 +1,100 @@
+{
+  "event_id": "christmas",
+  "sources": [
+    {
+      "source_id": "src_christmas_audit_01",
+      "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
+      "publisher": "КонсультантПлюс",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "christmas"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает 7 января как нерабочий праздничный день.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_christmas_audit_02",
+      "title": "Богослужебные указания за 7 января 2026 г.",
+      "publisher": "Русская Православная Церковь / Патриархия.ru",
+      "url": "https://patriarchia.ru/bu/2026-01-07",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "christmas"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает религиозное значение даты для РПЦ; не обобщать на всех христиан.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_christmas_audit_03",
+      "title": "Обычаи и традиции России",
+      "publisher": "Культура.РФ",
+      "url": "https://www.culture.ru/events/4397307/obychai-i-tradicii-rossii",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "needs_content_review",
+      "topics": [
+        "christmas"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Содержит краткое описание рождественских обычаев; для школьного применения обозначать как традиции части верующих.",
+      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
+      "content_relevance_checked": false,
+      "url_access_checked_in_this_revision": false
+    },
+    {
+      "source_id": "src_christmas_v19_01",
+      "title": "Президентская библиотека о праздновании Рождества Христова",
+      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
+      "url": "https://www.prlib.ru/news/2016531",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "christmas"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Подтверждает празднование Рождества православными верующими в ночь с 6 на 7 января и описывает исторические обычаи.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    },
+    {
+      "source_id": "src_christmas_v19_02",
+      "title": "Рождество Христово в Евангелии — и в истории",
+      "publisher": "Православие.Ru / Фома.Ru",
+      "url": "https://www.pravoslavie.ru/67214.html",
+      "retrieved_at": "2026-10-20",
+      "verification_status": "verified",
+      "topics": [
+        "christmas"
+      ],
+      "regions": [
+        "RU"
+      ],
+      "text_excerpt": "Историко-религиозный материал о празднике Рождества Христова.",
+      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
+    }
+  ],
+  "required_minimum": 3,
+  "verified_count": 2,
+  "status": "incomplete",
+  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
+  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются."
+}

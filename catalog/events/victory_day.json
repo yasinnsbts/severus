@@ -1,0 +1,71 @@
+{
+  "id": "victory_day",
+  "title": "День Победы",
+  "aliases": [
+    "9 мая"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "fixed",
+    "value": "05-09",
+    "note": "Ежегодно, 9 мая"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Сохранение исторической памяти о Великой Отечественной войне",
+    "Воспитание уважения к подвигу ветеранов",
+    "Формирование чувства гражданской ответственности"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Бережное обращение с темой, без графических описаний насилия, оружейных демонстраций и запугивания; говорить о мире и помощи.",
+    "5-8": "Проверять биографии и даты по источникам; отделять документальные факты от легенд и избегать героизации насилия.",
+    "9-11": "Сопоставлять первичные и музейно-архивные источники; обсуждать потери корректно, не использовать неподтверждённые цифры."
+  },
+  "prompt_block": "events/victory_day.md",
+  "source_collection": "victory_day",
+  "source_ids": [
+    "src_victory_day_audit_01",
+    "src_victory_day_audit_02",
+    "src_victory_day_audit_03",
+    "src_victory_day_audit_04",
+    "src_victory_day_audit_05",
+    "src_victory_day_audit_06",
+    "src_victory_day_audit_07",
+    "src_victory_day_audit_08",
+    "src_victory_day_audit_09",
+    "src_victory_day_audit_10",
+    "src_victory_day_audit_11",
+    "src_victory_day_v19_01",
+    "src_victory_day_v19_02",
+    "src_victory_day_v19_03",
+    "src_victory_day_v19_04",
+    "src_victory_day_v19_05",
+    "src_victory_day_v19_06",
+    "src_victory_day_v19_07",
+    "src_victory_day_v19_08",
+    "src_victory_day_v19_09",
+    "src_victory_day_v19_10",
+    "src_victory_day_v19_11",
+    "src_victory_day_v19_12",
+    "src_victory_day_v19_13"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

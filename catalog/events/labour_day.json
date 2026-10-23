@@ -1,0 +1,53 @@
+{
+  "id": "labour_day",
+  "title": "Праздник Весны и Труда",
+  "aliases": [
+    "1 мая",
+    "День труда"
+  ],
+  "category": "federal",
+  "date_rule": {
+    "type": "fixed",
+    "value": "05-01",
+    "note": "Ежегодно, 1 мая"
+  },
+  "supported_age_groups": [
+    "1-4",
+    "5-8",
+    "9-11"
+  ],
+  "supported_formats": [
+    "class_hour",
+    "school_event",
+    "interactive_lesson"
+  ],
+  "educational_goals": [
+    "Воспитание уважения к труду",
+    "Знакомство с историей праздника",
+    "Формирование понимания ценности профессионального мастерства"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Говорить о полезном труде и взаимопомощи; не оценивать достоинство людей по профессии.",
+    "5-8": "Обсуждать разные профессии, права и безопасность труда без партийной агитации.",
+    "9-11": "Разделять историю рабочего движения, современное трудовое право и политические интерпретации."
+  },
+  "prompt_block": "events/labour_day.md",
+  "source_collection": "labour_day",
+  "source_ids": [
+    "src_labour_day_audit_01",
+    "src_labour_day_audit_02",
+    "src_labour_day_audit_03",
+    "src_labour_day_v19_01",
+    "src_labour_day_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": true,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}

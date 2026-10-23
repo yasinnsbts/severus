@@ -1,0 +1,18 @@
+{
+  "run_date": "2026-10-20",
+  "version": "1.7",
+  "event_json_files": 12,
+  "json_files_parsed": 12,
+  "json_schema_errors": [],
+  "catalog_index_data_rows": 12,
+  "prompt_files": 12,
+  "supplementary_source_records": 20,
+  "supplementary_source_directly_opened": 10,
+  "supplementary_source_search_only_or_failed": 10,
+  "age_review_rows": 36,
+  "age_notes_present_rows": 36,
+  "age_review_scope": "Internal desk review of age_appropriateness_notes only; not full script-level review and not independent expert review.",
+  "ordinary_event_independent_source_minimums": "NOT_CONFIRMED_FOR_ALL_COLLECTIONS",
+  "victory_day_10_independent_sources": "NOT_CONFIRMED; publisher independence and claim relevance are not yet sufficient",
+  "overall_status": "NOT_ACCEPTED_SOURCE_AND_CONTENT_BLOCKERS"
+}

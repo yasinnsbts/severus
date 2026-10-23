@@ -1,0 +1,49 @@
+{
+  "id": "graduation",
+  "title": "Выпускной вечер",
+  "aliases": [
+    "Выпускной"
+  ],
+  "category": "school",
+  "date_rule": {
+    "type": "floating",
+    "value": "june",
+    "note": "Июнь, дата определяется школой и региональным регламентом"
+  },
+  "supported_age_groups": [
+    "9-11"
+  ],
+  "supported_formats": [
+    "school_event",
+    "class_hour"
+  ],
+  "educational_goals": [
+    "Торжественное завершение этапа обучения",
+    "Благодарность педагогам, родителям, школе",
+    "Постановка целей на следующий жизненный этап"
+  ],
+  "age_appropriateness_notes": {
+    "1-4": "Событие обычно не относится к этой группе; не позиционировать как обязательный жизненный этап.",
+    "5-8": "Если используется как знакомство с традицией, не создавать давления «все обязаны поступить/окончить одинаково».",
+    "9-11": "Не акцентировать стоимость одежды и праздника; учитывать доступность, безопасность и разные семейные ресурсы."
+  },
+  "prompt_block": "events/graduation.md",
+  "source_collection": "graduation",
+  "source_ids": [
+    "src_graduation_audit_01",
+    "src_graduation_audit_02",
+    "src_graduation_audit_03",
+    "src_graduation_v19_01",
+    "src_graduation_v19_02"
+  ],
+  "review": {
+    "historical_accuracy_required": false,
+    "age_appropriateness_required": true,
+    "cultural_review_required": true
+  },
+  "regional_variants": [
+    "RU-SVE"
+  ],
+  "catalog_version": "2.5",
+  "updated_at": "2026-10-21"
+}
