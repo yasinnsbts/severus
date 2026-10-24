@@ -1,0 +1,1103 @@
+:root{font-family:Manrope,Arial,sans-serif;color:#162726;background:#071e2a;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}.app{min-height:100vh;background:radial-gradient(ellipse at 10% 28%,#0d5a50 0%,transparent 24%),radial-gradient(ellipse at 96% 70%,#0f574d 0%,transparent 28%),#081e2b;padding:0 7%;position:relative;overflow:hidden}.app:before,.app:after{content:"";position:fixed;z-index:0;width:280px;height:70%;top:14%;pointer-events:none;border:1px solid rgba(212,163,70,.25);border-radius:49%}.app:before{left:-210px}.app:after{right:-210px}.side-ornament{position:fixed;inset:0 auto 0 0;width:9%;pointer-events:none;color:#b48b3e;z-index:0;opacity:.7}.side-ornament.right{left:auto;right:0;transform:scaleX(-1)}.branch{position:absolute;font-family:Georgia,serif;font-size:130px;transform:rotate(-27deg);left:-60px;top:20%;color:#a8854c;text-shadow:0 0 20px rgba(7,200,142,.3)}.branch-two{top:63%;font-size:120px;left:-30px;transform:rotate(18deg)}.app-shell{background:linear-gradient(120deg,#fffefa,#f9f8f1 44%,#fcfaf3);min-height:100vh;max-width:1310px;margin:auto;position:relative;box-shadow:0 0 65px #041922b0;z-index:1}.app-shell:before,.app-shell:after{content:"";position:absolute;inset:0 auto 0 0;width:13px;background:linear-gradient(90deg,rgba(7,54,54,.18),transparent);pointer-events:none}.app-shell:after{left:auto;right:0;transform:scaleX(-1)}.topbar{height:85px;border-bottom:1px solid #e6e0ce;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(20px,5%,75px);gap:12px}.brand{border:0;background:none;display:flex;gap:10px;align-items:center;color:#103f34;font:700 30px 'Cormorant Garamond',serif}.magic-star{color:#ad7c2c;font-size:30px;display:inline-block;line-height:1}.magic-star.small{font-size:21px}.topbar-mid{display:flex;gap:9px;align-items:center;color:#7f806f;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.mode-badge{font-size:11px;color:#9c783a;border:1px solid #e2cfa0;padding:7px 11px;border-radius:20px;white-space:nowrap}.mode-badge.connected{color:#158163;border-color:#a6d6c1}.welcome{min-height:calc(100vh - 49px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 25px 60px;text-align:center;position:relative}.welcome-stars{font-size:31px;letter-spacing:24px;color:#bf9448;padding-left:24px}.welcome-overline,.eyebrow{color:#9a7b43;letter-spacing:.24em;font-weight:800;font-size:11px}.welcome-overline{margin-top:17px}.hero-logo{width:min(98%,1010px);max-height:500px;object-fit:contain;mix-blend-mode:multiply;margin:2px 0 3px;filter:drop-shadow(0 12px 18px rgba(24,77,62,.06))}.welcome-subtitle{font:500 clamp(18px,2.2vw,25px)/1.45 'Cormorant Garamond',serif;color:#35453b;margin:2px 0 26px}.primary,.secondary{border-radius:8px;padding:15px 24px;display:inline-flex;align-items:center;justify-content:center;gap:11px;font-size:13px;font-weight:800;transition:.2s}.primary{background:#0e5847;color:#fff;border:1px solid #0e5847;box-shadow:0 8px 18px #0b513b25}.primary:not(:disabled):hover{background:#0b3e35;transform:translateY(-2px)}.secondary{background:#fffdf7;color:#315a4e;border:1px solid #d7d3c2}.secondary:hover{background:#f2f5ea}.hero-cta{font-size:14px;min-width:243px}.welcome-foot{position:absolute;bottom:25px;color:#9a8f77;font-size:10px;letter-spacing:.19em}.welcome-foot span{margin:0 10px;color:#b68f48}.footer{text-align:center;padding:17px 12px;border-top:1px solid #e9e2d0;font-size:10px;color:#988e7b;letter-spacing:.13em}.footer span{color:#b88b43;margin:0 15px}.page-content{padding:40px clamp(22px,5.4%,77px) 58px}.heading{text-align:center;margin-bottom:31px}.heading h1{font:600 clamp(35px,4vw,53px)/1.14 'Cormorant Garamond',serif;margin:13px 0 9px;color:#123d34}.heading h1 em{color:#b18b47;font-weight:600}.heading p{margin:0;color:#747d72;font-size:12px}.eyebrow{display:inline-flex;gap:8px;align-items:center}.eyebrow .magic-star{font-size:15px}.mode-switch{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f2f3e9;border:1px solid #e1e6d8;border-radius:9px;padding:12px 15px;margin-bottom:18px}.mode-switch>div:first-child{display:grid;gap:3px}.mode-switch b{font-size:12px;color:#305747}.mode-switch span{font-size:11px;color:#7b8679}.mode-actions{display:flex;gap:5px;background:#e7ebdf;padding:4px;border-radius:7px}.mode-actions button{border:0;background:transparent;color:#667568;font-weight:700;font-size:11px;padding:8px 15px;border-radius:5px;display:flex;align-items:center;gap:5px}.mode-actions button.active{background:#fff;color:#125542;box-shadow:0 2px 5px #00000012}.notice{padding:11px 14px;border-radius:7px;margin:12px 0;font-size:12px;line-height:1.6}.notice.error{background:#fff1e8;color:#8a5033;border:1px solid #e7b796}.notice.warning{background:#faf4e2;color:#80613b;border:1px solid #e9d4a0}.notice.warning p{margin:5px 0 0}.demo-notice{background:#f1f7f0;border:1px solid #d8e6ce;color:#45634f;display:flex;gap:9px;align-items:center}.form-grid{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:22px;align-items:start}.form-main{display:grid;gap:17px}.panel{border-radius:11px;background:#fffefa;border:1px solid #e9e2d1;box-shadow:0 5px 22px #24453508;padding:27px}.panel-heading{display:flex;align-items:center;gap:13px;margin-bottom:25px}.step-icon{height:43px;width:43px;border-radius:11px;background:#e6eee7;display:grid;place-items:center;color:#24624d}.step-label{font-size:10px;letter-spacing:.2em;color:#b29459;font-weight:800}.panel-heading h2{font:700 29px 'Cormorant Garamond',serif;color:#25473d;margin:2px 0 0}.fields{display:grid;gap:16px}.fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}.field{display:flex;flex-direction:column;gap:8px;min-width:0}.field>span:first-child{font-size:11px;color:#4e6257;font-weight:800}.field input,.field select,.field textarea{width:100%;appearance:none;border:1px solid #e0dfd2;border-radius:7px;background:#fbfcf8;color:#234539;outline:0;min-height:44px;padding:11px 12px;font-size:12px;transition:.2s}.field textarea{resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#448d73;box-shadow:0 0 0 3px #70be9e23}.select-wrap{display:block;position:relative}.select-wrap svg{position:absolute;right:12px;top:14px;color:#89978a;pointer-events:none}.select-wrap select{padding-right:30px}.toggles{display:flex;flex-wrap:wrap;gap:9px 17px;margin:22px 0}.check{display:inline-flex;gap:8px;align-items:center;position:relative;font-size:12px;color:#40584e;font-weight:700;cursor:pointer}.check input{position:absolute;opacity:0;width:18px;height:18px}.check-icon{border:1px solid #bccabd;border-radius:4px;width:17px;height:17px;display:grid;place-items:center;background:#fff;color:transparent}.check input:checked+.check-icon{background:#15694e;color:#fff;border-color:#15694e}.check input:focus-visible+.check-icon{outline:2px solid #12735c;outline-offset:2px}.form-divider{height:1px;background:#ece9dc;margin-bottom:16px}.extra{margin-top:15px}.full{margin-top:20px}.variant-choices{border-top:1px solid #ece9dc;margin-top:20px;padding-top:20px;display:flex;justify-content:space-between;align-items:center}.variant-choices>div:first-child{display:grid;gap:5px}.variant-choices b{font-size:12px;color:#315447}.variant-choices span{font-size:11px;color:#7b897d}.segment{background:#eaf0e9;border-radius:7px;display:flex;padding:4px;gap:5px}.segment button{background:none;border:0;border-radius:5px;color:#4b6357;padding:7px 16px}.segment button.selected{background:#14664d;color:white}.form-aside{display:grid;gap:15px;position:sticky;top:18px}.aside-card{background:radial-gradient(ellipse at 95% 10%,#146b5b 0,transparent 43%),linear-gradient(150deg,#062836,#073c3c 65%,#10583f);border:1px solid #bb995c;border-radius:10px;color:#fdf7e5;padding:29px 23px 25px;text-align:center;position:relative;overflow:hidden}.aside-card:before,.aside-card:after{content:'✧';position:absolute;color:#d6b26c;font-size:57px;opacity:.4;top:3px;right:12px}.aside-card:after{font-size:35px;right:auto;top:auto;bottom:7px;left:13px}.aside-decoration{position:absolute;top:12px;left:18px;color:#d0a454}.aside-calendar{color:#d7ad65;margin:15px auto 10px;width:63px;height:63px;border:1px solid #a78e60;border-radius:50%;display:grid;place-items:center}.aside-card h3{font:600 29px/1.1 'Cormorant Garamond',serif;margin:13px 0}.aside-card h3 em{color:#caba84}.aside-card p{font-size:11px;line-height:1.9;color:#c5d6cb;margin:15px 0}.gold-rule{height:1px;background:linear-gradient(90deg,transparent,#c3ab72,transparent);margin:20px 0}.aside-card ul{margin:0;padding:0;list-style:none;text-align:left;display:grid;gap:16px}.aside-card li{display:flex;align-items:center;gap:9px;font-size:11px;color:#e5eddd}.aside-card li svg{color:#c5b076;flex-shrink:0}.tip{display:flex;gap:11px;padding:14px;border-radius:9px;background:#f6f2e7;border:1px solid #ece0c9;color:#847b65;font-size:11px;line-height:1.6}.tip svg{color:#a78a43;flex-shrink:0}.form-bottom{display:flex;justify-content:space-between;margin-top:24px}.loader-page{min-height:calc(100vh - 140px);display:grid;place-items:center}.magic-loading{text-align:center;padding:50px 16px}.magic-loading h2{font:600 clamp(30px,4vw,46px) 'Cormorant Garamond',serif;margin:5px 0;color:#114b3d}.magic-loading p{font-size:13px;color:#7c877d}.loading-scene{height:245px;width:min(440px,90vw);position:relative;margin:0 auto 15px;overflow:hidden}.loader-wand{position:absolute;left:5%;bottom:7%;width:56%;object-fit:contain;transform:rotate(-13deg);animation:wandEnter 2.9s ease-in-out infinite}.loader-doe{position:absolute;right:5%;bottom:2%;height:90%;width:60%;object-fit:contain;filter:drop-shadow(0 0 12px #17c99077);animation:doeLeap 2.9s ease-in-out infinite}.spell-flare{position:absolute;left:43%;top:27%;font-size:48px;color:#04caa3;text-shadow:0 0 15px #00e3aa;animation:flare 2.9s infinite}.spark{position:absolute;color:#c7a251;font-size:24px;font-style:normal;animation:twinkle 2.9s infinite}.spark-1{right:8%;top:23%}.spark-2{right:35%;top:5%;animation-delay:.4s}.spark-3{left:26%;top:20%;animation-delay:.8s}.loading-dots{display:flex;gap:6px;justify-content:center;margin-top:19px}.loading-dots b{display:block;width:6px;height:6px;border-radius:50%;background:#26b68f;animation:pulse 1.3s infinite}.loading-dots b:nth-child(2){animation-delay:.2s}.loading-dots b:nth-child(3){animation-delay:.4s}@keyframes wandEnter{0%,100%{transform:translate(-45px,45px) rotate(-29deg);opacity:.15}20%,80%{transform:translate(0,0) rotate(-10deg);opacity:1}45%{transform:rotate(-19deg)}}@keyframes doeLeap{0%,16%{transform:translate(-80px,70px) scale(.4);opacity:0}46%{transform:translate(-4px,-16px) scale(.89);opacity:1}72%{transform:translate(20px,-30px) scale(1);opacity:1}100%{transform:translate(100px,-65px) scale(1.13);opacity:0}}@keyframes flare{0%,18%,100%{opacity:0;transform:scale(.2)}35%,70%{opacity:1;transform:scale(1.1)}}@keyframes twinkle{0%,100%{opacity:0;transform:scale(.5)}45%{opacity:1;transform:scale(1.2)}}@keyframes pulse{0%,70%,100%{opacity:.3;transform:scale(.7)}35%{opacity:1;transform:scale(1.3)}}.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.results-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 14px}.tabs{display:flex;gap:6px;margin-top:9px}.tabs button,.result-tabs button{border:1px solid #dce5d7;background:#f4f6f0;color:#60776a;border-radius:7px;padding:11px 18px;font-weight:700;font-size:12px}.tabs button.current,.result-tabs button.current{background:#155e49;border-color:#155e49;color:white}.result-hero{position:relative;overflow:hidden;background:linear-gradient(110deg,#fcfdf8,#f3f6e9);padding:25px 30px}.result-hero h2{font:600 34px 'Cormorant Garamond',serif;color:#14533f;margin:10px 0 8px}.result-hero p{font-size:12px;color:#697c6e}.result-hero-star{position:absolute;right:30px;top:0;font-size:100px;color:#dec89b55}.concept-goal{display:flex;align-items:start;gap:10px;background:#fffaf0;border:1px solid #e8dfc9;padding:12px 15px;border-radius:8px;font-size:12px;color:#4d6755;margin-top:17px}.concept-goal svg{color:#b28f44;flex-shrink:0}.result-layout{display:grid;grid-template-columns:minmax(0,1fr) 273px;gap:19px;margin-top:19px;align-items:start}.result-main{padding:0;overflow:hidden}.result-tabs{display:flex;gap:9px;border-bottom:1px solid #e7e7dc;padding:17px}.result-tabs button{display:flex;align-items:center;gap:7px}.timeline{padding:28px 24px}.timeline-step{display:flex;gap:20px;position:relative;padding-bottom:26px}.timeline-step:not(:last-child):before{content:'';position:absolute;width:1px;top:38px;bottom:-1px;left:18px;background:#d9e2d8}.timeline-index{display:grid;place-items:center;flex:0 0 38px;height:38px;border:1px solid #b8d4bf;border-radius:50%;font-size:12px;background:#e6f0e7;color:#185b43;z-index:1;font-weight:800}.timeline-body{flex:1;min-width:0}.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.timeline-top h3{font:700 23px 'Cormorant Garamond',serif;margin:4px 0;color:#164c3b}.timeline-top span{font-size:10px;white-space:nowrap;color:#a27f4b;background:#f7f0df;padding:6px 8px;border-radius:12px}.purpose{font-size:12px;color:#8b9388;margin:0 0 14px}.teacher-script{background:#f4f8f3;border-left:3px solid #69ae86;padding:12px 14px;border-radius:0 7px 7px 0}.teacher-script b,.pupil-actions b{color:#39644c;font-size:11px}.teacher-script p,.pupil-actions li{font-size:12px;line-height:1.75;color:#536357;margin:7px 0 0}.pupil-actions{margin-top:12px}.pupil-actions ul{margin:6px 0;padding-left:20px}.material-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}.material-links span{display:flex;gap:5px;align-items:center;background:#f6f0e4;color:#936f36;padding:7px 8px;border-radius:20px;font-size:10px}.result-aside{display:grid;gap:14px}.summary{padding:20px}.summary h3{display:flex;align-items:center;gap:8px;color:#1b5b45;font:700 21px 'Cormorant Garamond',serif;margin:0 0 15px}.summary h3 svg{color:#a99158}.summary ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}.summary li{display:flex;align-items:start;gap:7px;font-size:11px;color:#58695a;line-height:1.6}.summary li svg{color:#4b9e76;flex-shrink:0;margin-top:2px}.copy{width:100%}.material-grid{padding:22px;display:grid;gap:10px}.material-card{padding:18px;background:#f7faf5;border-radius:9px;border:1px solid #e0ebde}.material-card svg{color:#367a5c}.material-card h3{margin:9px 0;font:700 22px 'Cormorant Garamond',serif}.material-card p{color:#697c6e;font-size:12px}.role-list{padding:23px;display:grid;gap:12px}.role-list>div{display:flex;gap:11px;align-items:center;padding:16px;background:#f7faf5;border-radius:8px;color:#376951;font-size:13px}.role-list span{margin-left:auto;font-size:12px;color:#718071}@media(max-width:950px){.app{padding:0 3%}.form-grid,.result-layout{grid-template-columns:1fr}.form-aside{position:static}.aside-card{display:none}.tip{max-width:none}}@media(max-width:650px){.app{padding:0}.topbar{height:70px;padding:0 17px}.topbar-mid{display:none}.page-content{padding:30px 15px}.panel{padding:20px 17px}.fields.two{grid-template-columns:1fr}.form-grid{gap:14px}.heading h1{font-size:37px}.welcome-overline{font-size:9px;letter-spacing:.1em}.hero-logo{width:112%;max-width:112%}.welcome-subtitle br{display:none}.form-bottom{gap:8px}.form-bottom button{padding:13px 10px;font-size:11px}.results-header{flex-wrap:wrap}.result-tabs{gap:4px;padding:10px}.result-tabs button{padding:9px 11px;font-size:11px}.timeline{padding:19px 13px}.timeline-step{gap:11px}.timeline-top{align-items:start}.timeline-top h3{font-size:20px}.footer{font-size:9px}.mode-switch{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.loader-doe{opacity:1;transform:none}.loader-wand{opacity:1;transform:none}}
+
+/* === October refinement pass: ornate borders, richer cards, improved loader === */
+body{background:#071f2b}
+.app{padding:0 5.6%;background:
+radial-gradient(ellipse at 8% 16%,rgba(16,108,95,.62),transparent 24%),
+radial-gradient(ellipse at 92% 68%,rgba(14,101,86,.60),transparent 28%),
+radial-gradient(circle at 50% 50%,rgba(11,51,55,.18),transparent 55%),
+linear-gradient(180deg,#051b28,#072533 32%,#0a2938 60%,#061d2a)}
+.app:before,.app:after{display:none}
+.side-ornament{position:fixed;top:0;bottom:0;width:92px;pointer-events:none;z-index:0;opacity:1;
+background:
+linear-gradient(180deg,rgba(2,27,40,.98),rgba(6,64,72,.98) 38%,rgba(11,87,77,.96) 52%,rgba(6,52,67,.98) 74%,rgba(4,27,39,.98));
+border-inline:1px solid rgba(215,174,92,.42);box-shadow:inset 0 0 0 1px rgba(17,132,109,.15),0 0 40px rgba(1,12,20,.35)}
+.side-ornament::before{content:"";position:absolute;inset:0;background:
+url('/assets/frame-top-band.png') center 26px/92px auto no-repeat,
+url('/assets/frame-top-band.png') center calc(100% - 26px)/92px auto no-repeat,
+url('/assets/frame-leaf.png') center 120px/58px auto repeat-y;
+opacity:.95;filter:drop-shadow(0 0 10px rgba(26,212,156,.16))}
+.side-ornament::after{content:"";position:absolute;inset:18px 10px;border:1px solid rgba(214,173,93,.22);border-radius:48px}
+.side-ornament.right{left:auto;right:0;transform:none}
+.side-ornament.right::before{transform:scaleX(-1)}
+.branch{display:none}
+.app-shell{background:linear-gradient(120deg,#fffefa,#f9f8f1 44%,#fcfaf3);min-height:100vh;max-width:1310px;margin:auto;position:relative;
+box-shadow:0 0 65px #041922b0,inset 0 0 0 1px rgba(35,111,84,.08);border:1px solid rgba(215,194,151,.85);z-index:1;overflow:hidden}
+.app-shell:before{content:"";position:absolute;left:50%;top:8px;transform:translateX(-50%);width:250px;height:104px;background:url('/assets/frame-top-star.png') center/contain no-repeat;pointer-events:none;z-index:3}
+.app-shell:after{content:"";position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(700px,64vw);height:118px;background:url('/assets/frame-bottom-crystal.png') center/contain no-repeat;pointer-events:none;z-index:3}
+.topbar{height:98px;padding:18px clamp(20px,5%,75px) 0;border-bottom:1px solid #e6deca;background:linear-gradient(180deg,rgba(255,252,244,.98),rgba(255,252,244,.92));position:relative;z-index:2}
+.brand{position:relative;z-index:2}
+.mode-badge{background:rgba(255,251,242,.7);backdrop-filter:blur(1px)}
+.welcome{min-height:calc(100vh - 49px);padding:96px 25px 120px;z-index:2}
+.welcome:before{content:"";position:absolute;inset:22px 26px auto;border-top:1px solid rgba(199,168,96,.26)}
+.hero-logo{filter:drop-shadow(0 14px 22px rgba(19,79,61,.08))}
+.page-content{padding:52px clamp(22px,5.4%,77px) 118px;position:relative;z-index:2}
+.footer{position:relative;z-index:2;padding:17px 12px 88px;border-top:1px solid #e9e2d0}
+.heading{position:relative}
+.heading:before{content:"✧";position:absolute;left:50%;top:-14px;transform:translateX(-50%);font-size:20px;color:#c7a25a;opacity:.7}
+.panel,.mode-switch,.notice,.tip,.material-card,.role-list>div,.result-hero,.summary{position:relative;overflow:hidden}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,
+.notice.demo-notice,.notice.warning,.notice.error,.result-hero{background:
+radial-gradient(circle at 100% 0%,rgba(24,141,112,.11),transparent 27%),
+radial-gradient(circle at 0% 100%,rgba(201,166,90,.11),transparent 28%),
+linear-gradient(135deg,#fffef8 0%,#f6fbf4 46%,#fffaf1 100%);
+border-color:#ded3bb;box-shadow:0 14px 35px rgba(12,40,34,.05),inset 0 1px 0 rgba(255,255,255,.95)}
+.panel:before,.mode-switch:before,.notice:before,.tip:before,.material-card:before,.role-list>div:before,.result-hero:before,.summary:before{content:"";position:absolute;inset:0;background:
+url('/assets/frame-sparkles.png') right 14px top 12px/72px auto no-repeat,
+url('/assets/frame-beads.png') left 14px bottom 12px/21px auto no-repeat;
+opacity:.55;pointer-events:none}
+.panel:after,.mode-switch:after,.notice:after,.tip:after,.material-card:after,.role-list>div:after,.summary:after{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(24,115,89,.36),rgba(211,171,87,.42),transparent);pointer-events:none}
+.notice.warning{color:#7a5d31}
+.notice.error{background:linear-gradient(135deg,#fff5ef,#fef7f1 35%,#fffaf6);border-color:#e6c5ab;color:#88563d}
+.notice.demo-notice{color:#45634f}
+.mode-switch{padding:14px 18px}
+.panel{border-radius:14px;padding:27px 27px 29px}
+.tip{border-radius:11px}
+.result-hero{background:
+radial-gradient(circle at 100% 0%,rgba(24,141,112,.15),transparent 29%),
+radial-gradient(circle at 0% 100%,rgba(201,166,90,.12),transparent 28%),
+linear-gradient(115deg,#fefdf8,#eef6ee 47%,#fff8ef);border-color:#d7caad}
+.result-hero-star{color:#d9ca9a77;right:18px;top:10px}
+.tabs button,.result-tabs button{background:linear-gradient(180deg,#fbfdf8,#eef4ee);border-color:#d5dfd2;color:#597263}
+.tabs button.current,.result-tabs button.current{background:linear-gradient(180deg,#17674e,#0f5642);border-color:#145742}
+.material-card,.role-list>div{background:
+radial-gradient(circle at 100% 0%,rgba(24,141,112,.12),transparent 24%),
+linear-gradient(130deg,#fbfdf7,#f3f8f2 52%,#fefaf1)}
+.teacher-script{background:linear-gradient(130deg,#f7fbf7,#eff7f1);border-left:3px solid #6faf87}
+.concept-goal{background:linear-gradient(90deg,#fffbf2,#fff8ec);border-color:#e4d8be}
+.material-links span,.timeline-top span{background:linear-gradient(180deg,#f8f1e0,#fff8eb);border:1px solid rgba(216,189,132,.38)}
+.form-grid,.result-layout{position:relative;z-index:1}
+.aside-card{box-shadow:0 18px 40px rgba(4,26,34,.22), inset 0 0 0 1px rgba(221,191,122,.18)}
+.loading-scene{height:360px;width:min(640px,92vw);margin:0 auto 18px;overflow:visible}
+.loading-scene::before{content:"";position:absolute;left:29%;top:31%;width:44%;height:26%;background:radial-gradient(circle,rgba(49,255,196,.36),rgba(37,220,168,.16) 35%,transparent 72%);filter:blur(20px);opacity:.8;animation:trailGlow 4.8s ease-in-out infinite}
+.loading-scene::after{content:"";position:absolute;inset:0;background:url('/assets/frame-sparkles.png') 82% 14%/118px auto no-repeat;opacity:.58;pointer-events:none}
+.loader-wand{left:0;bottom:16%;width:43%;transform-origin:18% 72%;animation:wandEnter 4.8s cubic-bezier(.42,0,.18,1) infinite}
+.loader-doe{left:31%;right:auto;bottom:4%;width:51%;height:auto;max-height:none;object-fit:contain;filter:drop-shadow(0 0 18px rgba(23,201,144,.55));animation:doeLeap 4.8s cubic-bezier(.4,0,.2,1) infinite}
+.spell-flare{left:30%;top:34%;font-size:58px;animation:flare 4.8s ease-in-out infinite}
+.spark{font-size:25px;animation-duration:4.8s}
+.spark-1{right:8%;top:23%}.spark-2{right:35%;top:7%}.spark-3{left:23%;top:17%}
+.loading-dots b{background:#26b68f}
+@keyframes wandEnter{0%,100%{transform:translate(-62px,42px) rotate(-25deg);opacity:.25}12%,84%{transform:translate(0,0) rotate(-12deg);opacity:1}44%{transform:translate(4px,-7px) rotate(-18deg)}60%{transform:translate(0,-4px) rotate(-14deg)}}
+@keyframes doeLeap{0%,18%{transform:translate(-118px,88px) scale(.26) rotate(-10deg);opacity:0}26%{transform:translate(-82px,55px) scale(.42) rotate(-6deg);opacity:.42}44%{transform:translate(-24px,8px) scale(.7) rotate(-3deg);opacity:.96}60%{transform:translate(14px,-18px) scale(.89) rotate(0deg);opacity:1}82%{transform:translate(54px,-55px) scale(1.03) rotate(1deg);opacity:1}100%{transform:translate(94px,-76px) scale(1.1) rotate(2deg);opacity:0}}
+@keyframes flare{0%,18%,100%{opacity:0;transform:translate(0,0) scale(.25)}26%{opacity:.65}42%,72%{opacity:1;transform:translate(10px,-4px) scale(1.18)}88%{opacity:.2;transform:translate(20px,-10px) scale(1.35)}}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4) rotate(-8deg)}32%,74%{opacity:1;transform:scale(1.18) rotate(6deg)}}
+@keyframes trailGlow{0%,18%,100%{opacity:0;transform:translate(-10px,8px) scale(.6)}40%,76%{opacity:.8;transform:translate(12px,-8px) scale(1)}}
+@media(max-width:950px){.app{padding:0 2.2%}.side-ornament{width:62px}.side-ornament::before{background-size:68px auto,68px auto,42px auto}.app-shell:before{width:210px;height:88px}.app-shell:after{width:min(560px,72vw);height:96px}.page-content{padding-bottom:104px}.footer{padding-bottom:76px}.form-grid,.result-layout{grid-template-columns:1fr}.form-aside{position:static}.aside-card{display:none}.tip{max-width:none}}
+@media(max-width:650px){.side-ornament{display:none}.app{padding:0}.app-shell:before{top:4px;width:170px;height:72px}.app-shell:after{bottom:18px;width:min(360px,84vw);height:66px}.topbar{height:88px;padding:18px 17px 0}.page-content{padding:40px 15px 94px}.welcome{padding-top:90px;padding-bottom:98px}.footer{padding-bottom:58px}.panel{padding:20px 17px}.loading-scene{height:280px;width:min(360px,92vw)}.loader-doe{left:30%;width:56%}.spell-flare{left:28%;top:36%;font-size:42px}}
+
+/* === refinement pass 2: cleaner ornaments, gem accents, non-cropped loader === */
+.app{padding:0 6%;background:radial-gradient(ellipse at 10% 28%,#0d5a50 0%,transparent 24%),radial-gradient(ellipse at 96% 70%,#0f574d 0%,transparent 28%),#081e2b}
+.side-ornament{width:70px;background:linear-gradient(180deg,#072333 0%,#083949 46%,#0b5a55 50%,#0a3c4c 72%,#072333 100%);border-inline:1px solid rgba(201,166,87,.34);box-shadow:inset 0 0 0 1px rgba(26,122,108,.16)}
+.side-ornament::before{content:"";position:absolute;inset:16px 10px;border-radius:40px;border:1px solid rgba(204,172,102,.18)}
+.side-ornament::after{content:"";position:absolute;inset:0;background:
+radial-gradient(circle at 50% 10%,rgba(227,193,110,.95) 0 3px,transparent 4px),
+radial-gradient(circle at 50% 90%,rgba(227,193,110,.95) 0 3px,transparent 4px),
+linear-gradient(180deg,transparent 0 8%,rgba(216,180,94,.2) 8% 8.6%,transparent 9%),
+linear-gradient(180deg,transparent 91%,rgba(216,180,94,.2) 91.5% 92.1%,transparent 92.5%);
+opacity:.9}
+.branch{display:block;font-size:105px;left:-18px;top:16%;opacity:.55;color:#d0a760;text-shadow:0 0 18px rgba(20,201,150,.14)}
+.branch-two{top:61%;font-size:98px;left:-8px}.side-ornament.right .branch{left:auto;right:-18px}.side-ornament.right .branch-two{right:-8px}
+.app-shell{overflow:hidden}
+.app-shell:before,.app-shell:after{content:none}
+.page-jewel{position:absolute;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:12px}
+.page-jewel-top{top:12px}.page-jewel-bottom{bottom:18px;transform:translateX(-50%) scale(.8);opacity:.96}
+.gem-core{width:28px;height:28px;display:block;position:relative;transform:rotate(45deg);border-radius:4px;border:2px solid #d8a751;background:linear-gradient(135deg,#bff9ec,#14cba4 45%,#0b8a75 74%,#d5fff5);box-shadow:0 0 0 3px rgba(255,249,240,.92),0 0 22px rgba(18,201,154,.18)}
+.gem-core::before,.gem-core::after{content:"";position:absolute;inset:4px;border:1px solid rgba(255,249,240,.65);border-radius:3px}.gem-core::after{inset:-12px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);border:1.4px solid rgba(196,154,67,.9);border-radius:0}
+.gem-wing{position:relative;display:block;width:72px;height:20px}
+.gem-wing::before,.gem-wing::after{content:"";position:absolute;top:50%;width:100%;height:1.5px;background:linear-gradient(90deg,rgba(196,154,67,.2),rgba(196,154,67,.95),rgba(196,154,67,.2));transform:translateY(-50%)}
+.gem-wing.left::after,.gem-wing.right::after{width:34px;height:16px;background:none;border-top:1.4px solid rgba(196,154,67,.8);border-radius:50%}
+.gem-wing.left::after{right:4px;transform:translateY(-50%) rotate(-12deg)}
+.gem-wing.right::after{left:4px;transform:translateY(-50%) rotate(12deg)}
+.topbar{padding-top:22px;height:86px;background:linear-gradient(180deg,rgba(255,251,244,.96),rgba(255,251,244,.98))}
+.page-content{padding-bottom:106px}.footer{padding-bottom:54px}
+.hero-logo-wrap{width:min(98%,1010px);background:linear-gradient(180deg,#f7f4ec,#f8f6ef);border-radius:24px;padding:10px 6px;box-shadow:inset 0 0 0 1px rgba(221,214,196,.6)}
+.hero-logo{width:100%;max-height:500px;display:block;object-fit:contain;mix-blend-mode:multiply;filter:saturate(1.02) drop-shadow(0 12px 18px rgba(24,77,62,.05))}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero,.notice{background:linear-gradient(180deg,rgba(252,252,248,.98),rgba(241,247,240,.94) 60%,rgba(255,250,242,.98));border-color:#d7c9aa;box-shadow:0 10px 28px rgba(20,45,41,.05)}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{border-radius:18px}
+.panel::before,.mode-switch::before,.tip::before,.material-card::before,.role-list>div::before,.summary::before,.result-hero::before,
+.panel::after,.mode-switch::after,.tip::after,.material-card::after,.role-list>div::after,.summary::after,.result-hero::after{content:"";position:absolute;width:70px;height:70px;top:14px;background-repeat:no-repeat;pointer-events:none;opacity:.92}
+.panel::before,.mode-switch::before,.tip::before,.material-card::before,.role-list>div::before,.summary::before,.result-hero::before{left:14px;background:
+radial-gradient(circle at 50% 50%,rgba(229,186,93,.98) 0 5px,transparent 6px),
+linear-gradient(45deg,transparent 42%,rgba(229,186,93,.98) 43% 57%,transparent 58%),
+linear-gradient(-45deg,transparent 42%,rgba(229,186,93,.98) 43% 57%,transparent 58%);background-size:18px 18px,26px 26px,26px 26px;background-position:0 0,8px 8px,8px 8px}
+.panel::after,.mode-switch::after,.tip::after,.material-card::after,.role-list>div::after,.summary::after,.result-hero::after{right:14px;background:
+radial-gradient(circle at 50% 50%,rgba(99,226,195,.9) 0 4px,transparent 5px),
+radial-gradient(circle at 50% 50%,rgba(229,186,93,.98) 0 5px,transparent 6px),
+linear-gradient(45deg,transparent 42%,rgba(229,186,93,.98) 43% 57%,transparent 58%),
+linear-gradient(-45deg,transparent 42%,rgba(229,186,93,.98) 43% 57%,transparent 58%),
+radial-gradient(circle at 78% 28%,rgba(164,240,223,.75) 0 1.4px,transparent 2px),
+radial-gradient(circle at 92% 8%,rgba(229,186,93,.95) 0 1.2px,transparent 2px);
+background-size:11px 11px,18px 18px,26px 26px,26px 26px,100% 100%,100% 100%;background-position:46px 18px,28px 12px,22px 8px,22px 8px,0 0,0 0}
+.mode-switch::before,.notice::before{left:auto;right:84px;top:auto;bottom:14px;width:34px;height:22px;background:radial-gradient(circle at 15% 85%,rgba(106,217,193,.8) 0 2px,transparent 3px),radial-gradient(circle at 74% 30%,rgba(229,186,93,.95) 0 1.8px,transparent 3px)}
+.notice::before,.notice::after{content:none}
+.result-hero::before,.panel::before{opacity:.72}.result-hero::after,.panel::after{opacity:.88}
+.result-hero-star{display:none}
+.notice.demo-notice{background:linear-gradient(180deg,#f4f9f1,#eef7eb);border-color:#d5e1cb}
+.notice.warning{background:linear-gradient(180deg,#fff9ee,#fbf2df)}
+.notice.error{background:linear-gradient(180deg,#fff5ef,#fff7f2)}
+.summary{padding-top:24px}.result-tabs{background:linear-gradient(180deg,rgba(255,253,246,.88),rgba(244,248,242,.82))}
+.tabs button,.result-tabs button{border-radius:12px}
+.aside-card{border-radius:18px}
+.loading-scene{height:390px;width:min(780px,94vw);overflow:visible}
+.loading-scene::before,.loading-scene::after{content:none}
+.loader-wand{left:8%;bottom:12%;width:26%;transform-origin:18% 70%;filter:drop-shadow(0 0 12px rgba(19,77,62,.14));animation:wandEnter 4.8s cubic-bezier(.42,0,.18,1) infinite}
+.loader-doe{left:39%;bottom:5%;width:38%;height:auto;max-height:none;object-fit:contain;filter:drop-shadow(0 0 28px rgba(46,224,171,.34));animation:doeLeap 4.8s cubic-bezier(.4,0,.2,1) infinite}
+.spell-flare{left:31%;top:36%;font-size:56px}
+.spark-1{right:17%;top:21%}.spark-2{right:31%;top:11%}.spark-3{left:28%;top:14%}
+@keyframes wandEnter{0%,100%{transform:translate(-54px,34px) rotate(-14deg);opacity:.14}16%,84%{transform:translate(0,0) rotate(-6deg);opacity:1}46%{transform:translate(8px,-6px) rotate(-10deg)}65%{transform:translate(0,-2px) rotate(-7deg)}}
+@keyframes doeLeap{0%,18%{transform:translate(-130px,88px) scale(.38);opacity:0}28%{transform:translate(-72px,44px) scale(.52);opacity:.46}46%{transform:translate(-26px,8px) scale(.74);opacity:.98}66%{transform:translate(12px,-22px) scale(.93);opacity:1}84%{transform:translate(42px,-54px) scale(1.04);opacity:1}100%{transform:translate(88px,-74px) scale(1.08);opacity:0}}
+@media(max-width:950px){.app{padding:0 3%}.side-ornament{width:54px}.branch{font-size:84px;left:-18px}.branch-two{font-size:78px}.page-jewel-top{top:10px}.gem-wing{width:56px}.page-content{padding-bottom:94px}}
+@media(max-width:650px){.app{padding:0}.side-ornament{display:none}.page-jewel{transform:translateX(-50%) scale(.78)}.page-jewel-top{top:10px}.page-jewel-bottom{bottom:14px;transform:translateX(-50%) scale(.56)}.topbar{height:76px;padding-top:18px}.page-content{padding-bottom:80px}.footer{padding-bottom:44px}.loading-scene{height:280px;width:min(360px,96vw)}.loader-wand{left:2%;bottom:16%;width:34%}.loader-doe{left:42%;width:43%}.spell-flare{left:28%;top:34%;font-size:42px}}
+
+/* Final concept: original deep-blue aurora sides, lightweight gold ornaments, emerald interactive states. */
+.app{padding:0 clamp(22px,5vw,84px);background:radial-gradient(ellipse at 4% 26%,rgba(1,181,136,.58),transparent 22%),radial-gradient(ellipse at 98% 76%,rgba(0,156,118,.52),transparent 27%),linear-gradient(125deg,#041a29,#074049 48%,#031a2b);}
+.side-ornament{position:fixed;top:0;bottom:0;width:clamp(22px,5vw,84px);background:radial-gradient(ellipse at 56% 36%,rgba(0,190,149,.38),transparent 26%),radial-gradient(ellipse at 44% 82%,rgba(0,182,151,.3),transparent 24%),linear-gradient(180deg,#031b2c,#05394a 48%,#05283c);box-shadow:inset 0 0 0 1px rgba(210,164,67,.35);overflow:hidden;}
+.side-ornament::before{content:'✧  ✦  ✧';position:absolute;inset:10px 4px auto;color:#ecc980;text-align:center;letter-spacing:5px;font-size:15px;border:none;white-space:nowrap;transform:none;}
+.side-ornament::after{content:'✦';position:absolute;top:64%;left:14%;right:14%;color:#ddb361;text-align:center;font-size:26px;background:none;opacity:.9}
+.branch{display:block;left:-27px;top:18%;font-size:95px;color:#dcb469;opacity:.65;text-shadow:0 0 22px #04b58c45;transform:rotate(-26deg)}
+.branch-two{top:68%;font-size:110px;left:-27px;transform:rotate(14deg)}
+.app-shell{background:linear-gradient(115deg,#fffdf6,#f9f6ed 52%,#fffdf7);border-inline:1px solid #cfaf6a;border-radius:2px;}
+.hero-logo-wrap{background:transparent;border:0;box-shadow:none;padding:0;width:min(98%,1000px)}
+.hero-logo{background:transparent;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.12);mask-image:radial-gradient(ellipse 75% 73% at 50% 49%,black 69%,rgba(0,0,0,.98) 82%,transparent 99%);-webkit-mask-image:radial-gradient(ellipse 75% 73% at 50% 49%,black 69%,rgba(0,0,0,.98) 82%,transparent 99%)}
+.welcome{padding-top:105px}
+.heading{padding-top:26px}.heading .eyebrow{margin-top:13px}
+.heading h1,.heading h1 em,.result-hero h2,.panel-heading h2,.timeline-top h3,.aside-card h3,.summary h3{background:linear-gradient(105deg,#073d36,#0a775b 48%,#063b34 83%);background-clip:text;-webkit-background-clip:text;color:transparent;font-style:normal;}
+.heading .eyebrow{color:#11624d}.result-overline{color:#0c6950!important;font-weight:800}.result-overline svg{color:#0b8a6d}
+.primary,.segment button.selected,.tabs button.current,.result-tabs button.current{background:linear-gradient(120deg,#074a3b,#0c745b 47%,#07523e);border:1px solid #bc9250;color:#fff;position:relative;overflow:hidden;isolation:isolate;transition:background .3s,box-shadow .3s,transform .3s}
+.primary:before,.segment button.selected:before,.tabs button.current:before,.result-tabs button.current:before{content:'';position:absolute;inset:-80% auto -80% -60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(116,255,208,.52),transparent);transition:left .55s ease;pointer-events:none;z-index:-1}
+.primary:hover:not(:disabled),.segment button.selected:hover,.tabs button.current:hover,.result-tabs button.current:hover{background:linear-gradient(115deg,#065c49,#0b9975 50%,#065b49);box-shadow:0 0 19px #12b78d7b,0 9px 20px #04543a40;transform:translateY(-1px)}
+.primary:hover:before,.segment button.selected:hover:before,.tabs button.current:hover:before,.result-tabs button.current:hover:before{left:135%}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{border:1px solid #cdad66;border-radius:16px;box-shadow:0 5px 23px #05372f10;background:radial-gradient(circle at 98% 1%,#d9f1e53d,transparent 28%),linear-gradient(120deg,#fffcf5,#f6faf3 55%,#fffaf1)}
+.panel:before,.panel:after,.mode-switch:before,.mode-switch:after,.result-hero:before,.result-hero:after,.tip:before,.tip:after,.summary:before,.summary:after,.material-card:before,.material-card:after,.role-list>div:before,.role-list>div:after{content:'✦';position:absolute;top:9px;width:auto;height:auto;color:#c79c4f;font-size:23px;opacity:.85;background:none;pointer-events:none;line-height:1}
+.panel:before,.mode-switch:before,.result-hero:before,.tip:before,.summary:before,.material-card:before,.role-list>div:before{left:13px;right:auto}
+.panel:after,.mode-switch:after,.result-hero:after,.tip:after,.summary:after,.material-card:after,.role-list>div:after{right:13px;left:auto}
+.panel-heading{padding-left:27px}.mode-switch{padding-left:32px}
+.aside-card{background:radial-gradient(ellipse at 90% 18%,#137d61,transparent 48%),linear-gradient(145deg,#052837,#064737 70%,#07573e);border:1px solid #b89650}
+.loader-page{min-height:calc(100vh - 150px);overflow:hidden}.magic-loading{padding:45px 12px}.loading-scene{width:min(760px,92vw);height:360px;overflow:visible}.spell-art{width:100%;height:100%;overflow:visible}.wand-svg{transform-origin:30% 70%;animation:wandGleam 5.8s ease-in-out infinite}.magic-trails .trail{stroke-dasharray:900;stroke-dashoffset:900;animation:drawMagic 5.8s ease-in-out infinite}.magic-trails .t2{animation-delay:.18s}.magic-trails .t3{animation-delay:.36s}.magic-trails .t4{animation-delay:.45s}.spell-flash{animation:flashMagic 5.8s ease-in-out infinite}.loading-dots b{background:linear-gradient(145deg,#009b76,#22e0a6);width:7px;height:7px}
+@keyframes drawMagic{0%,14%{stroke-dashoffset:900;opacity:0}25%{opacity:1}77%{stroke-dashoffset:0;opacity:1}92%,100%{stroke-dashoffset:-60;opacity:0}}
+@keyframes flashMagic{0%,13%,95%,100%{opacity:0;r:6}23%,55%{opacity:1;r:19}77%{opacity:.7;r:14}}
+@keyframes wandGleam{0%,100%{opacity:.65;transform:rotate(-4deg)}22%,78%{opacity:1;transform:rotate(0)}}
+@media(max-width:650px){.side-ornament{display:none}.app{padding:0}.heading{padding-top:22px}.panel-heading{padding-left:20px}.loading-scene{width:100%;height:240px}.hero-logo{mask-image:none;-webkit-mask-image:none}.page-jewel-top{top:7px}}
+@media(prefers-reduced-motion:reduce){.magic-trails .trail{animation:none;stroke-dashoffset:0}.spell-flash{animation:none;opacity:1}}
+
+/* Final concept: original deep-blue aurora sides, lightweight gold ornaments, emerald interactive states. */
+.app{padding:0 clamp(22px,5vw,84px);background:radial-gradient(ellipse at 4% 26%,rgba(1,181,136,.58),transparent 22%),radial-gradient(ellipse at 98% 76%,rgba(0,156,118,.52),transparent 27%),linear-gradient(125deg,#041a29,#074049 48%,#031a2b);}
+.side-ornament{position:fixed;top:0;bottom:0;width:clamp(22px,5vw,84px);background:radial-gradient(ellipse at 56% 36%,rgba(0,190,149,.38),transparent 26%),radial-gradient(ellipse at 44% 82%,rgba(0,182,151,.3),transparent 24%),linear-gradient(180deg,#031b2c,#05394a 48%,#05283c);box-shadow:inset 0 0 0 1px rgba(210,164,67,.35);overflow:hidden;}
+.side-ornament::before{content:'✧  ✦  ✧';position:absolute;inset:10px 4px auto;color:#ecc980;text-align:center;letter-spacing:5px;font-size:15px;border:none;white-space:nowrap;transform:none;}
+.side-ornament::after{content:'✦';position:absolute;top:64%;left:14%;right:14%;color:#ddb361;text-align:center;font-size:26px;background:none;opacity:.9}
+.branch{display:block;left:-27px;top:18%;font-size:95px;color:#dcb469;opacity:.65;text-shadow:0 0 22px #04b58c45;transform:rotate(-26deg)}
+.branch-two{top:68%;font-size:110px;left:-27px;transform:rotate(14deg)}
+.app-shell{background:linear-gradient(115deg,#fffdf6,#f9f6ed 52%,#fffdf7);border-inline:1px solid #cfaf6a;border-radius:2px;}
+.hero-logo-wrap{background:transparent;border:0;box-shadow:none;padding:0;width:min(98%,1000px)}
+.hero-logo{background:transparent;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.12);mask-image:radial-gradient(ellipse 75% 73% at 50% 49%,black 69%,rgba(0,0,0,.98) 82%,transparent 99%);-webkit-mask-image:radial-gradient(ellipse 75% 73% at 50% 49%,black 69%,rgba(0,0,0,.98) 82%,transparent 99%)}
+.welcome{padding-top:105px}
+.heading{padding-top:26px}.heading .eyebrow{margin-top:13px}
+.heading h1,.heading h1 em,.result-hero h2,.panel-heading h2,.timeline-top h3,.aside-card h3,.summary h3{background:linear-gradient(105deg,#073d36,#0a775b 48%,#063b34 83%);background-clip:text;-webkit-background-clip:text;color:transparent;font-style:normal;}
+.heading .eyebrow{color:#11624d}.result-overline{color:#0c6950!important;font-weight:800}.result-overline svg{color:#0b8a6d}
+.primary,.segment button.selected,.tabs button.current,.result-tabs button.current{background:linear-gradient(120deg,#074a3b,#0c745b 47%,#07523e);border:1px solid #bc9250;color:#fff;position:relative;overflow:hidden;isolation:isolate;transition:background .3s,box-shadow .3s,transform .3s}
+.primary:before,.segment button.selected:before,.tabs button.current:before,.result-tabs button.current:before{content:'';position:absolute;inset:-80% auto -80% -60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(116,255,208,.52),transparent);transition:left .55s ease;pointer-events:none;z-index:-1}
+.primary:hover:not(:disabled),.segment button.selected:hover,.tabs button.current:hover,.result-tabs button.current:hover{background:linear-gradient(115deg,#065c49,#0b9975 50%,#065b49);box-shadow:0 0 19px #12b78d7b,0 9px 20px #04543a40;transform:translateY(-1px)}
+.primary:hover:before,.segment button.selected:hover:before,.tabs button.current:hover:before,.result-tabs button.current:hover:before{left:135%}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{border:1px solid #cdad66;border-radius:16px;box-shadow:0 5px 23px #05372f10;background:radial-gradient(circle at 98% 1%,#d9f1e53d,transparent 28%),linear-gradient(120deg,#fffcf5,#f6faf3 55%,#fffaf1)}
+.panel:before,.panel:after,.mode-switch:before,.mode-switch:after,.result-hero:before,.result-hero:after,.tip:before,.tip:after,.summary:before,.summary:after,.material-card:before,.material-card:after,.role-list>div:before,.role-list>div:after{content:'✦';position:absolute;top:9px;width:auto;height:auto;color:#c79c4f;font-size:23px;opacity:.85;background:none;pointer-events:none;line-height:1}
+.panel:before,.mode-switch:before,.result-hero:before,.tip:before,.summary:before,.material-card:before,.role-list>div:before{left:13px;right:auto}
+.panel:after,.mode-switch:after,.result-hero:after,.tip:after,.summary:after,.material-card:after,.role-list>div:after{right:13px;left:auto}
+.panel-heading{padding-left:27px}.mode-switch{padding-left:32px}
+.aside-card{background:radial-gradient(ellipse at 90% 18%,#137d61,transparent 48%),linear-gradient(145deg,#052837,#064737 70%,#07573e);border:1px solid #b89650}
+.loader-page{min-height:calc(100vh - 150px);overflow:hidden}.magic-loading{padding:45px 12px}.loading-scene{width:min(760px,92vw);height:360px;overflow:visible}.spell-art{width:100%;height:100%;overflow:visible}.wand-svg{transform-origin:30% 70%;animation:wandGleam 5.8s ease-in-out infinite}.magic-trails .trail{stroke-dasharray:900;stroke-dashoffset:900;animation:drawMagic 5.8s ease-in-out infinite}.magic-trails .t2{animation-delay:.18s}.magic-trails .t3{animation-delay:.36s}.magic-trails .t4{animation-delay:.45s}.spell-flash{animation:flashMagic 5.8s ease-in-out infinite}.loading-dots b{background:linear-gradient(145deg,#009b76,#22e0a6);width:7px;height:7px}
+@keyframes drawMagic{0%,14%{stroke-dashoffset:900;opacity:0}25%{opacity:1}77%{stroke-dashoffset:0;opacity:1}92%,100%{stroke-dashoffset:-60;opacity:0}}
+@keyframes flashMagic{0%,13%,95%,100%{opacity:0;r:6}23%,55%{opacity:1;r:19}77%{opacity:.7;r:14}}
+@keyframes wandGleam{0%,100%{opacity:.65;transform:rotate(-4deg)}22%,78%{opacity:1;transform:rotate(0)}}
+@media(max-width:650px){.side-ornament{display:none}.app{padding:0}.heading{padding-top:22px}.panel-heading{padding-left:20px}.loading-scene{width:100%;height:240px}.hero-logo{mask-image:none;-webkit-mask-image:none}.page-jewel-top{top:7px}}
+@media(prefers-reduced-motion:reduce){.magic-trails .trail{animation:none;stroke-dashoffset:0}.spell-flash{animation:none;opacity:1}}
+
+/* Release polish: aurora borders with whole golden vines; no side outlines */
+.side-ornament{overflow:hidden;border:0!important;box-shadow:none!important;background:radial-gradient(ellipse at 10% 32%,#04a8857d,transparent 50%),radial-gradient(ellipse at 85% 78%,#0379697a,transparent 42%),linear-gradient(175deg,#051626 0%,#082b3c 44%,#052d3a 69%,#031626 100%)!important}
+.side-ornament::before,.side-ornament::after{content:none!important;display:none!important}
+.side-vines-svg{display:block;position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 5px rgba(10,177,134,.3))}
+.side-ornament.right .side-vines-svg{transform:scaleX(-1)}
+.app-shell{border-left:0!important;border-right:0!important}
+.welcome-overline{margin-top:14px!important;margin-bottom:20px!important;position:relative;top:-7px}
+/* Translucent glass with a golden, teal-blue border and a darker middle tone */
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{
+border:1.6px solid transparent!important;
+background:linear-gradient(180deg,rgba(255,255,251,.82),rgba(227,242,236,.64) 50%,rgba(255,251,240,.84)) padding-box,
+linear-gradient(120deg,#f0cf79 0%,#13a99b 25%,#075a62 50%,#1ba88f 75%,#e5b45c 100%) border-box!important;
+backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+box-shadow:0 8px 32px rgba(5,57,57,.09),inset 0 1px 12px rgba(255,255,255,.5)!important;
+}
+/* preserve decorative stars without blocking content */
+.panel::before,.panel::after,.mode-switch::before,.mode-switch::after,.tip::before,.tip::after,.material-card::before,.material-card::after,.role-list>div::before,.role-list>div::after,.summary::before,.summary::after,.result-hero::before,.result-hero::after{opacity:.55!important;top:9px!important;font-size:17px!important}
+.panel-heading{padding-left:16px!important}
+.role-list>div{padding-left:29px!important;padding-right:31px!important}
+.role-list>div span{margin-right:13px!important}
+@media(max-width:650px){.side-ornament{display:none!important}}
+
+
+/* V5 – soft glass, iridescent lettering, integrated wand effect */
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{
+ background:linear-gradient(145deg,rgba(255,255,255,.37),rgba(223,247,240,.28) 51%,rgba(252,247,228,.37)) padding-box,linear-gradient(120deg,#e9c46e 0%,#71cabb 25%,#257785 51%,#71d2b8 73%,#d4a453 100%) border-box!important;
+ backdrop-filter:blur(15px) saturate(115%);-webkit-backdrop-filter:blur(15px) saturate(115%);
+ box-shadow:inset 0 1px 18px rgba(255,255,255,.19),0 8px 20px rgba(11,67,59,.045)!important;
+}
+/* Make all green headlines and the brand reflect the same slow emerald light */
+@keyframes emeraldTextSweep{0%,18%,100%{background-position:100% 50%}52%{background-position:0% 50%}}
+.brand span:last-child,.heading h1,.heading h1 em,.heading .eyebrow,.welcome-overline,.topbar-mid,.result-overline,.panel-heading h2,.timeline-top h3,.result-hero h2,.summary h3,.material-card h3,.aside-card h3,.timeline-body b,.pupil-actions b,.teacher-script b{
+ background-image:linear-gradient(105deg,#063d35 0%,#08755d 27%,#22cfa0 45%,#075741 60%,#073d35 83%,#0a9770 100%)!important;
+ background-size:310% 100%!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important;
+ animation:emeraldTextSweep 7.2s ease-in-out infinite!important;
+}
+/* Lighter, integrated info displays: avoid white boxes within the glass */
+.concept-goal{background:rgba(255,253,244,.17)!important;border:1px solid rgba(195,172,115,.27)!important;box-shadow:none!important}
+.result-tabs{background:transparent!important;border-bottom:1px solid rgba(184,174,144,.26)!important;padding:12px 16px!important}
+.result-main{background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(217,241,234,.24) 55%,rgba(255,250,236,.22)) padding-box,linear-gradient(125deg,#dec06a,#4cb8a5,#327988,#dec06a) border-box!important}
+.teacher-script{background:rgba(247,255,250,.25)!important;border-left:2px solid rgba(62,155,120,.4)!important;box-shadow:none!important}
+.material-card,.role-list>div{background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(230,249,242,.24)) padding-box,linear-gradient(125deg,#d3b16b,#76c6b3,#bda262) border-box!important}
+.new-scenario{min-width:170px}.new-scenario:hover{filter:brightness(1.12)}
+/* Magic paths now start at the exact transformed wand tip (327, 202). */
+.wand-svg{animation:wandGlowStill 5.8s ease-in-out infinite!important;transform-origin:center!important}
+@keyframes wandGlowStill{0%,100%{opacity:.85;filter:drop-shadow(0 0 0 rgba(10,195,144,0))}45%,70%{opacity:1;filter:drop-shadow(0 0 8px rgba(10,195,144,.3))}}
+@media(prefers-reduced-motion:reduce){.brand span:last-child,.heading h1,.heading h1 em,.heading .eyebrow,.welcome-overline,.topbar-mid,.result-overline,.panel-heading h2,.timeline-top h3,.result-hero h2,.summary h3,.material-card h3,.aside-card h3,.timeline-body b,.pupil-actions b,.teacher-script b{animation:none!important;background-position:50% 50%!important}}
+
+/* V6: high-legibility pale-glass surfaces and larger body copy */
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero,.result-main{
+  border:1.5px solid transparent!important;
+  background:linear-gradient(130deg,rgba(255,255,250,.90),rgba(251,253,249,.91) 48%,rgba(249,252,247,.9)) padding-box,
+    linear-gradient(120deg,rgba(212,173,86,.62),rgba(102,198,178,.55),rgba(211,181,106,.6)) border-box!important;
+  box-shadow:0 8px 22px rgba(28,73,59,.045),inset 0 1px 0 rgba(255,255,255,.8)!important;
+  backdrop-filter:blur(12px) saturate(102%);
+}
+.result-main{background:linear-gradient(130deg,rgba(255,254,249,.94),rgba(251,253,250,.93)) padding-box,linear-gradient(120deg,#dfcc9b,#8cc8bc,#e2c990) border-box!important}
+.teacher-script,.material-card,.role-list>div{
+  background:rgba(251,254,250,.72)!important;
+  box-shadow:none!important;
+}
+.teacher-script{border-left:2px solid rgba(37,125,100,.45)!important}
+/* Ensure text remains dark and readable over the almost clear surfaces. */
+.field>span:first-child,.field input,.field select,.field textarea,.check,.mode-switch b,.mode-switch span,
+.timeline-body .purpose,.teacher-script p,.pupil-actions li,.material-card p,.role-list>div,.role-list span,
+.summary li,.result-hero p,.heading p,.notice,.concept-goal,.tip,.timeline-step .purpose,
+.timeline-top span,.material-links span{color:#263f39!important}
+.teacher-script p,.pupil-actions li,.timeline-body .purpose,.material-card p,.role-list>div,
+.summary li,.result-hero p,.tip,.concept-goal,.notice,.field input,.field select,.field textarea,
+.field>span:first-child,.check,.mode-switch span,.mode-switch b{font-size:clamp(14px,1.05vw,16px)!important;line-height:1.65!important}
+.timeline-top span,.material-links span{font-size:12px!important}
+.timeline-step{padding-bottom:34px}
+.material-grid,.role-list{gap:16px}
+.teacher-script{padding:16px 19px!important}
+.pupil-actions{margin-top:18px}
+/* Animation point is (327,202), the physical tip of the wand SVG. */
+.wand-svg{animation:none!important;transform:none!important}
+@media(max-width:650px){.teacher-script p,.pupil-actions li,.material-card p,.summary li,.field input,.field select,.field textarea{font-size:14px!important}}
+
+/* V7 liquid-glass central surfaces. The original blue aurora side ornament remains unchanged. */
+.page-content.results{isolation:isolate}
+.page-content.results::before{
+ content:"";position:absolute;z-index:-1;right:0;top:120px;width:min(48%,530px);height:650px;
+ background:url('/assets/doe-watermark.svg') center/contain no-repeat;
+ opacity:.105;pointer-events:none;
+}
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary{
+ border:1.5px solid transparent!important;
+ background:
+  linear-gradient(140deg,rgba(255,255,252,.76),rgba(239,251,248,.71) 48%,rgba(249,253,250,.79)) padding-box,
+  linear-gradient(115deg,rgba(232,188,109,.82),rgba(89,207,191,.83),rgba(218,185,119,.73)) border-box!important;
+ backdrop-filter:blur(19px) saturate(126%)!important;
+ box-shadow:inset 0 2px 1px rgba(255,255,255,.72),inset 0 -1px 8px rgba(135,215,203,.10),0 9px 23px rgba(13,66,60,.07)!important;
+}
+.material-card,.role-list>div{
+ border:1.5px solid transparent!important;border-radius:14px!important;
+ background:linear-gradient(135deg,rgba(255,255,255,.83),rgba(227,248,242,.69) 61%,rgba(254,247,231,.76)) padding-box,
+ linear-gradient(115deg,rgba(223,169,73,.92),rgba(46,169,150,.86),rgba(218,179,97,.88)) border-box!important;
+ box-shadow:0 5px 15px rgba(18,81,72,.08),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ backdrop-filter:blur(18px)!important;
+}
+.material-card{padding:22px 24px!important}
+.role-list>div{padding:19px 30px!important;gap:16px!important}
+.role-list>div span{padding-right:22px!important;white-space:nowrap;color:#25463d!important}
+.teacher-script{background:linear-gradient(120deg,rgba(255,255,255,.57),rgba(236,252,245,.46))!important;border:1px solid rgba(116,192,169,.28)!important;border-left:3px solid rgba(39,138,111,.56)!important;border-radius:12px!important}
+.teacher-script b,.pupil-actions b{font-size:clamp(17px,1.25vw,19px)!important;line-height:1.5!important;font-weight:750!important;color:#0d4b3e!important;background:none!important;-webkit-text-fill-color:#0d4b3e!important;animation:none!important}
+.teacher-script p,.pupil-actions li,.material-card p,.role-list>div,.summary li{color:#253c38!important}
+@media(max-width:650px){.page-content.results::before{width:68%;opacity:.07}.role-list>div{padding:17px 20px!important}.teacher-script b,.pupil-actions b{font-size:17px!important}}
+
+/* V8: stationary, clearer but non-intrusive glass doe. Scrolling moves content, not artwork. */
+.page-content.results{isolation:isolate;position:relative}
+.page-content.results::before{
+ position:fixed!important;
+ inset:auto 0 4vh auto!important;
+ width:min(46vw,650px)!important;
+ height:min(78vh,770px)!important;
+ background:url('/assets/doe-watermark.svg') center center/contain no-repeat!important;
+ opacity:.34!important;
+ filter:contrast(1.25) saturate(1.4) drop-shadow(0 0 16px rgba(21,150,137,.17));
+ z-index:-1!important;
+ pointer-events:none!important;
+}
+/* Clearance around corner stars: keep both body copy and controls away from decorations. */
+.mode-switch{padding:19px 48px 19px 46px!important;min-height:94px}
+.mode-switch>div:first-child{max-width:calc(100% - 10px)}
+.mode-switch>div:first-child b,.mode-switch>div:first-child span{position:relative;z-index:1}
+.tip{padding:18px 46px 18px 24px!important;min-height:64px}
+.tip span{position:relative;z-index:1}
+.mode-switch::after,.tip::after{right:13px!important;top:9px!important}
+@media(max-width:650px){
+ .page-content.results::before{width:75vw!important;height:58vh!important;opacity:.22!important;right:0!important;bottom:12vh!important}
+ .mode-switch{padding:26px 40px 18px 28px!important}
+ .tip{padding-right:40px!important}
+}
+
+
+/* --- V9 final glass-doe refinements --- */
+.page-content.results::before{content:none!important;display:none!important}
+.topbar,.welcome,.page-content,.loader-page,.footer{position:relative;z-index:1}
+.glass-doe-bg{
+  position:fixed;
+  left:56%;
+  top:56%;
+  width:min(40vw,560px);
+  height:min(80vh,760px);
+  transform:translate(-18%,-34%);
+  background:url('/assets/doe-clean.png') center center/contain no-repeat;
+  opacity:.20;
+  filter:saturate(1.05) contrast(1.05) brightness(.88) drop-shadow(0 0 22px rgba(18,196,170,.14));
+  pointer-events:none;
+  z-index:0;
+  mix-blend-mode:multiply;
+}
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary{
+  border:1.35px solid transparent!important;
+  background:
+    linear-gradient(140deg,rgba(255,255,255,.46),rgba(228,248,243,.30) 48%,rgba(255,251,244,.40)) padding-box,
+    linear-gradient(115deg,rgba(231,188,104,.82),rgba(93,207,191,.74),rgba(214,183,113,.78)) border-box!important;
+  backdrop-filter:blur(22px) saturate(135%)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(135%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.58), inset 0 -1px 10px rgba(113,208,191,.07), 0 9px 18px rgba(15,71,63,.05)!important;
+}
+.mode-switch,.tip{
+  background:
+    linear-gradient(140deg,rgba(255,255,255,.32),rgba(223,246,239,.22) 48%,rgba(255,248,240,.30)) padding-box,
+    linear-gradient(115deg,rgba(231,188,104,.82),rgba(93,207,191,.72),rgba(214,183,113,.77)) border-box!important;
+}
+.result-main,.result-hero,.summary{
+  background:
+    linear-gradient(140deg,rgba(255,255,255,.36),rgba(224,247,241,.23) 50%,rgba(255,249,241,.32)) padding-box,
+    linear-gradient(115deg,rgba(231,188,104,.84),rgba(93,207,191,.72),rgba(214,183,113,.80)) border-box!important;
+}
+.teacher-script{
+  background:linear-gradient(120deg,rgba(255,255,255,.48),rgba(236,252,245,.30))!important;
+  border:1px solid rgba(108,184,162,.24)!important;
+}
+.pupil-actions{color:#23423c!important}
+.mode-switch b,.panel-heading h2,.result-hero h2,.summary h3,.material-card h3,.timeline-top h3,.brand span:last-child{color:#11463c!important}
+.mode-switch span,.tip span,.teacher-script p,.pupil-actions li,.summary li,.concept-goal,.result-hero p,.field input,.field select,.field textarea,.role-list>div,.material-card p{color:#304943!important}
+.material-card,.role-list>div{
+  border:1.55px solid transparent!important;
+  background:
+    linear-gradient(140deg,rgba(255,255,255,.56),rgba(228,248,243,.38) 58%,rgba(255,249,241,.46)) padding-box,
+    linear-gradient(115deg,rgba(231,188,104,.90),rgba(93,207,191,.80),rgba(214,183,113,.88)) border-box!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 8px 20px rgba(18,81,72,.06)!important;
+}
+.material-card h3,.role-list>div b{position:relative;z-index:1}
+.material-card p,.role-list>div span{position:relative;z-index:1}
+@media(max-width:950px){
+  .glass-doe-bg{left:58%;width:min(48vw,470px);height:min(68vh,620px);transform:translate(-14%,-30%);opacity:.18}
+}
+@media(max-width:650px){
+  .glass-doe-bg{left:58%;top:58%;width:64vw;height:48vh;transform:translate(-18%,-30%);opacity:.13}
+}
+
+
+/* --- V10 emerald deer + true transparent glass --- */
+.glass-doe-bg{
+  position:fixed !important;
+  left:59% !important;
+  top:58% !important;
+  width:min(38vw,500px) !important;
+  height:min(74vh,700px) !important;
+  transform:translate(-18%,-24%) !important;
+  background:url('/assets/deer-emerald.png') center center/contain no-repeat !important;
+  opacity:.26 !important;
+  filter:drop-shadow(0 0 20px rgba(37,212,177,.18)) saturate(1.18) brightness(.98) !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+  mix-blend-mode:multiply !important;
+}
+
+/* non-welcome screens keep deer behind content */
+.topbar,.page-content,.footer,.loader-page{position:relative;z-index:1}
+
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary,.material-card,.role-list>div,.notice{
+  border:1.2px solid transparent !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.18), rgba(220,247,241,.13) 50%, rgba(255,250,242,.16)) padding-box,
+    linear-gradient(115deg, rgba(228,188,105,.62), rgba(88,201,185,.58), rgba(216,184,110,.58)) border-box !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 10px rgba(134,223,210,.04),
+    0 6px 18px rgba(8,51,44,.035) !important;
+}
+
+/* Make informational glass less bright */
+.mode-switch,.tip,.notice.demo-notice,.notice.warning,.notice.error{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.14), rgba(218,245,237,.10) 52%, rgba(255,249,240,.12)) padding-box,
+    linear-gradient(115deg, rgba(228,188,105,.56), rgba(88,201,185,.52), rgba(216,184,110,.54)) border-box !important;
+}
+
+.teacher-script{
+  background:linear-gradient(135deg, rgba(255,255,255,.20), rgba(227,248,242,.14)) !important;
+  border:1px solid rgba(113,194,173,.18) !important;
+  border-left:3px solid rgba(37,142,114,.48) !important;
+}
+
+.material-card,.role-list>div{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.20), rgba(221,247,240,.14) 52%, rgba(255,249,242,.18)) padding-box,
+    linear-gradient(115deg, rgba(229,188,106,.68), rgba(86,200,184,.62), rgba(215,183,108,.64)) border-box !important;
+}
+
+/* text readable atop transparent glass */
+.mode-switch b,.tip b,.notice b,.field>span:first-child,.role-list>div b,.material-card h3,.summary h3,.panel-heading h2,.result-hero h2,.timeline-top h3{color:#15453b !important}
+.mode-switch span,.tip span,.notice,.material-card p,.role-list>div span,.summary li,.teacher-script p,.pupil-actions li,.concept-goal,.result-hero p,.heading p,.field input,.field select,.field textarea{color:#35534b !important}
+
+/* keep corner stars but ensure text does not collide */
+.mode-switch{padding:20px 50px 20px 34px !important}
+.tip{padding:18px 50px 18px 22px !important}
+.mode-switch::before,.tip::before{left:10px !important; top:8px !important; font-size:16px !important; opacity:.65 !important}
+.mode-switch::after,.tip::after{right:10px !important; top:8px !important; font-size:16px !important; opacity:.65 !important}
+
+@media(max-width:950px){
+  .glass-doe-bg{left:58% !important; width:min(44vw,420px) !important; height:min(66vh,580px) !important; transform:translate(-18%,-20%) !important; opacity:.24 !important}
+}
+@media(max-width:650px){
+  .glass-doe-bg{left:60% !important; top:64% !important; width:58vw !important; height:44vh !important; transform:translate(-16%,-18%) !important; opacity:.18 !important}
+  .mode-switch{padding:24px 40px 18px 24px !important}
+  .tip{padding:17px 40px 17px 18px !important}
+}
+
+
+/* --- V11: repositioned emerald deer + clearer glass + restored heading shimmer --- */
+.glass-doe-bg{
+  left:52% !important;
+  top:50% !important;
+  width:min(41vw,560px) !important;
+  height:min(74vh,720px) !important;
+  transform:translate(-15%,-14%) !important;
+  background:url('/assets/deer-emerald-v2.png') center center/contain no-repeat !important;
+  opacity:.31 !important;
+  filter:drop-shadow(0 0 14px rgba(29,194,160,.16)) saturate(1.12) brightness(.84) contrast(1.06) !important;
+  mix-blend-mode:multiply !important;
+}
+
+/* Make glass panels more transparent and less bright so deer shows through */
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary,.material-card,.role-list>div,.notice{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.10), rgba(224,247,241,.08) 50%, rgba(255,249,242,.10)) padding-box,
+    linear-gradient(115deg, rgba(228,188,105,.50), rgba(88,201,185,.44), rgba(216,184,110,.46)) border-box !important;
+  backdrop-filter: blur(20px) saturate(138%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(138%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 6px 18px rgba(8,51,44,.03) !important;
+}
+.mode-switch,.tip,.notice.demo-notice,.notice.warning,.notice.error{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.09), rgba(222,246,239,.065) 55%, rgba(255,249,241,.08)) padding-box,
+    linear-gradient(115deg, rgba(228,188,105,.46), rgba(88,201,185,.40), rgba(216,184,110,.42)) border-box !important;
+}
+.result-main,.result-hero,.summary,.panel{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.09), rgba(224,247,241,.07) 50%, rgba(255,249,242,.09)) padding-box,
+    linear-gradient(115deg, rgba(228,188,105,.52), rgba(88,201,185,.45), rgba(216,184,110,.48)) border-box !important;
+}
+.teacher-script{
+  background:linear-gradient(135deg, rgba(255,255,255,.20), rgba(227,248,242,.10)) !important;
+  border:1px solid rgba(113,194,173,.14) !important;
+  border-left:3px solid rgba(37,142,114,.42) !important;
+}
+.material-card,.role-list>div{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.16), rgba(221,247,240,.11) 52%, rgba(255,249,242,.14)) padding-box,
+    linear-gradient(115deg, rgba(229,188,106,.60), rgba(86,200,184,.54), rgba(215,183,108,.56)) border-box !important;
+}
+
+/* Restore emerald animated headings inside information blocks */
+.mode-switch b,.tip b,.notice b,.field>span:first-child,.role-list>div b,.material-card h3,.summary h3,.panel-heading h2,.result-hero h2,.timeline-top h3,.teacher-script b,.pupil-actions b{
+  background-image:linear-gradient(110deg,#0c4d40 0%,#11a988 28%,#0a5a49 52%,#38d7bb 72%,#0b493d 100%) !important;
+  background-size:250% 100% !important;
+  background-position:100% 50% !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  animation:emeraldTextSweep 6.8s ease-in-out infinite !important;
+}
+/* Keep body text readable */
+.mode-switch span,.tip span,.notice,.material-card p,.role-list>div span,.summary li,.teacher-script p,.pupil-actions li,.concept-goal,.result-hero p,.heading p,.field input,.field select,.field textarea{color:#315048 !important}
+
+@media(max-width:950px){
+  .glass-doe-bg{left:50% !important; top:54% !important; width:min(47vw,460px) !important; height:min(66vh,590px) !important; transform:translate(-14%,-14%) !important; opacity:.28 !important}
+}
+@media(max-width:650px){
+  .glass-doe-bg{left:50% !important; top:61% !important; width:66vw !important; height:48vh !important; transform:translate(-8%,-16%) !important; opacity:.22 !important}
+}
+
+
+/* Severus concept design: sapphire-gold deer visible through light liquid glass */
+.app-shell{background:linear-gradient(130deg,#fdf9ed 0%,#f9f8ed 47%,#f6f7ee 100%)!important}
+.glass-doe-bg{background:url('/assets/deer-sapphire-gold.png') center/contain no-repeat!important;left:53%!important;top:48%!important;transform:translate(-15%,-28%)!important;width:min(45vw,650px)!important;height:min(79vh,800px)!important;opacity:.43!important;filter:drop-shadow(0 0 17px rgba(20,145,178,.17))!important;mix-blend-mode:multiply!important}
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary,.material-card,.role-list>div,.notice{
+  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(210,242,241,.10) 46%,rgba(255,242,205,.13)) padding-box,linear-gradient(130deg,rgba(238,202,129,.8),rgba(140,237,228,.74),rgba(229,187,107,.8)) border-box!important;
+  border:1.5px solid transparent!important;backdrop-filter:blur(5px) saturate(118%)!important;-webkit-backdrop-filter:blur(5px) saturate(118%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 7px rgba(255,255,255,.22),0 7px 24px rgba(12,59,67,.075)!important;
+  border-radius:22px!important;
+}
+.panel,.mode-switch,.tip,.material-card,.role-list>div,.summary,.result-hero{position:relative}
+.panel::before,.panel::after,.mode-switch::before,.mode-switch::after,.tip::before,.tip::after,.material-card::before,.material-card::after,.role-list>div::before,.role-list>div::after,.summary::before,.summary::after,.result-hero::before,.result-hero::after{opacity:.48!important}
+.field input,.field select,.field textarea{background:rgba(255,255,255,.68)!important;border:1px solid rgba(250,255,250,.85)!important;box-shadow:inset 0 1px 4px rgba(40,90,80,.08),0 1px 1px rgba(255,255,255,.4);color:#194139!important}
+.mode-switch b,.tip b,.notice b,.field>span:first-child,.check,.variant-choices b,.role-list>div b,.role-list>div span{color:#123f35!important;-webkit-text-fill-color:#123f35!important;background:none!important;animation:none!important}
+.panel-heading h2,.heading h1,.heading h1 em,.result-hero h2,.summary h3,.material-card h3,.timeline-top h3,.brand span:last-child{
+background:linear-gradient(104deg,#073b33 4%,#09a88b 34%,#114c44 57%,#25c4a8 72%,#073a34 100%)!important;
+background-size:270% 100%!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important;-webkit-text-fill-color:transparent!important;animation:emeraldTextSweep 7s ease-in-out infinite!important}
+.teacher-script b,.pupil-actions b{color:#0d4b3e!important;-webkit-text-fill-color:#0d4b3e!important;background:none!important;animation:none!important;font-size:18px!important}
+.teacher-script{background:rgba(255,255,255,.27)!important;backdrop-filter:blur(3px)!important}.result-tabs{background:transparent!important}.result-main{overflow:visible!important}.role-list>div,.material-card{backdrop-filter:blur(6px)!important;background:rgba(255,255,255,.27)!important;border:1px solid rgba(255,251,225,.7)!important}.notice{background:rgba(255,255,255,.18)!important}.tip,.mode-switch{background:rgba(255,255,255,.16)!important}.timeline-top span{background:rgba(255,250,234,.77)!important}
+@media(max-width:950px){.glass-doe-bg{left:50%!important;top:50%!important;width:min(55vw,540px)!important;opacity:.32!important}}
+@media(max-width:650px){.glass-doe-bg{left:55%!important;top:48%!important;width:70vw!important;height:62vh!important;opacity:.25!important}.panel{border-radius:17px!important}}
+@media(prefers-reduced-motion:reduce){.panel-heading h2,.heading h1,.heading h1 em,.result-hero h2,.summary h3,.material-card h3,.timeline-top h3,.brand span:last-child{animation:none!important}}
+
+/* Approved magical liquid-glass layout / release refinement */
+.app{background:radial-gradient(ellipse at 6% 20%,rgba(7,100,96,.7),transparent 36%),radial-gradient(ellipse at 94% 76%,rgba(13,119,99,.7),transparent 36%),#071c2b}
+.app-shell{background:linear-gradient(115deg,#fffaf0 0%,#faf8ed 56%,#f8f8eb 100%)!important}
+.topbar{background:rgba(255,253,244,.56);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:3!important}
+.glass-doe-bg{left:44%!important;top:42%!important;width:min(54vw,760px)!important;height:min(88vh,920px)!important;transform:translate(-28%,-15%)!important;opacity:.39!important;filter:drop-shadow(0 0 23px rgba(46,150,169,.2))!important}
+.page-content{isolation:isolate;position:relative}.page-content>*{position:relative;z-index:1}
+.heading h1{font-size:clamp(40px,4.3vw,60px);line-height:1.08}.heading p{font-size:14px;color:#3e6158!important}
+.panel,.mode-switch,.tip,.result-hero,.result-main,.summary,.notice{
+ background:linear-gradient(125deg,rgba(255,255,255,.13) 0%,rgba(219,250,245,.09) 49%,rgba(255,237,199,.12) 100%) padding-box,
+ linear-gradient(115deg,rgba(255,231,181,.92),rgba(109,231,215,.78) 53%,rgba(230,183,109,.78)) border-box!important;
+ border:1.5px solid transparent!important;
+ -webkit-backdrop-filter:blur(2.5px) saturate(130%)!important;backdrop-filter:blur(2.5px) saturate(130%)!important;
+ box-shadow:inset 0 1.4px 1px rgba(255,255,255,.88),inset 0 -1px 10px rgba(173,239,231,.12),0 12px 26px rgba(20,73,73,.045)!important;
+ border-radius:22px!important
+}
+.mode-switch{min-height:112px!important}.mode-switch b{font-size:17px!important}.mode-switch span{font-size:14px!important}
+.panel{padding:30px!important}.panel-heading h2{font-size:32px}.field>span:first-child{font-size:14px!important;color:#103c35!important;-webkit-text-fill-color:#103c35!important;background:none!important;animation:none!important}.field input,.field select,.field textarea{min-height:50px;background:rgba(255,255,255,.55)!important;backdrop-filter:blur(7px);font-size:15px!important}
+.check{font-size:14px!important;color:#123f37!important}.variant-choices b{font-size:14px!important}.variant-choices span{font-size:13px!important}
+.panel-heading h2,.heading h1,.heading h1 em,.result-hero h2,.summary h3,.material-card h3,.timeline-top h3,.brand span:last-child,.topbar-mid,.heading .eyebrow,.result-overline,.welcome-overline{
+ background-image:linear-gradient(105deg,#093f38 0%,#087c6d 27%,#21d0ad 42%,#124c44 59%,#0aa28c 74%,#07382f 100%)!important;
+ background-size:290% 100%!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important;-webkit-text-fill-color:transparent!important;animation:emeraldTextSweep 7.5s ease-in-out infinite!important
+}
+.mode-switch b,.mode-switch span,.tip,.tip b,.summary li,.teacher-script p,.pupil-actions li,.material-card p,.role-list>div,.role-list>div span,.result-hero p,.concept-goal{color:#254740!important;-webkit-text-fill-color:initial!important}
+.material-card,.role-list>div,.teacher-script{background:rgba(250,255,251,.24)!important;border:1px solid rgba(255,255,255,.63)!important;box-shadow:inset 0 1px rgba(255,255,255,.55),0 5px 16px rgba(18,82,83,.04)!important;border-radius:14px!important}
+.result-main{overflow:hidden!important}.result-tabs{padding:22px!important;background:rgba(255,255,255,.08)!important}
+.timeline{padding:27px!important}.timeline-top h3{font-size:27px}.teacher-script p,.pupil-actions li,.material-card p,.summary li{font-size:15px!important;line-height:1.75!important}
+.teacher-script b,.pupil-actions b{font-size:19px!important;color:#124f43!important;-webkit-text-fill-color:#124f43!important}
+.notice.demo-notice{padding:18px 22px!important}.role-list>div{min-height:70px}
+@media(max-width:950px){.glass-doe-bg{left:44%!important;top:47%!important;width:60vw!important;opacity:.30!important}.page-content{padding-inline:28px}}
+@media(max-width:650px){.glass-doe-bg{left:49%!important;top:48%!important;width:76vw!important;height:62vh!important;opacity:.20!important}.panel{padding:23px 17px!important}.heading h1{font-size:39px}.mode-switch{gap:12px}.field input,.field select,.field textarea{font-size:14px!important}.timeline{padding:15px!important}}
+@media(prefers-reduced-motion:reduce){.panel-heading h2,.heading h1,.heading h1 em,.result-hero h2,.summary h3,.material-card h3,.timeline-top h3,.brand span:last-child,.topbar-mid,.heading .eyebrow,.result-overline,.welcome-overline{animation:none!important}}
+
+/* V13 — approved correction: visible full deer, transparent glass, shimmering headings. */
+@keyframes severusEmeraldSweep {
+  0%, 10% { background-position: 115% center; }
+  45%, 60% { background-position: -10% center; }
+  90%, 100% { background-position: 115% center; }
+}
+/* Explicitly restrict the animation to headings, never form labels or body text. */
+.brand span:last-child,
+.topbar-mid,
+.welcome-overline,
+.heading h1,.heading h1 em,
+.heading .eyebrow,.result-overline,
+.panel-heading h2,.result-hero h2,
+.timeline-top h3,.summary h3,.material-card h3,
+.aside-card h3,.magic-loading h2 {
+  background-image:linear-gradient(100deg,#063b35 0%,#086052 23%,#52efd0 39%,#06856f 46%,#10483f 62%,#24d7b6 74%,#063b35 100%)!important;
+  background-size:360% 100%!important;
+  background-repeat:no-repeat!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  animation:severusEmeraldSweep 5.4s ease-in-out infinite!important;
+  will-change:background-position;
+}
+/* Keep labels, toggles and ordinary copy static and high contrast. */
+.field>span:first-child,.check,.mode-switch b,.tip b,.role-list>div b,
+.variant-choices b,.teacher-script b,.pupil-actions b {
+  background:none!important;
+  color:#153f37!important;
+  -webkit-text-fill-color:#153f37!important;
+  animation:none!important;
+}
+/* The background stays centered within a viewport-sized area even when the page scrolls. */
+.glass-doe-bg{
+  position:fixed!important;
+  left:40%!important;
+  top:46%!important;
+  width:min(59vw,800px)!important;
+  height:min(79vh,760px)!important;
+  transform:translate(-21%,-47%)!important;
+  background-image:url('/assets/deer-sapphire-gold.png')!important;
+  background-position:center!important;
+  background-size:contain!important;
+  background-repeat:no-repeat!important;
+  opacity:.53!important;
+  filter:drop-shadow(0 0 17px rgba(24,132,161,.1))!important;
+  pointer-events:none!important;
+  z-index:0!important;
+  mix-blend-mode:multiply!important;
+}
+.glass-doe-bg::after{
+  content:"";position:absolute;inset:-4%;
+  background:url('/assets/deer-magic-ornaments.svg') center/contain no-repeat;
+  opacity:.65;pointer-events:none;
+}
+/* Remove the milkiness: glass allows the deer and gold ornaments to show through. */
+.panel,.mode-switch,.tip,.notice,.result-hero,.result-main,.summary {
+  border:1.3px solid transparent!important;
+  background:linear-gradient(125deg,rgba(255,255,255,.055),rgba(211,241,237,.035) 50%,rgba(255,239,203,.06)) padding-box,
+             linear-gradient(120deg,rgba(238,200,122,.7),rgba(110,216,207,.62),rgba(222,174,103,.68)) border-box!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.50),inset 0 -1px rgba(255,255,255,.16),0 9px 22px rgba(18,74,75,.045)!important;
+}
+.material-card,.role-list>div,.teacher-script,.concept-goal {
+  background:rgba(255,255,255,.105)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border:1px solid rgba(255,255,255,.55)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.48),0 5px 12px rgba(15,63,68,.035)!important;
+}
+.mode-switch,.tip,.notice.demo-notice {background:rgba(255,255,255,.055)!important;border:1px solid rgba(217,191,138,.45)!important;}
+.panel,.mode-switch,.tip,.notice,.result-hero,.result-main,.summary,.material-card,.role-list>div{isolation:auto!important}
+@media(max-width:950px){.glass-doe-bg{left:43%!important;top:46%!important;width:64vw!important;height:75vh!important;transform:translate(-16%,-47%)!important;opacity:.38!important}}
+@media(max-width:650px){.glass-doe-bg{left:46%!important;top:47%!important;width:84vw!important;height:67vh!important;transform:translate(-17%,-47%)!important;opacity:.25!important}}
+@media(prefers-reduced-motion:reduce){.brand span:last-child,.topbar-mid,.welcome-overline,.heading h1,.heading h1 em,.heading .eyebrow,.result-overline,.panel-heading h2,.result-hero h2,.timeline-top h3,.summary h3,.material-card h3,.aside-card h3,.magic-loading h2{animation:none!important;background-position:50% center!important}}
+
+/* V14: full-coverage emerald glint.  The texture always covers every glyph. */
+@keyframes severusSafeGlimmer {
+  0%, 12%   { background-position: 0% 50%; }
+  44%, 60%  { background-position: 100% 50%; }
+  90%, 100% { background-position: 0% 50%; }
+}
+.brand span:last-child,
+.topbar-mid,
+.welcome-overline,
+.heading h1, .heading h1 em,
+.heading .eyebrow, .result-overline,
+.panel-heading h2, .result-hero h2,
+.timeline-top h3, .summary h3,
+.material-card h3, .aside-card h3, .magic-loading h2 {
+  background-image:linear-gradient(110deg,
+    #073d35 0%, #084c40 24%, #056d55 34%,
+    #29d7af 48%, #068e72 53%, #084b40 65%, #073d35 100%) !important;
+  background-size:200% 100% !important;
+  background-repeat:repeat !important;
+  background-position:0% 50%;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:#073d35 !important;
+  -webkit-text-fill-color:transparent !important;
+  animation:severusSafeGlimmer 6s ease-in-out infinite !important;
+}
+@media(prefers-reduced-motion:reduce){
+  .brand span:last-child,.topbar-mid,.welcome-overline,
+  .heading h1,.heading h1 em,.heading .eyebrow,.result-overline,
+  .panel-heading h2,.result-hero h2,.timeline-top h3,.summary h3,
+  .material-card h3,.aside-card h3,.magic-loading h2 {
+    animation:none !important;
+    background-position:0% 50% !important;
+  }
+}
+
+
+/* V21 — single stable animated emerald glint, replaces V15–V20 conflicts. */
+@keyframes severusGlint {
+  0%, 8% { background-position: 100% 50%; }
+  80%, 100% { background-position: 0% 50%; }
+}
+.brand span:last-child, .topbar-mid, .welcome-overline,
+.heading .eyebrow, .result-overline,
+.heading h1, .heading h1 em,
+.panel-heading h2, .result-hero h2,
+.timeline-top h3, .summary h3,
+.material-card h3, .aside-card h3,
+.magic-loading h2 {
+  background-image: linear-gradient(100deg, #073e35 0%, #073e35 42%, #13785e 46%, #66f8d4 49.5%, #bcfff0 50%, #55e6c0 50.5%, #106950 54%, #073e35 58%, #073e35 100%) !important;
+  background-size: 220% 100% !important;
+  background-repeat: no-repeat !important;
+  background-position: 100% 50%;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #073e35 !important;
+  animation: severusGlint 4s linear infinite !important;
+}
+.brand span:last-child { display:inline-block; }
+.heading h1 { width:fit-content!important; max-width:100%!important; margin-inline:auto!important; }
+.panel-heading h2, .result-hero h2, .timeline-top h3, .summary h3, .material-card h3, .aside-card h3 { width:fit-content; max-width:100%; }
+.magic-loading h2 { display:block!important; text-align:center!important; width:100%!important; margin:5px auto!important; }
+@media (prefers-reduced-motion:reduce) {
+  .brand span:last-child, .topbar-mid, .welcome-overline,
+  .heading .eyebrow, .result-overline, .heading h1, .heading h1 em,
+  .panel-heading h2, .result-hero h2, .timeline-top h3, .summary h3,
+  .material-card h3, .aside-card h3, .magic-loading h2 {
+    animation:none!important;
+    background-image:none!important;
+    -webkit-text-fill-color:#073e35!important;
+    color:#073e35!important;
+  }
+}
+
+/* V22: targeted, legible headline shimmer.  Overrides earlier conflicting
+   background-position rules without changing the working eyebrow animation. */
+@keyframes severusHeadingSweepV22 {
+  0%, 8% { background-position: 100% 50%; filter: brightness(1); }
+  48% { background-position: 50% 50%; filter: brightness(1.10); }
+  88%, 100% { background-position: 0% 50%; filter: brightness(1); }
+}
+:where(.brand span:last-child, .heading h1, .heading h1 em,
+       .panel-heading h2, .result-hero h2, .timeline-top h3,
+       .summary h3, .material-card h3, .aside-card h3,
+       .teacher-script b, .pupil-actions b) {
+  background-image: linear-gradient(90deg,
+    #063f35 0%, #075041 28%, #0a7960 40%, #78f4d5 48%,
+    #cbfff0 50%, #39d6ab 52%, #0b765c 61%, #064135 74%, #063f35 100%) !important;
+  background-size: 300% 100% !important;
+  background-repeat: repeat !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #063f35 !important;
+  animation: severusHeadingSweepV22 4.2s linear infinite !important;
+}
+/* Higher-specificity declarations deliberately win against previous V14-V21 selectors. */
+.app-shell .brand span:last-child,
+.app-shell .heading h1,
+.app-shell .heading h1 em,
+.app-shell .panel-heading h2,
+.app-shell .result-hero h2,
+.app-shell .timeline-top h3,
+.app-shell .summary h3,
+.app-shell .material-card h3,
+.app-shell .aside-card h3,
+.app-shell .teacher-script b,
+.app-shell .pupil-actions b {
+  background-image:linear-gradient(90deg,#063f35 0%,#075041 30%,#0f9e7c 43%,#b5ffe8 50%,#20c69b 57%,#075041 70%,#063f35 100%)!important;
+  background-size:300% 100%!important;
+  background-position:100% 50%;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  animation:severusHeadingSweepV22 4.2s linear infinite!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .app-shell .brand span:last-child,.app-shell .heading h1,.app-shell .heading h1 em,
+  .app-shell .panel-heading h2,.app-shell .result-hero h2,.app-shell .timeline-top h3,
+  .app-shell .summary h3,.app-shell .material-card h3,.app-shell .aside-card h3,
+  .app-shell .teacher-script b,.app-shell .pupil-actions b {
+    animation:none!important;background-position:50% 50%!important;
+    -webkit-text-fill-color:#063f35!important;
+  }
+}
+
+/* V24: stable moving glint. Never make glyphs transparent outside a painted
+   background; repeating gradient keeps the whole text painted. */
+@keyframes severusSelectedTitleShimmerV24 {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+.app-shell .brand span:last-child,
+.app-shell .heading h1,
+.app-shell .heading h1 em,
+.app-shell .magic-loading h2 {
+  display: inline-block;
+  background-image: linear-gradient(90deg,
+    #073f36 0%, #084a3d 24%, #0b6d57 38%,
+    #46dfb5 46%, #c7fff1 50%, #39d9af 54%,
+    #09614e 63%, #073f36 79%, #073f36 100%) !important;
+  background-size: 200% 100% !important;
+  background-repeat: repeat !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #073f36 !important;
+  /* NO !important on background-position: keyframes must own it. */
+  animation: severusSelectedTitleShimmerV24 3.8s linear infinite !important;
+}
+.app-shell .heading h1 {
+  display: table !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.app-shell .magic-loading h2 {
+  display: table !important;
+  width: auto !important;
+  max-width: 100% !important;
+  text-align: center !important;
+  margin: 5px auto !important;
+}
+
+/* Remove shimmer from texts that should remain static */
+.app-shell .topbar-mid,
+.app-shell .heading .eyebrow,
+.app-shell .result-overline,
+.app-shell .panel-heading h2,
+.app-shell .result-hero h2,
+.app-shell .timeline-top h3,
+.app-shell .summary h3,
+.app-shell .material-card h3,
+.app-shell .aside-card h3,
+.app-shell .teacher-script b,
+.app-shell .pupil-actions b {
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: #123f35 !important;
+  color: #123f35 !important;
+  animation: none !important;
+}
+.app-shell .heading .eyebrow,
+.app-shell .result-overline,
+.app-shell .topbar-mid {
+  color: #13715c !important;
+  -webkit-text-fill-color: #13715c !important;
+}
+
+/* Static small labels stay dark green */
+.app-shell .field > span:first-child,
+.app-shell .role-list > div b,
+.app-shell .role-list > div span,
+.app-shell .teacher-script b,
+.app-shell .pupil-actions b,
+.app-shell .summary li,
+.app-shell .material-card p,
+.app-shell .concept-goal,
+.app-shell .tip,
+.app-shell .mode-switch b,
+.app-shell .mode-switch span {
+  color: #1e4a41 !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+/* Icon highlight colors */
+.app-shell .summary h3 svg,
+.app-shell .concept-goal > svg {
+  color: #d1a64d !important;
+  stroke: #d1a64d !important;
+}
+.app-shell .material-card > svg,
+.app-shell .role-list > div > svg {
+  color: #167d63 !important;
+  stroke: #167d63 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .brand span:last-child,
+  .app-shell .heading h1,
+  .app-shell .heading h1 em,
+  .app-shell .magic-loading h2 {
+    animation: none !important;
+    background-position: 50% 50% !important;
+  }
+}
+
+/* V25 — animate only three eyebrow labels and the loading title.
+   All other writing remains solid dark green. */
+.app-shell :is(h1,h2,h3,h4,h5,h6,p,span,em,b,strong,label,small) {
+  animation: none !important;
+}
+/* Clear old clipped-gradient styles from headlines so they cannot vanish. */
+.app-shell .brand span:last-child,
+.app-shell .heading h1,
+.app-shell .heading h1 em,
+.app-shell .panel-heading h2,
+.app-shell .result-hero h2,
+.app-shell .timeline-top h3,
+.app-shell .summary h3,
+.app-shell .material-card h3,
+.app-shell .aside-card h3,
+.app-shell .teacher-script b,
+.app-shell .pupil-actions b {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: #123f35 !important;
+  color: #123f35 !important;
+  animation: none !important;
+}
+/* The three section labels retain a moving emerald sweep. */
+@keyframes severusFourOnly {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.app-shell .topbar-mid,
+.app-shell .heading .eyebrow,
+.app-shell .heading .eyebrow.result-overline,
+.app-shell .magic-loading h2 {
+  background-image: linear-gradient(90deg,#0d4e42 0%,#0c604e 28%,#34cda6 42%,#b5ffec 50%,#23ba98 58%,#0c604e 72%,#0d4e42 100%) !important;
+  background-size: 180% 100% !important;
+  background-repeat: repeat !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #0b5043 !important;
+  animation: severusFourOnly 4.8s linear infinite !important;
+}
+.app-shell .magic-loading h2 {
+  display:table !important;
+  width:auto !important;
+  max-width:100% !important;
+  margin-inline:auto !important;
+  text-align:center !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .topbar-mid,
+  .app-shell .heading .eyebrow,
+  .app-shell .heading .eyebrow.result-overline,
+  .app-shell .magic-loading h2 {
+    animation:none !important;
+    background:none !important;
+    -webkit-text-fill-color:#0d4e42 !important;
+    color:#0d4e42 !important;
+  }
+}
+
+
+/* V26: isolate the four animated phrases in their own elements.
+   Older selectors affect parent ribbons, but cannot freeze this new background.
+   The animated registered custom property feeds an !important background position. */
+@property --severus-glint-pos {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 100%;
+}
+@keyframes severusGlintTravel26 {
+  0%, 9%   { --severus-glint-pos: 100%; }
+  84%,100% { --severus-glint-pos: 0%; }
+}
+.app-shell .topbar-mid .selected-text-glint,
+.app-shell .heading .eyebrow .selected-text-glint,
+.app-shell .magic-loading h2 .selected-text-glint {
+  display: inline-block !important;
+  width: max-content;
+  max-width: 100%;
+  --severus-glint-pos: 100%;
+  background: linear-gradient(90deg,
+    #0b4d41 0%, #0b4d41 36%,
+    #2fb996 44%, #c7fff0 49%, #56eccc 52%,
+    #0b6c58 58%, #0b4d41 65%, #0b4d41 100%) !important;
+  background-size: 240% 100% !important;
+  background-position: var(--severus-glint-pos) 50% !important;
+  background-repeat: no-repeat !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #0b4d41 !important;
+  animation: severusGlintTravel26 4.6s linear infinite !important;
+}
+.app-shell .magic-loading h2 {
+  -webkit-text-fill-color: initial !important;
+  background: none !important;
+  color:#0b4d41 !important;
+  animation: none !important;
+}
+.app-shell .topbar-mid .selected-text-glint,
+.app-shell .heading .eyebrow .selected-text-glint { text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .topbar-mid .selected-text-glint,
+  .app-shell .heading .eyebrow .selected-text-glint,
+  .app-shell .magic-loading h2 .selected-text-glint {
+    animation:none !important;
+    -webkit-text-fill-color:#0b4d41 !important;
+    background:none !important;
+  }
+}
+
+/* V27 — richer but completely static emerald for the two main hero headings. */
+.app-shell .page-content .heading h1,
+.app-shell .page-content .heading h1 em {
+  background: linear-gradient(105deg,
+    #073d35 0%,
+    #0b5748 26%,
+    #118b6d 49%,
+    #24b995 64%,
+    #0c6652 83%,
+    #073d35 100%) !important;
+  background-size: 100% 100% !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #0b5748 !important;
+  animation: none !important;
+}
+
+/* v30: workshop label centered under the page crystal (desktop). */
+.app-shell .topbar { position: relative; }
+.app-shell .topbar-mid {
+ position: absolute !important;
+ left: 50% !important;
+ top: 67px !important;
+ transform: translate(-50%, -50%) !important;
+ margin: 0 !important;
+ width: max-content !important;
+ max-width: calc(100% - 360px) !important;
+ align-items: center !important;
+ justify-content: center !important;
+ white-space: nowrap !important;
+ z-index: 4 !important;
+}
+/* Preserve existing emerald animation of the nested selected-text-glint. */
+@media(max-width:800px) and (min-width:651px) {
+ .app-shell .topbar-mid {font-size:9px!important;gap:4px!important;letter-spacing:.06em!important;max-width:calc(100% - 250px)!important}
+}
+@media(max-width:650px) {
+ .app-shell .topbar-mid {display:none!important}
+}
+
+/* v31 — requested header and copy action refinements. */
+/* Keep the static emerald gradient on the site name, consistent with page headings. */
+.app-shell .topbar .brand span:last-child {
+  display: inline-block !important;
+  background: linear-gradient(105deg, #073d35 0%, #0b5748 26%, #118b6d 49%, #24b995 64%, #0c6652 83%, #073d35 100%) !important;
+  background-size: 100% 100% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #0b5748 !important;
+  animation: none !important;
+}
+/* Slight optical correction, while preserving crystal-centered layout and animated text. */
+.app-shell .topbar-mid {
+  left: calc(50% + 8px) !important;
+}
+/* Make Copy plan match the emerald action buttons, with movement on hover only. */
+.app-shell .result-aside .copy {
+  background: #0e5847 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border: 1px solid #19775d !important;
+  box-shadow: 0 8px 18px rgba(11,81,59,.16) !important;
+  transition: background-position .45s ease, transform .25s ease, box-shadow .25s ease !important;
+  background-image: linear-gradient(110deg, #0b4d3e 0%, #106f55 38%, #2ab595 51%, #0f765c 66%, #0b4d3e 100%) !important;
+  background-size: 220% 100% !important;
+  background-position: 100% 50% !important;
+}
+.app-shell .result-aside .copy:hover:not(:disabled) {
+  background-position: 0% 50% !important;
+  box-shadow: 0 9px 25px rgba(14,133,100,.32) !important;
+  transform: translateY(-2px) !important;
+}
+.app-shell .result-aside .copy svg {color: #fff !important; stroke: #fff !important;}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .result-aside .copy { transition: none !important; }
+  .app-shell .result-aside .copy:hover:not(:disabled) {transform: none !important;}
+}

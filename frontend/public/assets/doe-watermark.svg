@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="650" viewBox="0 0 740 650" fill="none">
+<defs><linearGradient id="d" x1="100" y1="90" x2="620" y2="565" gradientUnits="userSpaceOnUse"><stop stop-color="#C5FFF0"/><stop offset=".48" stop-color="#29BFA9"/><stop offset="1" stop-color="#C4E9F5"/></linearGradient><filter id="soft"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
+<g stroke="url(#d)" stroke-linecap="round" stroke-linejoin="round" filter="url(#soft)" opacity=".7">
+<path d="M295 473 C332 422 388 403 423 344 C442 315 452 276 468 222 C477 187 495 157 511 146 C537 130 572 145 590 176 L614 184 L590 199 L569 192 C549 209 534 225 525 252 C508 319 510 362 485 401 C461 448 420 478 410 520" stroke-width="15"/>
+<path d="M328 465 C284 463 248 439 211 444 C168 451 148 491 108 499 M352 467 C323 489 299 539 303 580 M411 517 C433 539 438 573 434 602 M385 473 C389 527 376 563 365 602" stroke-width="11"/>
+<path d="M521 152 C523 114 509 88 478 53 M520 146 C546 111 575 94 614 76 M525 138 C518 100 542 81 548 41 M509 122 C481 107 466 85 451 71 M556 129 C584 126 607 112 625 94" stroke-width="8"/>
+<path d="M549 171 Q562 170 565 174" stroke-width="4"/>
+</g>
+</svg>
