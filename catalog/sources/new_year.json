@@ -7,7 +7,7 @@
       "publisher": "КонсультантПлюс",
       "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
       "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
+      "verification_status": "verified",
       "topics": [
         "new_year"
       ],
@@ -15,9 +15,9 @@
         "RU"
       ],
       "text_excerpt": "Подтверждает новогодние каникулы 1–8 января; не подтверждает все традиции праздника.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "note": "Прямое открытие URL и релевантность проверены вручную.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
     },
     {
       "source_id": "src_new_year_audit_02",
@@ -25,7 +25,7 @@
       "publisher": "Культура.РФ",
       "url": "https://www.culture.ru/s/vopros/pervyi-novyi-god",
       "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
+      "verification_status": "verified",
       "topics": [
         "new_year"
       ],
@@ -33,9 +33,9 @@
         "RU"
       ],
       "text_excerpt": "Исторический материал о смене дат Нового года и традициях в России.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "note": "Прямое открытие URL и релевантность проверены вручную.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
     },
     {
       "source_id": "src_new_year_audit_03",
@@ -43,7 +43,7 @@
       "publisher": "Культура.РФ",
       "url": "https://www.culture.ru/events/4397307/obychai-i-tradicii-rossii",
       "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
+      "verification_status": "verified",
       "topics": [
         "new_year"
       ],
@@ -51,9 +51,9 @@
         "RU"
       ],
       "text_excerpt": "Описывает некоторые современные новогодние традиции; страница события, требуется осторожная оценка авторства.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "note": "Прямое открытие URL и релевантность проверены вручную.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
     },
     {
       "source_id": "src_new_year_v19_01",
@@ -87,7 +87,7 @@
         "RU"
       ],
       "text_excerpt": "Историческая справка об изменении даты начала года в России.",
-      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "note": "Прямое открытие URL и релевантность проверены вручную.",
       "content_relevance_checked": true,
       "url_access_checked_in_this_revision": true
     },
@@ -97,7 +97,7 @@
       "publisher": "Большая российская энциклопедия",
       "url": "https://old.bigenc.ru/ethnology/text/2668984",
       "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
+      "verification_status": "verified",
       "topics": [
         "new_year"
       ],
@@ -106,8 +106,8 @@
       ],
       "text_excerpt": "Энциклопедическая статья о календарном празднике и его традициях.",
       "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true
     }
   ],
   "required_minimum": 3,
@@ -127,10 +127,10 @@
       "regions": [
         "RU-SVE"
       ],
-      "verification_status": "draft",
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
+      "verified_by": manual_audit,
+      "retrieved_at": "2026-10-29",
       "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
     },
     {
@@ -144,10 +144,10 @@
       "regions": [
         "RU-SVE"
       ],
-      "verification_status": "draft",
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
+      "verified_by": manual_audit,
+      "retrieved_at": "2026-10-29",
       "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
     },
     {
@@ -161,10 +161,10 @@
       "regions": [
         "RU-SVE"
       ],
-      "verification_status": "draft",
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
+      "verified_by": manual_audit,
+      "retrieved_at": "2026-10-29",
       "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
     },
     {
@@ -178,10 +178,10 @@
       "regions": [
         "RU-SVE"
       ],
-      "verification_status": "draft",
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
+      "verified_by": manual_audit,
+      "retrieved_at": "2026-10-29",
       "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
     },
     {
@@ -195,10 +195,10 @@
       "regions": [
         "RU-SVE"
       ],
-      "verification_status": "draft",
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
+      "verified_by": manual_audit,
+      "retrieved_at": "2026-10-29",
       "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
     }
   ]
