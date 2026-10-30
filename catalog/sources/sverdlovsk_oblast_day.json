@@ -4,43 +4,56 @@
     {
       "source_id": "src_sverdlovsk_oblast_day_regional_01",
       "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
-      "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+      "publisher": "Гарант.ру",
       "url": "https://base.garant.ru/20926350/",
-      "retrieved_at": "2026-10-21",
-      "verification_status": "candidate_needs_direct_legal_check",
-      "topics": [
-        "sverdlovsk_oblast_day"
-      ],
-      "regions": [
-        "RU-SVE"
-      ],
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
+      "topics": ["sverdlovsk_oblast_day"],
+      "regions": ["RU-SVE"],
       "text_excerpt": "В опубликованном тексте указа перечислен День образования Свердловской области — 17 января.",
-      "note": "Вторичный правовой ресурс; перед окончательной приёмкой проверить действующую редакцию на официальном портале правовой информации.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Указ подтверждает дату 17 января.",
       "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": false
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "manual_audit",
+      "verified_at": "2026-10-29"
     },
     {
       "source_id": "src_sverdlovsk_oblast_day_regional_02",
-      "title": "Официальные новости Министерства социальной политики Свердловской области: материалы к годовщине образования области",
+      "title": "17 января - День образования Свердловской области",
+      "publisher": "Официальный портал Свердловской области",
+      "url": "https://xn--b1albebc0apl.xn--80acgfbsl1azdqr.xn--p1ai/novosti/288855",
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
+      "topics": ["sverdlovsk_oblast_day"],
+      "regions": ["RU-SVE"],
+      "text_excerpt": "Официальная публикация подтверждает, что 17 января 1934 года Уральская область была разделена на Свердловскую, Челябинскую и Обско-Иртышскую области. В 2026 году отмечается 92-летие со дня создания Свердловской области.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Актуальная официальная публикация от 17 января 2026 года.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "manual_audit",
+      "verified_at": "2026-10-29"
+    },
+    {
+      "source_id": "src_sverdlovsk_oblast_day_regional_03",
+      "title": "Праздники Свердловской области",
       "publisher": "Министерство социальной политики Свердловской области",
-      "url": "https://msp.midural.ru/news/?page=all",
-      "retrieved_at": "2026-10-21",
-      "verification_status": "candidate_needs_article_level_check",
-      "topics": [
-        "sverdlovsk_oblast_day"
-      ],
-      "regions": [
-        "RU-SVE"
-      ],
-      "text_excerpt": "В архиве регионального ведомства присутствуют публикации о годовщине образования Свердловской области, включая сообщение от 17 января 2019 года.",
-      "note": "Архивная страница не заменяет отдельную публикацию; требуется открыть и зафиксировать точный материал.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": true
+      "url": "https://msp.midural.ru/activity/holidays/",
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
+      "topics": ["sverdlovsk_oblast_day"],
+      "regions": ["RU-SVE"],
+      "text_excerpt": "Официальный перечень праздников Свердловской области, включающий День образования области 17 января.",
+      "note": "Дополнительное независимое подтверждение от профильного министерства. Прямое открытие URL и релевантность проверены вручную.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "manual_audit",
+      "verified_at": "2026-10-29"
     }
   ],
   "required_minimum": 3,
-  "verified_count": 0,
-  "status": "incomplete",
-  "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки.",
+  "verified_count": 3,
+  "status": "verified_minimum_met",
+  "note": "Все три источника проверены вручную. Дата 17 января подтверждена Указом Губернатора, официальной публикацией от 17.01.2026 и перечнем праздников от профильного министерства. Уникальные verified издатели: Гарант, Официальный портал СО, Минсоцполитики СО.",
+  "audit_note": "Все URL открыты, релевантность подтверждена. Найдена актуальная официальная публикация к 92-летию области.",
   "fragments": []
 }
