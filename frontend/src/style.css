@@ -1101,3 +1101,415 @@ background-size:270% 100%!important;background-clip:text!important;-webkit-backg
   .app-shell .result-aside .copy { transition: none !important; }
   .app-shell .result-aside .copy:hover:not(:disabled) {transform: none !important;}
 }
+
+
+/* SEVERUS_UI_REVIEW_FIX_2026_10 */
+/* Stop heading shimmer, keep emerald/gold layout and non-text wand animation. */
+.app-shell .brand, .app-shell .brand span,
+.app-shell .topbar-mid, .app-shell .topbar-mid *,
+.app-shell .selected-text-glint, .app-shell .heading h1,
+.app-shell .heading h1 em, .app-shell .heading .eyebrow,
+.app-shell .heading .eyebrow *,
+.app-shell .panel-heading h2, .app-shell .result-hero h2,
+.app-shell .timeline-top h3, .app-shell .summary h3,
+.app-shell .aside-card h3, .app-shell .aside-card h3 em,
+.app-shell .magic-loading h2, .app-shell .welcome h1 {
+  animation:none!important; transition:color .2s ease!important;
+  background:none!important; background-image:none!important;
+  -webkit-text-fill-color:#103f32!important; color:#103f32!important;
+  -webkit-background-clip:border-box!important; background-clip:border-box!important;
+  text-shadow:none!important; opacity:1!important;
+}
+/* Prevent old shimmer overlays from covering text when tabs regain focus. */
+.app-shell .selected-text-glint::before,.app-shell .selected-text-glint::after,
+.app-shell .heading h1::before,.app-shell .heading h1::after,
+.app-shell .brand span::before,.app-shell .brand span::after{animation:none!important;content:none!important}
+/* Glass side card: pale mint with high-contrast navy typography. */
+.app-shell .aside-card{
+  background:linear-gradient(135deg,rgba(216,244,228,.76),rgba(196,234,222,.66) 48%,rgba(228,242,234,.78))!important;
+  border:1px solid rgba(137,190,168,.62)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.15);backdrop-filter:blur(16px) saturate(1.15);
+  box-shadow:0 10px 28px rgba(24,60,68,.10),inset 0 1px 1px rgba(255,255,255,.85)!important;
+}
+.app-shell .aside-card h3,.app-shell .aside-card h3 em{
+ color:#102c4a!important;-webkit-text-fill-color:#102c4a!important;
+ background:linear-gradient(100deg,#102c4a,#bfe8ff 47%,#142c51 58%,#102c4a)!important;
+ -webkit-background-clip:text!important;background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+}
+.app-shell .aside-card p,.app-shell .aside-card li,.app-shell .aside-card ul,
+.app-shell .aside-card .tip{color:#173451!important;-webkit-text-fill-color:#173451!important;text-shadow:none!important}
+/* Maintain field visibility during tab switches; avoid large paint layers drifting. */
+.app-shell .field,.app-shell .fields,.app-shell .form-main,.app-shell .form-grid{transform:none!important;filter:none!important;opacity:1!important;visibility:visible!important}
+.app-shell input,.app-shell textarea,.app-shell .glass-select-trigger{color:#183e39!important;-webkit-text-fill-color:#183e39!important;opacity:1!important}
+.app-shell .panel,.app-shell .mode-switch,.app-shell .notice{background-attachment:scroll!important}
+.app-shell .panel::before,.app-shell .panel::after,.app-shell .mode-switch::before,.app-shell .mode-switch::after{background-attachment:scroll!important}
+.app-shell .result-layout,.app-shell .result-main,.app-shell .results{isolation:isolate}
+/* The single beige rectangle on scroll may come from an overextended decoration layer;
+   contain backdrop ornaments without hiding the deer. */
+.app-shell .panel,.app-shell .result-hero,.app-shell .summary{background-clip:padding-box}
+/* Fully custom popup menu; unlike OS-native <option> it respects glass/typography. */
+.app-shell .custom-select-field{display:flex;flex-direction:column;gap:8px;min-width:0;position:relative;z-index:auto}
+.app-shell .custom-select-field:focus-within{z-index:40}
+.app-shell .field-name{color:#163c34;font-weight:700}
+.app-shell .glass-select{position:relative;width:100%;font:inherit}
+.app-shell .glass-select-trigger{width:100%;min-height:56px;padding:12px 15px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:10px;border:1px solid rgba(255,255,255,.9);background:rgba(238,249,242,.69);box-shadow:inset 0 1px 1px rgba(255,255,255,.65);font:inherit;cursor:pointer}
+.app-shell .glass-select-trigger svg{color:#5c8174;flex-shrink:0}
+.app-shell .glass-select-trigger:focus-visible,.app-shell .glass-options button:focus-visible{outline:2px solid #178e73;outline-offset:2px}
+.app-shell .glass-options{position:absolute;top:calc(100% + 5px);left:0;right:0;max-height:260px;overflow-y:auto;overscroll-behavior:contain;z-index:200;padding:5px;border:1px solid rgba(181,213,196,.85);border-radius:12px;background:rgba(220,242,229,.96);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 12px 32px rgba(4,43,38,.22)}
+.app-shell .glass-options button{width:100%;display:block;text-align:left;color:#193f36;background:transparent;padding:11px 12px;border:0;border-radius:8px;font:inherit;line-height:1.4;white-space:normal}
+.app-shell .glass-options button:hover,.app-shell .glass-options button.chosen{background:rgba(14,109,81,.14);color:#063e31}
+.app-shell .glass-options button[aria-selected="true"]{font-weight:750}
+/* Remove unwanted horizontal shape overflow while keeping fixed background subject. */
+.app-shell{overflow-x:clip}
+
+
+/* SEVERUS_LAYOUT_HOTFIX_2 */
+/* Dropdowns must escape form panels and flow over following cards. */
+.app-shell .form-grid,.app-shell .form-main,.app-shell .form-main .panel,
+.app-shell .fields,.app-shell .fields.two,.app-shell .field,
+.app-shell .custom-select-field,.app-shell .glass-select{
+ overflow:visible!important;contain:none!important;clip-path:none!important;
+}
+.app-shell .form-main .panel{position:relative!important;z-index:1!important}
+.app-shell .form-main .panel:has(.glass-select:focus-within){z-index:30!important}
+.app-shell .glass-select:has(.glass-select-trigger[aria-expanded="true"]){z-index:100!important}
+.app-shell .glass-options{z-index:1000!important;max-height:min(270px,55vh)!important;overflow-y:auto!important}
+/* Make only the custom checkbox visible; native checkbox stays operable by label. */
+.app-shell label.check{position:relative!important;display:inline-flex!important;align-items:center!important;gap:9px!important;cursor:pointer!important}
+.app-shell label.check input[type="checkbox"]{
+ position:absolute!important;width:20px!important;height:20px!important;margin:0!important;
+ opacity:0!important;pointer-events:none!important;
+}
+.app-shell label.check .check-icon{display:inline-grid!important;place-items:center!important;
+ width:20px!important;height:20px!important;min-width:20px!important;flex:0 0 20px!important;
+ border:1px solid #639e8d!important;border-radius:5px!important;background:rgba(247,255,251,.85)!important}
+.app-shell label.check .check-icon svg{width:13px!important;height:13px!important;opacity:0!important;color:white!important}
+.app-shell label.check input[type="checkbox"]:checked + .check-icon{background:#086b56!important;border-color:#086b56!important}
+.app-shell label.check input[type="checkbox"]:checked + .check-icon svg{opacity:1!important}
+.app-shell label.check input[type="checkbox"]:focus-visible + .check-icon{outline:2px solid #007b66!important;outline-offset:3px!important}
+/* Disable moving shimmer throughout heading text, including nested gradient spans. */
+.app-shell .selected-text-glint,.app-shell .topbar-mid .selected-text-glint,
+.app-shell .heading h1,.app-shell .heading h1 *,
+.app-shell .panel-heading h2,.app-shell .panel-heading h2 *,
+.app-shell .welcome-overline,.app-shell .heading .eyebrow,
+.app-shell .result-overline,.app-shell .result-hero h2,
+.app-shell .result-hero h2 *, .app-shell .summary h3,
+.app-shell .material-card h3,.app-shell .timeline-top h3,
+.app-shell .brand span:last-child {
+ animation:none!important;background-image:none!important;background:none!important;
+ color:#073f33!important;-webkit-text-fill-color:#073f33!important;
+ -webkit-background-clip:border-box!important;background-clip:border-box!important;
+ text-shadow:none!important;
+}
+.app-shell .selected-text-glint::before,.app-shell .selected-text-glint::after,
+.app-shell .heading h1::before,.app-shell .heading h1::after{
+ content:none!important;animation:none!important}
+/* Sidebar stays mint / navy rather than falling back to old dark-card styles. */
+.app-shell .form-aside .aside-card{background:linear-gradient(130deg,rgba(227,249,236,.87),rgba(197,233,222,.83))!important;
+ border:1px solid rgba(150,196,177,.85)!important;color:#173451!important}
+.app-shell .form-aside .aside-card h3,.app-shell .form-aside .aside-card h3 em{
+ animation:none!important;background:linear-gradient(105deg,#112d50,#bde8fd 48%,#112d50 62%)!important;
+ background-clip:text!important;-webkit-background-clip:text!important;
+ color:transparent!important;-webkit-text-fill-color:transparent!important}
+.app-shell .form-aside .aside-card p,.app-shell .form-aside .aside-card li{
+ color:#173451!important;-webkit-text-fill-color:#173451!important}
+
+/* Liquid Glass — боковая карточка конструктора */
+.app-shell .form-aside .aside-card {
+background: rgba(210, 238, 231, 0.12) !important;
+backdrop-filter: blur(14px) saturate(115%) !important;
+-webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+border: 1px solid rgba(255, 255, 255, 0.42) !important;
+box-shadow: 0 8px 24px rgba(28, 72, 61, 0.08) !important;
+}
+
+/* Статичный синий заголовок */
+.app-shell .form-aside .aside-card h3,
+.app-shell .form-aside .aside-card h3 em,
+.app-shell .form-aside .aside-card h3 span {
+  color: #284e74 !important;
+  -webkit-text-fill-color: #284e74 !important;
+  background: none !important;
+  background-image: none !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+/* Остальной текст — однотонный темно-синий */
+.app-shell .form-aside .aside-card p,
+.app-shell .form-aside .aside-card li {
+  color: #34566b !important;
+}
+/* Убираем переливы маленьких заголовков */
+.app-shell .eyebrow,
+.app-shell .eyebrow *,
+.app-shell .selected-text-glint {
+  animation: none !important;
+  background-image: none !important;
+  -webkit-text-fill-color: #064b3b !important;
+  color: #064b3b !important;
+}
+
+/* Отключаем переливы заголовка конструктора */
+.app-shell .heading .eyebrow,
+.app-shell .heading .eyebrow *,
+.app-shell .heading .eyebrow .selected-text-glint {
+  animation: none !important;
+  background: none !important;
+  background-image: none !important;
+  -webkit-text-fill-color: #064b3b !important;
+  color: #064b3b !important;
+  text-shadow: none !important;
+}
+
+
+/* Ожидаемые результаты и Памятка педагогу */
+.app-shell .result-aside .panel.summary {
+  background: rgba(210, 238, 231, 0.12) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.42) !important;
+  box-shadow: 0 8px 24px rgba(28, 72, 61, 0.08) !important;
+}
+
+/* Обратите внимание — очень прозрачная карточка */
+.app-shell .result-aside .notice.warning {
+  background: rgba(255, 251, 239, 0.07) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.48) !important;
+  box-shadow: 0 5px 18px rgba(28, 72, 61, 0.035) !important;
+}
+
+/* Максимальная прозрачность блока "Обратите внимание" */
+.app-shell .result-aside .notice.warning,
+.app-shell .result-aside .notice,
+.app-shell .results .demo-notice {
+  background: transparent !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(211, 181, 119, 0.35) !important;
+}
+
+
+/* Красное обрамление двух информационных блоков */
+.app-shell .form-aside .tip,
+.app-shell .result-aside .notice {
+  border: 1px solid rgba(200, 65, 65, 0.55) !important;
+  border-radius: 22px !important;
+}
+
+/* Красная лампочка в блоке "Для первого знакомства" */
+.app-shell .form-aside .tip svg {
+  color: #c43c3c !important;
+  stroke: #c43c3c !important;
+}
+
+/* Значок предупреждения для блока "Обратите внимание" */
+.app-shell .result-aside .notice::before {
+  content: "!";
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  margin-right: 7px;
+  border: 1.5px solid #c43c3c;
+  border-radius: 50%;
+  color: #c43c3c;
+  font-size: 13px;
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+
+/* Красный заголовок "Обратите внимание" */
+.app-shell .result-aside .notice b,
+.app-shell .result-aside .notice strong {
+  color: #c43c3c !important;
+  -webkit-text-fill-color: #c43c3c !important;
+}
+
+
+/* Исправление блока "Обратите внимание" */
+
+/* Красная рамка, прозрачный фон */
+.app-shell .result-aside .notice {
+  position: relative !important;
+  border: 1px solid rgba(196, 60, 60, 0.65) !important;
+  border-radius: 22px !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Убираем старый восклицательный знак */
+.app-shell .result-aside .notice::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Красный заголовок */
+.app-shell .result-aside .notice b,
+.app-shell .result-aside .notice strong {
+  color: #c43c3c !important;
+  -webkit-text-fill-color: #c43c3c !important;
+}
+
+/* Новый знак строго слева от заголовка */
+.app-shell .result-aside .notice b::before,
+.app-shell .result-aside .notice strong::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  margin-right: 7px;
+  border: 1.5px solid #c43c3c;
+  border-radius: 50%;
+  color: #c43c3c;
+  font: 800 12px/1 Arial, sans-serif;
+  vertical-align: middle;
+}
+
+/* Красная рамка блока "Обратите внимание" */
+.app-shell .results .result-aside .notice,
+.app-shell .results .result-aside .notice.warning {
+  border: 1px solid #c43c3c !important;
+  border-radius: 22px !important;
+  outline: none !important;
+}
+
+/* Выравнивание надписи относительно кристалла */
+.app-shell .topbar-mid {
+  left: calc(50% - 1px) !important;
+}
+
+
+/* Красные прозрачные предупреждения на странице результата */
+.app-shell .results .notice.error,
+.app-shell .results .notice.generation-warnings {
+  position: relative !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #e04444 !important;
+  border-radius: 22px !important;
+  box-shadow: none !important;
+  color: #34566b !important;
+}
+
+/* Убираем прежние декоративные значки */
+.app-shell .results .notice.error::before,
+.app-shell .results .notice.generation-warnings::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Красные заголовки */
+.app-shell .results .notice.error > b,
+.app-shell .results .notice.generation-warnings > b {
+  color: #d93636 !important;
+  -webkit-text-fill-color: #d93636 !important;
+}
+
+/* Красный восклицательный знак слева от заголовка */
+.app-shell .results .notice.error > b::before,
+.app-shell .results .notice.generation-warnings > b::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  margin-right: 9px;
+  border: 1.5px solid #d93636;
+  border-radius: 50%;
+  color: #d93636;
+  -webkit-text-fill-color: #d93636;
+  font: 800 12px/1 Arial, sans-serif;
+  vertical-align: middle;
+}
+
+
+
+/* Уведомление об ошибке генерации failed */
+.app-shell .page-content .notice.error:not([role="status"]),
+.app-shell .page-content .notice.error[role="alert"] {
+  position: relative !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #e04444 !important;
+  border-radius: 22px !important;
+  box-shadow: none !important;
+  color: #d93636 !important;
+  -webkit-text-fill-color: #d93636 !important;
+}
+
+/* Красный значок перед сообщением */
+.app-shell .page-content .notice.error:not([role="status"])::before,
+.app-shell .page-content .notice.error[role="alert"]::before {
+  content: "!";
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  margin-right: 9px;
+  border: 1.5px solid #d93636;
+  border-radius: 50%;
+  color: #d93636;
+  -webkit-text-fill-color: #d93636;
+  font: 800 12px/1 Arial, sans-serif;
+  vertical-align: middle;
+}
+
+
+/* UI review: parent roles and generation messages — preserve original Liquid Glass styles. */
+.app-shell .parent-role-fieldset {grid-column:1/-1;min-width:0;border:1px solid rgba(134,187,166,.5);border-radius:14px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:12px 20px;}
+.app-shell .parent-role-fieldset legend {padding:0 8px;font-weight:600;color:#174b40;}
+.app-shell .parent-role-fieldset .check {display:inline-flex;align-items:center;gap:9px;min-width:155px;}
+.app-shell .results .notice.error ul,.app-shell .results .generation-warnings ul {padding-left:1.5em;margin:8px 0;}
+.app-shell .results .notice.error li,.app-shell .results .generation-warnings li {margin:4px 0;overflow-wrap:anywhere;}
+.app-shell .results .generation-warnings {border:1px solid rgba(186,116,36,.65);background:rgba(255,246,215,.28);color:#5e482f;}
+
+/* Значок ошибки слева от текста */
+.app-shell .page-content .notice.error:not([role="status"])::before {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  margin: 0 9px 0 0 !important;
+  vertical-align: middle !important;
+}
+
+/* Красный текст предупреждений partial и BUG-10 */
+.app-shell .results .notice.error,
+.app-shell .results .notice.generation-warnings,
+.app-shell .results .notice.error li,
+.app-shell .results .notice.generation-warnings li,
+.app-shell .results .notice.error p,
+.app-shell .results .notice.generation-warnings p {
+  color: #d93636 !important;
+  -webkit-text-fill-color: #d93636 !important;
+  font-weight: 400 !important;
+}
+
+/* Заголовки остаются красными и жирными */
+.app-shell .results .notice.error > b,
+.app-shell .results .notice.generation-warnings > b {
+  color: #d93636 !important;
+  -webkit-text-fill-color: #d93636 !important;
+  font-weight: 700 !important;
+}

@@ -4,7 +4,9 @@ export type Options={regions:Choice[];grades:number[];duration_minutes:{value:nu
 export type RequestData={event_id:string;region_id:string;grade:number;pupils_count:number;duration_minutes:number;format:string;participants:{teachers_count:number;parents_enabled:boolean;parents_count:number;parent_roles:string[]};resources:{projector:boolean;printer:boolean;internet:boolean;audio:boolean;room:string;available_materials:string[]};teacher_preferences:{style:string;script_detail:string;difficulty:string;interaction_level:string;group_work:boolean;preparation_effort:string;notes:string|null};generation:{variants_count:number;language:'ru'}};
 export type TimelineBlock={block_id:string;start_minute:number;duration_minutes:number;title:string;purpose?:string;teacher_script?:string;pupil_actions?:string[];material_ids?:string[]};
 export type Variant={variant_id:string;title:string;concept?:{summary?:string;goal?:string;tasks?:string[];expected_outcomes?:string[]};roles?:{role_id:string;title:string;count:number}[];timeline?:TimelineBlock[];materials?:{material_id:string;title:string;type?:string;content?:string;used_in_blocks?:string[]}[];teacher_instructions?:string[];quality_report?:{status:string;issues?:{code:string;severity:string;message:string}[]}};
-export type Project={schema_version:string;project_id:string;status:string;variants:Variant[]};
+export type GenerationIssue={code?:string;message?:string;field?:string;variant_id?:string};
+export type GenerationWarning=string|{code?:string;message?:string;field?:string};
+export type Project={schema_version:string;project_id:string;status:string;variants:Variant[];generation_issues?:GenerationIssue[];generation_warnings?:GenerationWarning[];variant_statuses?:{variant_id:string;status:string}[]};
 const apiBase=(import.meta.env.VITE_API_BASE_URL||'http://127.0.0.1:8000').replace(/\/$/,'');
 async function getJson<T>(path:string,init?:RequestInit):Promise<T>{
  const url=path.startsWith('http')?path:`${apiBase}${path}`;
@@ -24,17 +26,18 @@ export async function createProject(request:RequestData,onStatus:(status:string)
   const state=await getJson<{
    status:string;
    completed_variants?:number;
-   errors?:{code?:string;message?:string}[];
+   errors?:GenerationIssue[];
+   warnings?:GenerationWarning[];
+   variants?:{variant_id:string;status:string}[];
   }>(statusUrl);
 
   onStatus(state.status);
 
-  if(state.status==='completed'){
-   return await getJson<Project>(projectUrl);
-  }
-
-  if(state.status==='partial'&&(state.completed_variants??0)>0){
-   return await getJson<Project>(projectUrl);
+  if(state.status==='completed'||(state.status==='partial'&&(state.completed_variants??0)>0)){
+   const result=await getJson<Project>(projectUrl);
+   // Metadata belongs to the job status, not necessarily the project payload.
+   return {...result, generation_issues:state.errors||[], generation_warnings:state.warnings||[],
+    variant_statuses:state.variants||[], status:state.status};
   }
 
   if(state.status==='failed'||state.status==='partial'){
