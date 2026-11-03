@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Герои среди нас",
+      "summary": "Участники узнают истории реальных защитников Отечества через письма и воспоминания, затем создают коллективный плакат-поздравление, отражающий качества настоящего героя.",
+      "narrative_approach": "Событие начинается с обсуждения качеств защитника, продолжается работой с историческими источниками и завершается созданием совместного поздравления, выражающего благодарность и уважение.",
+      "primary_mechanic": "creative_workshop",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Вводная беседа: кто такой защитник?",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Работа с источниками: герои прошлого",
+          "activity_type": "source_work",
+          "approx_minutes": 15
+        },
+        {
+          "order": 3,
+          "title": "Групповая работа: создание поздравительного плаката",
+          "activity_type": "team_task",
+          "approx_minutes": 20
+        },
+        {
+          "order": 4,
+          "title": "Представление работ",
+          "activity_type": "performance",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "Рефлексия и награждение",
+          "activity_type": "reflection",
+          "approx_minutes": 10
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "source_work",
+          "description": "Дети делятся на группы и изучают реальные письма и воспоминания защитников Отечества"
+        },
+        {
+          "activity_type": "team_task",
+          "description": "Создание общего поздравительного плаката, отражающего качества защитника"
+        }
+      ],
+      "distinctive_result": "Коллективный плакат-поздравление, отражающий понимание детьми качеств защитника и благодарности к защитникам Отечества",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "historical_memory",
+          "mechanic_type": "source_work",
+          "mechanic": "Изучение реальных писем и воспоминаний защитников Отечества позволяет детям познакомиться с историей и сделать собственные выводы."
+        },
+        {
+          "value_id": "citizenship",
+          "mechanic_type": "class_collective_task",
+          "mechanic": "Совместное создание плаката отражает гражданскую позицию детей и формирует чувство общности и ответственности."
+        }
+      ]
+    }
+  ]
+}

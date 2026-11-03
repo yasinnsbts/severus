@@ -1,0 +1,89 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Сердечные открытки",
+  "concept": {
+    "summary": "Дети создают открытки-букеты для близкого взрослого, сопровождая процесс обсуждением добрых слов и игрой-викториной о заботливых делах.",
+    "goal": "Формирование уважительного отношения к близким взрослым через создание подарков и обсуждение проявлений заботы.",
+    "tasks": [
+      "Развитие умения выражать благодарность близкими людьми",
+      "Обучение навыкам совместной творческой деятельности"
+    ],
+    "expected_outcomes": [
+      "Готовая открытка-букет с добрыми словами для близкого взрослого",
+      "Осознание важности внимания и заботы в отношениях"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "family",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное создание открыток-букетов для близкого взрослого, выражающее уважение и благодарность",
+        "block_ids": ["block_02"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_02"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 20},
+    {"role_id": "parent_active_participants", "participant_type": "parent", "role_mode": "active_participant", "title": "Родители-участники", "count": 6}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Доброе слово",
+      "purpose": "Настройка на тему заботы и благодарности",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Мастерская открыток-букетов",
+      "purpose": "Создание подарка для близкого взрослого",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_active_participants"],
+      "planned_material_ids": ["card_template", "decoration_kit"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Игра-викторина 'Кто самый внимательный?'",
+      "purpose": "Закрепление понимания заботливого поведения",
+      "proposed_minutes": 7,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["quiz_cards"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Подведение итогов",
+      "purpose": "Рефлексия и завершение мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "card_template",
+      "type": "worksheet",
+      "purpose": "Бланк для создания открытки-букета"
+    },
+    {
+      "material_id": "decoration_kit",
+      "type": "props_checklist",
+      "purpose": "Материалы для украшения открыток (сердечки, цветная бумага)"
+    },
+    {
+      "material_id": "quiz_cards",
+      "type": "quiz",
+      "purpose": "Карточки с вопросами для игры-викторины"
+    }
+  ]
+}
+```

@@ -1,0 +1,49 @@
+{
+  "concept": {
+    "summary": "Классный час без родителей, но с родительской ролью.",
+    "goal": "Продемонстрировать нарушение правила родителей."
+  },
+  "timeline": [
+    {
+      "block_id": "block_1",
+      "start_minute": 0,
+      "duration_minutes": 20,
+      "title": "Первый блок",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board"],
+      "teacher_script": "Текст."
+    },
+    {
+      "block_id": "block_2",
+      "start_minute": 20,
+      "duration_minutes": 25,
+      "title": "Второй блок",
+      "role_ids": ["teacher_main", "parent_helper"],
+      "material_ids": ["board"],
+      "teacher_script": "Текст второго блока."
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "teacher_main",
+      "participant_type": "teacher",
+      "count": 1
+    },
+    {
+      "role_id": "parent_helper",
+      "participant_type": "parent",
+      "count": 3
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "board",
+      "name": "Маркерная доска"
+    }
+  ],
+  "teacher_instructions": "Инструкция.",
+  "parent_participation_plan": {
+    "enabled": true,
+    "block_ids": ["block_2"]
+  }
+}

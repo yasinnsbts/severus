@@ -1,0 +1,10 @@
+{
+  "event_id": "last_bell",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 11,
+  "pupils_count": 22,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "generation": {"variants_count": 1, "language": "ru"}
+}

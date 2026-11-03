@@ -1,0 +1,44 @@
+{
+  "event_id": "new_year",
+  "region_id": "RU-SVE",
+  "grade_group": "1-4",
+  "grade": 4,
+  "pupils_count": 26,
+  "duration_minutes": 45,
+  "format": "school_event",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 15,
+    "parent_roles": [
+      "helper",
+      "audience"
+    ],
+    "parent_audience_engagement": "vote"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": null,
+    "room": "assembly_hall",
+    "available_materials": [
+      "paper",
+      "markers"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "high",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

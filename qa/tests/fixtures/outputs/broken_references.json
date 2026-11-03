@@ -1,0 +1,44 @@
+{
+  "concept": {
+    "summary": "Классный час с битыми ссылками.",
+    "goal": "Продемонстрировать ошибку ссылочной целостности."
+  },
+  "timeline": [
+    {
+      "block_id": "block_1",
+      "start_minute": 0,
+      "duration_minutes": 20,
+      "title": "Первый блок",
+      "role_ids": ["teacher_main", "ghost_role"],
+      "material_ids": ["board", "nonexistent_material"],
+      "teacher_script": "Текст первого блока."
+    },
+    {
+      "block_id": "block_2",
+      "start_minute": 20,
+      "duration_minutes": 25,
+      "title": "Второй блок",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board"],
+      "teacher_script": "Текст второго блока."
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "teacher_main",
+      "participant_type": "teacher",
+      "count": 1
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "board",
+      "name": "Маркерная доска"
+    }
+  ],
+  "teacher_instructions": "Инструкция.",
+  "parent_participation_plan": {
+    "enabled": true,
+    "block_ids": ["block_1", "ghost_block"]
+  }
+}

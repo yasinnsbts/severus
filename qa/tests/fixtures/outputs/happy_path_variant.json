@@ -1,0 +1,79 @@
+{
+  "concept": {
+    "summary": "Интерактивный классный час, посвящённый Дню знаний, с элементами квеста и командной работы.",
+    "goal": "Создать у учащихся 6 класса положительную мотивацию к началу учебного года через активные формы взаимодействия."
+  },
+  "timeline": [
+    {
+      "block_id": "block_intro",
+      "start_minute": 0,
+      "duration_minutes": 10,
+      "title": "Открытие и приветствие",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board", "markers"],
+      "teacher_script": "Приветствуйте детей, представьте тему классного часа и разделите класс на команды."
+    },
+    {
+      "block_id": "block_quiz",
+      "start_minute": 10,
+      "duration_minutes": 20,
+      "title": "Квест-викторина «Знания вокруг нас»",
+      "role_ids": ["teacher_main", "pupil_team"],
+      "material_ids": ["quiz_cards"],
+      "teacher_script": "Проведите викторину по станциям, дайте командам время на обсуждение ответов."
+    },
+    {
+      "block_id": "block_award",
+      "start_minute": 30,
+      "duration_minutes": 15,
+      "title": "Подведение итогов и награждение",
+      "role_ids": ["teacher_main", "parent_helper"],
+      "material_ids": ["medals", "diplomas"],
+      "teacher_script": "Подведите итоги, награждайте команды, поблагодарите помощников."
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "teacher_main",
+      "participant_type": "teacher",
+      "count": 1
+    },
+    {
+      "role_id": "pupil_team",
+      "participant_type": "pupil",
+      "count": 27
+    },
+    {
+      "role_id": "parent_helper",
+      "participant_type": "parent",
+      "count": 5
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "board",
+      "name": "Маркерная доска"
+    },
+    {
+      "material_id": "markers",
+      "name": "Маркеры"
+    },
+    {
+      "material_id": "quiz_cards",
+      "name": "Карточки с вопросами"
+    },
+    {
+      "material_id": "medals",
+      "name": "Медали победителям"
+    },
+    {
+      "material_id": "diplomas",
+      "name": "Дипломы участникам"
+    }
+  ],
+  "teacher_instructions": "Подготовьте карточки вопросов заранее, проверьте проектор и распределите помощников по станциям до начала мероприятия.",
+  "parent_participation_plan": {
+    "enabled": true,
+    "block_ids": ["block_award"]
+  }
+}

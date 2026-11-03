@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Новогодний мастер-план",
+      "summary": "Участники объединяются в команды, планируют новогоднее украшение класса, представляют проекты зрителям и выбирают лучший дизайн.",
+      "narrative_approach": "Мероприятие начинается с обсуждения идей украшения класса, затем дети разделяются на команды, разрабатывают эскизы и презентации проектов, после чего выступают перед зрителями и родителями, которые голосуют за понравившийся вариант.",
+      "primary_mechanic": "collaborative_planning",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Приветствие и введение",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Разделение на команды и знакомство",
+          "activity_type": "team_task",
+          "approx_minutes": 5
+        },
+        {
+          "order": 3,
+          "title": "Планирование и создание эскизов",
+          "activity_type": "creative_product",
+          "approx_minutes": 15
+        },
+        {
+          "order": 4,
+          "title": "Представление проектов",
+          "activity_type": "performance",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "Голосование и награждение",
+          "activity_type": "voting",
+          "approx_minutes": 5
+        },
+        {
+          "order": 6,
+          "title": "Рефлексия и завершение",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "team_task",
+          "description": "Дети обсуждают и рисуют эскизы оформления класса"
+        },
+        {
+          "activity_type": "performance",
+          "description": "Команды презентуют свои проекты зрителям и родителям"
+        },
+        {
+          "activity_type": "voting",
+          "description": "Родители-гости голосуют за лучший проект"
+        }
+      ],
+      "distinctive_result": "Коллективные эскизы дизайна новогоднего класса и выбор лучшего проекта",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "family",
+          "mechanic_type": "family_research",
+          "mechanic": "Перед мероприятием детям предлагается домашнее задание (по желанию): собрать семейные новогодние традиции, которыми они смогут поделиться в команде."
+        },
+        {
+          "value_id": "labour_creation",
+          "mechanic_type": "joint_product",
+          "mechanic": "Создание коллективных эскизов декораций и плана украшения класса."
+        }
+      ]
+    }
+  ]
+}

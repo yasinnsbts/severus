@@ -1,0 +1,14 @@
+{
+  "event_id": "unity_day",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "pupils_count": 20,
+  "duration_minutes": 60,
+  "format": "interactive_lesson",
+  "teacher_preferences": {
+    "style": "interactive",
+    "group_work": true,
+    "interaction_level": "high"
+  },
+  "generation": {"variants_count": 1, "language": "ru"}
+}

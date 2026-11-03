@@ -1,0 +1,40 @@
+{
+  "event_id": "middle_urals_peoples_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "grade": 5,
+  "pupils_count": 28,
+  "duration_minutes": 90,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": false,
+    "printer": false,
+    "internet": false,
+    "audio": null,
+    "room": "classroom",
+    "available_materials": [
+      "paper"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "standard",
+    "difficulty": "standard",
+    "interaction_level": "high",
+    "group_work": false,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

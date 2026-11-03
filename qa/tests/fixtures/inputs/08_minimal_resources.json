@@ -1,0 +1,14 @@
+{
+  "event_id": "teachers_day",
+  "region_id": "RU-SVE",
+  "grade_group": "1-4",
+  "pupils_count": 16,
+  "duration_minutes": 30,
+  "format": "class_hour",
+  "resources": {
+    "projector": false,
+    "printer": false,
+    "available_materials": []
+  },
+  "generation": {"variants_count": 1, "language": "ru"}
+}

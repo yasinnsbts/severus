@@ -1,0 +1,16 @@
+{
+  "event_id": "womens_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "pupils_count": 25,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 12,
+    "parent_roles": ["helper", "audience"],
+    "parent_audience_engagement": "audience_award"
+  },
+  "generation": {"variants_count": 1, "language": "ru"}
+}

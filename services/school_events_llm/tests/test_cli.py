@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from app.cli import main
 from app.sources import check_sources
-from tests.helpers import EXAMPLES, settings
+from tests.helpers import EXAMPLES, catalog, settings
 
 
 class CliModeTest(unittest.TestCase):
@@ -48,12 +48,19 @@ class CliModeTest(unittest.TestCase):
 
 
 class SourcesCheckTest(unittest.TestCase):
-    def test_sources_check_reports_coverage_for_empty_pilot_corpus(self):
-        """Проверяет сценарий теста: sources check reports coverage for empty pilot corpus."""
+    def test_sources_check_reports_coverage(self):
+        """sources-check считает проверенные фрагменты и покрытие событий по реальному каталогу.
+
+        Не привязан к числу проверенных фрагментов: каталог пополняется, тест не должен ломаться от этого.
+        """
         report = check_sources(settings())
-        self.assertIn("coverage", report)
-        self.assertEqual(report["verified_fragments"], 0)
-        self.assertFalse(report["coverage"]["region_RU_SVE"]["covered"])
+        self.assertEqual(report["status"], "ok", report["issues"])
+        verified = [f for f in catalog().fragments.values() if f.get("verification_status") == "verified"]
+        self.assertEqual(report["verified_fragments"], len(verified))
+        self.assertIn("region_RU_SVE", report["coverage"])
+        for event_id, row in report["coverage"]["events"].items():
+            with self.subTest(event_id=event_id):
+                self.assertEqual(row["covered"], row["actual"] >= row["required"])
 
 
 if __name__ == "__main__":

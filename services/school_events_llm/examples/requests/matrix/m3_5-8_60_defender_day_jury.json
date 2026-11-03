@@ -1,0 +1,43 @@
+{
+  "event_id": "defender_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "grade": 7,
+  "pupils_count": 24,
+  "duration_minutes": 60,
+  "format": "interactive_lesson",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 3,
+    "parent_roles": [
+      "evaluator"
+    ],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": true,
+    "printer": false,
+    "internet": false,
+    "audio": null,
+    "room": "classroom",
+    "available_materials": [
+      "paper",
+      "markers"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "classic",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "high",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

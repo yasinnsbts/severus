@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Классный старт: вместе строим год!",
+      "summary": "На Дне знаний ученики совместно планируют важные моменты нового учебного года, ставят коллективные цели и решают реальные задачи школьного сообщества.",
+      "narrative_approach": "Мероприятие начинается с приветствия и обсуждения ожиданий от нового учебного года. Затем ребята объединяются в общую команду для создания «карты целей класса»: они предлагают инициативы, которые помогут сделать этот год интересным и полезным. Следующий этап – практическая взаимопомощь: дети работают парами по желанию над созданием идей для улучшения школьной жизни. Завершается встреча подведением итогов, вручением символического приза зрительских симпатий и общей фотографией.",
+      "primary_mechanic": "collaborative_planning",
+      "engagement_mode": "whole_class",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Приветствие и вводное слово",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Создание карты целей класса",
+          "activity_type": "class_collective_task",
+          "approx_minutes": 15
+        },
+        {
+          "order": 3,
+          "title": "Практическая взаимопомощь в парах",
+          "activity_type": "pair_task",
+          "approx_minutes": 15
+        },
+        {
+          "order": 4,
+          "title": "Представление лучших инициатив",
+          "activity_type": "performance",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "Подведение итогов и награждение",
+          "activity_type": "reflection",
+          "approx_minutes": 10
+        },
+        {
+          "order": 6,
+          "title": "Общая фотография",
+          "activity_type": "creative_product",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "class_collective_task",
+          "description": "Дети всей группой создают карту целей класса"
+        },
+        {
+          "activity_type": "pair_task",
+          "description": "Работа в парах по созданию инициатив для улучшения школьной жизни"
+        }
+      ],
+      "distinctive_result": "Коллективная карта целей класса, зафиксированные инициативы учащихся, памятная фотография класса",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "mutual_aid",
+          "mechanic_type": "pair_task",
+          "mechanic": "Участники помогают друг другу в разработке инициатив, работая парами по желанию"
+        },
+        {
+          "value_id": "citizenship",
+          "mechanic_type": "real_problem_solving",
+          "mechanic": "Учащиеся совместно определяют и предлагают конкретные шаги для улучшения школьной среды"
+        }
+      ]
+    }
+  ]
+}

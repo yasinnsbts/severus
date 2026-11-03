@@ -1,0 +1,16 @@
+{
+  "event_id": "teachers_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "pupils_count": 22,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none"
+  },
+  "generation": {"variants_count": 1, "language": "ru"}
+}

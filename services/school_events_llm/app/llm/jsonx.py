@@ -60,6 +60,88 @@ def _balanced_object(text: str) -> str | None:
     return None
 
 
+def _strip_comments(text: str) -> str:
+    """Убирает комментарии `// …` вне строк: модели иногда дописывают их прямо в JSON."""
+    out: list[str] = []
+    in_str = escape = False
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if in_str:
+            out.append(ch)
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_str = False
+        elif ch == '"':
+            in_str = True
+            out.append(ch)
+        elif ch == "/" and text[i + 1:i + 2] == "/":
+            while i < len(text) and text[i] != "\n":
+                i += 1
+            continue
+        else:
+            out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+MAX_QUOTE_REPAIRS = 30
+
+
+def _merge_stray_string(text: str, pos: int) -> str | None:
+    """Строка без ключа внутри объекта: `"teacher_script": "Реплика 1", "Реплика 2", "pupil_actions": [...]`.
+
+    GigaChat так разбивает длинный текст на абзацы. `pos` - место ошибки «Expecting ':'» сразу после
+    такой строки; если за ней `,` или `}`, а перед ней `"значение",`, строка присоединяется к значению
+    через перенос строки. Иначе - `None` (это другая ошибка, например неэкранированная кавычка).
+    """
+    if pos >= len(text) or text[pos] not in ",}":
+        return None
+    close = text.rfind('"', 0, pos)
+    if close <= 0 or text[close + 1:pos].strip():
+        return None
+    start = close - 1
+    while start >= 0 and not (text[start] == '"' and text[start - 1] != "\\"):
+        start -= 1
+    match = re.search(r'(?<!\\)"\s*,\s*$', text[:start])
+    if start <= 0 or not match:
+        return None
+    return text[:match.start()] + "\\n" + text[start + 1:]
+
+
+def _loads_lenient(text: str) -> Any:
+    """`json.loads` с поправками на типичные ошибки моделей.
+
+    - Управляющие символы (перенос строки, табуляция) внутри строк допускаются (`strict=False`).
+    - Запятая перед `}`/`]` убирается.
+    - Неэкранированная кавычка внутри строки («…дружно!" (Через 10 минут…»): если разбор ломается
+      сразу после неё с ожиданием `,` или `:`, кавычка экранируется и разбор повторяется
+      (не больше `MAX_QUOTE_REPAIRS` раз). Результат всё равно проходит проверку схемы этапа.
+    - Строки без ключа после значения-строки (текст, разбитый на абзацы) присоединяются к этому значению
+      (`_merge_stray_string`). Проверяется раньше кавычки: иначе экранирование склеит их со следующим ключом.
+    """
+    text = re.sub(r",\s*([}\]])", r"\1", text)
+    for _ in range(MAX_QUOTE_REPAIRS + 1):
+        try:
+            return json.loads(text, strict=False)
+        except json.JSONDecodeError as exc:
+            if not (exc.msg.startswith("Expecting ',' delimiter") or exc.msg.startswith("Expecting ':' delimiter")):
+                raise
+            if exc.msg.startswith("Expecting ':' delimiter"):
+                merged = _merge_stray_string(text, exc.pos)
+                if merged is not None:
+                    text = merged
+                    continue
+            quote = text.rfind('"', 0, exc.pos)
+            if quote <= 0 or text[quote - 1] == "\\":
+                raise
+            text = text[:quote] + '\\"' + text[quote + 1:]
+    return json.loads(text, strict=False)
+
+
 def extract_json(text: str) -> dict[str, Any]:
     """Извлекает первый корректный JSON-объект из сырого текстового ответа модели.
 
@@ -81,10 +163,8 @@ def extract_json(text: str) -> dict[str, Any]:
             value = json.loads(cand)
         except json.JSONDecodeError as exc:
             last_error = exc
-            # частая ошибка локальных моделей - запятая перед закрывающей скобкой
-            fixed = re.sub(r",\s*([}\]])", r"\1", cand)
             try:
-                value = json.loads(fixed)
+                value = _loads_lenient(_strip_comments(cand))
             except json.JSONDecodeError:
                 continue
         if isinstance(value, dict):

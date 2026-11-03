@@ -1,0 +1,48 @@
+{
+  "concept": {
+    "summary": "Интерактивный классный час с включёнными родителями, но без плана участия.",
+    "goal": "Продемонстрировать проверку обязательного плана родителей."
+  },
+  "timeline": [
+    {
+      "block_id": "block_intro",
+      "start_minute": 0,
+      "duration_minutes": 10,
+      "title": "Открытие и приветствие",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board", "markers"],
+      "teacher_script": "Приветствуйте детей и разделите класс на команды."
+    },
+    {
+      "block_id": "block_quiz",
+      "start_minute": 10,
+      "duration_minutes": 20,
+      "title": "Квест-викторина",
+      "role_ids": ["teacher_main", "pupil_team"],
+      "material_ids": ["quiz_cards"],
+      "teacher_script": "Проведите викторину по станциям."
+    },
+    {
+      "block_id": "block_award",
+      "start_minute": 30,
+      "duration_minutes": 15,
+      "title": "Подведение итогов",
+      "role_ids": ["teacher_main", "parent_helper"],
+      "material_ids": ["medals", "diplomas"],
+      "teacher_script": "Подведите итоги и наградите команды."
+    }
+  ],
+  "roles": [
+    {"role_id": "teacher_main", "participant_type": "teacher", "count": 1},
+    {"role_id": "pupil_team", "participant_type": "pupil", "count": 27},
+    {"role_id": "parent_helper", "participant_type": "parent", "count": 5}
+  ],
+  "materials": [
+    {"material_id": "board", "name": "Маркерная доска"},
+    {"material_id": "markers", "name": "Маркеры"},
+    {"material_id": "quiz_cards", "name": "Карточки с вопросами"},
+    {"material_id": "medals", "name": "Медали победителям"},
+    {"material_id": "diplomas", "name": "Дипломы участникам"}
+  ],
+  "teacher_instructions": "Проверьте оборудование до начала мероприятия."
+}

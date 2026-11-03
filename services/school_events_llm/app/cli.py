@@ -252,6 +252,79 @@ def cmd_generate(args: argparse.Namespace, settings: Settings) -> int:
     return _run_generation(args, settings, context_mode="full", cultural_context=True)
 
 
+def _batch_files(paths: list[str]) -> list[Path]:
+    """Файлы запросов: указанные файлы и все `*.json` из указанных папок (по алфавиту)."""
+    files: list[Path] = []
+    for raw in paths:
+        path = Path(raw)
+        files += sorted(path.glob("*.json")) if path.is_dir() else [path]
+    return files
+
+
+def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
+    """Прогоняет набор запросов подряд и печатает сводную таблицу.
+
+    Каждый запрос идёт тем же путём, что `generate` (с трассой и строкой в `runs.jsonl`).
+    Сводка сохраняется в `data/runs/batch_<время>.md` и `.json`.
+    Код возврата: 0 - все `completed`, 1 - есть `partial`/`failed`/ошибки.
+    """
+    import contextlib
+    import io
+    import time
+
+    rows: list[dict[str, Any]] = []
+    files = _batch_files(args.requests)
+    for index, path in enumerate(files, 1):
+        sys.stderr.write(f"[{index}/{len(files)}] {path.name} ...\n")
+        run_args = argparse.Namespace(request=str(path), out=None, model=args.model, fixture=args.fixture,
+                                      broken=None, no_trace=False)
+        captured = io.StringIO()
+        started = time.monotonic()
+        with contextlib.redirect_stdout(captured):
+            code = _run_generation(run_args, settings, context_mode="full", cultural_context=True)
+        elapsed = round(time.monotonic() - started, 1)
+        try:
+            summary = json.loads(captured.getvalue())
+        except json.JSONDecodeError:
+            summary = {}
+        issues = [i for v in summary.get("variants", []) for i in v.get("issues", [])]
+        error = summary.get("error") or {}
+        rows.append({
+            "request": path.name,
+            "job_id": summary.get("job_id"),
+            "status": summary.get("status") or "error",
+            "llm_calls": summary.get("llm_calls"),
+            "duration_s": round(summary["duration_ms"] / 1000, 1) if summary.get("duration_ms") else elapsed,
+            "tokens": (summary.get("tokens") or {}).get("total"),
+            "critical": sorted({i.split(":")[1] for i in issues if i.startswith("critical:")}),
+            "warnings": sorted({i.split(":")[1] for i in issues if i.startswith("warning:")}),
+            "error": error.get("code"),
+            "error_message": error.get("message"),
+            "variant_errors": [f"{v.get('variant_id')}: {v.get('error')}" for v in summary.get("variants", [])
+                               if v.get("status") != "completed" and v.get("error")],
+            "exit_code": code,
+        })
+        reason = f": {error.get('code')} - {error.get('message')}" if error else ""
+        if not reason and rows[-1]["variant_errors"]:
+            reason = ": " + "; ".join(rows[-1]["variant_errors"])
+        sys.stderr.write(f"    -> {rows[-1]['status']} ({rows[-1]['duration_s']} с){reason}\n")
+
+    lines = ["| Запрос | Статус | Вызовов | Время, с | Токены | Критичные | Предупреждения |", "|---|---|---|---|---|---|---|"]
+    for r in rows:
+        crit = ", ".join(r["critical"]) or ("ошибка " + r["error"] if r["error"] else "; ".join(r["variant_errors"]) or "-")
+        lines.append(f"| {r['request']} | {r['status']} | {r['llm_calls'] or '-'} | {r['duration_s']} | {r['tokens'] or '-'} | "
+                     f"{crit} | {', '.join(r['warnings']) or '-'} |")
+    done = sum(r["status"] == "completed" for r in rows)
+    table = "\n".join(lines) + f"\n\nИтого: completed {done} из {len(rows)}."
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    out_dir = settings.data_dir / "runs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / f"batch_{stamp}.md").write_text(table, encoding="utf-8")
+    (out_dir / f"batch_{stamp}.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    sys.stdout.write(table + f"\n\nСводка: {out_dir / f'batch_{stamp}.md'}\n")
+    return 0 if rows and done == len(rows) else 1
+
+
 def cmd_experiment(args: argparse.Namespace, settings: Settings) -> int:
     """Запускает внутренний эксперимент H2/H3 без изменения публичного контракта 01."""
     cultural_context = args.cultural_context == "on"
@@ -366,6 +439,11 @@ def main(argv: list[str] | None = None) -> int:
     generate = subparsers.add_parser("generate", help="запустить штатную генерацию")
     _add_generation_arguments(generate)
 
+    batch = subparsers.add_parser("batch", help="прогнать набор запросов и вывести сводную таблицу")
+    batch.add_argument("requests", nargs="+", help="файлы запросов или папки с ними, например examples/requests/matrix")
+    batch.add_argument("--model")
+    batch.add_argument("--fixture", nargs="*", help="эталоны вместо модели (для проверки самого прогона)")
+
     experiment = subparsers.add_parser("experiment", help="запустить внутренний эксперимент H2/H3")
     _add_generation_arguments(experiment)
     experiment.add_argument("--context-mode", required=True, choices=["full", "universal"])
@@ -395,6 +473,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_compose(args, settings)
         if args.cmd == "generate":
             return cmd_generate(args, settings)
+        if args.cmd == "batch":
+            return cmd_batch(args, settings)
         if args.cmd == "experiment":
             return cmd_experiment(args, settings)
         if args.cmd == "validate":

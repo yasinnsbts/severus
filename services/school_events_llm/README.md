@@ -128,6 +128,7 @@ python -m app serve [--host HOST] [--port PORT]
 python -m app health [--model KEY]
 python -m app compose REQUEST.json --stage STAGE [--json]
 python -m app generate REQUEST.json [--model KEY] [--out FILE]
+python -m app batch REQUEST.json|ПАПКА ... [--model KEY]
 python -m app experiment REQUEST.json --context-mode full|universal --cultural-context on|off [--experiment-tag TAG] [--experiment-pair-id ID]
 python -m app validate PACKAGE.json --request REQUEST.json
 python -m app render PACKAGE.json --request REQUEST.json [--markdown]
@@ -148,6 +149,22 @@ python -m app catalog-check
 - `quality_review`
 
 `quality_review` вызывается только если `llm_quality_review=true` в `config/generation.json`. Основные структурные проверки в любом случае выполняются Python-кодом.
+
+`batch` прогоняет набор запросов подряд тем же путём, что `generate`, и печатает сводную таблицу: статус, число вызовов, время, токены, критичные замечания и предупреждения. Сводка сохраняется в `data/runs/batch_<время>.md` и `.json`. Набор для проверки разных возрастов, длительностей и режимов участия родителей - `examples/requests/matrix/` (дополняет E2E-набор QA в `qa/tests/fixtures/inputs/`):
+
+```bash
+python -m app batch examples/requests/matrix
+```
+
+### Устойчивость к ошибкам модели
+
+- **Ошибки провайдера.** Временные ошибки (429, 5xx, таймаут, нет сети) повторяются с паузой: `provider_retry_attempts` и `provider_retry_backoff_seconds` в `config/generation.json`. Ошибки авторизации и настройки не повторяются. Каждый повтор пишется в трассу (`llm_call_retry`).
+- **Ответ не по схеме.** Этап повторяется с текстом ошибки (`max_repair_attempts_per_stage`).
+- **Исправления до проверки схемы** (`stage_output_fixed` в трассе): `material_id` и `role_id` приводятся к виду `^[a-z][a-z0-9_]*$` одинаково во всех ссылках, ID блоков - к `block_NN`; зависимости материалов - только из `catalog/dependencies.json` (синонимы заменяются, остальное переносится в `teacher_notes`); значения перечислений и адресаты материалов - к допустимым; расходники не становятся материалами и убираются из ссылок блоков; `family_task` снимается с памятки родителям, бюллетеня и других материалов для взрослых.
+- **Голосование без зрителей.** Если выбрано голосование, а модель сделала всех родителей помощниками, голосующими считаются родители из блока голосования. Инструкция к награждению разрешена и по итогам работы жюри.
+- **Разбор JSON ответа**: допускаются переносы строк внутри строк, комментарии `// …` убираются, неэкранированная кавычка внутри текста («…дружно!" (Через 10 минут…») экранируется. `content` материала списком или словарём превращается в текст, пустой `used_in_blocks` - в блоки, которые ссылаются на материал по плану, пустой чек-лист реквизита собирается из названия и заметок, без `groups_count` число групп считает программа.
+- **Ссылки на материалы.** Блоки ссылаются только на материалы плана; `used_in_blocks` и голосование - только на существующие блоки и материалы (`material_refs_fixed` в трассе).
+- **Ошибки задачи в HTTP API** - в формате контракта 02: `field=null` для замечаний проверки, `retryable=true` для отказов по качеству и временных ошибок модели, не больше 5 причин на вариант. Если генерация упала до вариантов - `OUTPUT_SCHEMA_INVALID` или код ошибки модели, без технических подробностей в тексте.
 
 ## Режимы full и universal
 

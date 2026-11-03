@@ -1,0 +1,15 @@
+{
+  "event_id": "victory_day",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 10,
+  "pupils_count": 28,
+  "duration_minutes": 90,
+  "format": "interactive_lesson",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0
+  },
+  "generation": {"variants_count": 1, "language": "ru"}
+}

@@ -1,0 +1,53 @@
+{
+  "concept": {
+    "summary": "Классный час с нарушением тайминга.",
+    "goal": "Продемонстрировать ошибку валидации."
+  },
+  "timeline": [
+    {
+      "block_id": "block_a",
+      "start_minute": 0,
+      "duration_minutes": 10,
+      "title": "Начало",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board"],
+      "teacher_script": "Начало мероприятия."
+    },
+    {
+      "block_id": "block_b",
+      "start_minute": 15,
+      "duration_minutes": 20,
+      "title": "Середина (дыра 5 минут после block_a)",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board"],
+      "teacher_script": "Середина мероприятия."
+    },
+    {
+      "block_id": "block_c",
+      "start_minute": 35,
+      "duration_minutes": 5,
+      "title": "Финал (сумма 35 вместо 45)",
+      "role_ids": ["teacher_main"],
+      "material_ids": ["board"],
+      "teacher_script": "Завершение."
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "teacher_main",
+      "participant_type": "teacher",
+      "count": 1
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "board",
+      "name": "Маркерная доска"
+    }
+  ],
+  "teacher_instructions": "Инструкция.",
+  "parent_participation_plan": {
+    "enabled": false,
+    "block_ids": []
+  }
+}

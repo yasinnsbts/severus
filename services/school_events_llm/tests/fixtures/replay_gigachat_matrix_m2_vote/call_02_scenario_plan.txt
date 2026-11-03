@@ -1,0 +1,128 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Новогодний квест: Вместе создадим чудо!",
+  "concept": {
+    "summary": "Ребята проходят новогодние станции-квесты, знакомясь с семейными традициями и создавая декоративную композицию для класса.",
+    "goal": "Создать атмосферу праздника, развить творческие способности и сплочённость класса.",
+    "tasks": [
+      "Развитие коммуникативных навыков через обмен опытом",
+      "Формирование позитивного отношения к труду и творчеству",
+      "Укрепление чувства принадлежности к классу и школе"
+    ],
+    "expected_outcomes": [
+      "Готовая декоративная композиция для оформления класса",
+      "Повышение интереса к изучению культурных традиций",
+      "Эмоциональный подъём и чувство общности среди участников"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "family",
+        "mechanic_type": "family_research",
+        "mechanic": "Обмен информацией о семейных традициях празднования Нового года",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "labour_creation",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное изготовление декора и оформление общей композиции",
+        "block_ids": ["block_04", "block_05"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_03", "block_04"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 26},
+    {"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "title": "Помощники", "count": 15}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Волшебное вступление",
+      "purpose": "Погружение в атмосферу праздника, знакомство с правилами",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Разделение на команды",
+      "purpose": "Организация участников для прохождения станций",
+      "proposed_minutes": 2,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_03",
+      "title": "Станция 'Семейные традиции'",
+      "purpose": "Знакомство с разнообразием семейных празднований",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["worksheet_traditions"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Станция 'Новогодняя мастерская'",
+      "purpose": "Изготовление декоративных элементов для общей композиции",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["craft_materials"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Создание общей композиции",
+      "purpose": "Сборка коллективного творческого продукта",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["composition_base"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Голосование и подведение итогов",
+      "purpose": "Определение самой оригинальной детали композиции, вручение символического приза",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["audience_ballot", "award_instruction"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "worksheet_traditions",
+      "type": "worksheet",
+      "purpose": "Листы для записей семейных традиций"
+    },
+    {
+      "material_id": "craft_materials",
+      "type": "props_checklist",
+      "purpose": "Материалы для изготовления декораций"
+    },
+    {
+      "material_id": "composition_base",
+      "type": "props_checklist",
+      "purpose": "Основа для сборки общей композиции"
+    },
+    {
+      "material_id": "audience_ballot",
+      "type": "audience_ballot",
+      "purpose": "Бюллетени для голосования"
+    },
+    {
+      "material_id": "award_instruction",
+      "type": "award_instruction",
+      "purpose": "Инструкция по проведению голосования и награждения"
+    },
+    {
+      "material_id": "parent_instruction",
+      "type": "parent_instruction",
+      "purpose": "Краткая инструкция для родителей-помощников"
+    }
+  ]
+}
+```

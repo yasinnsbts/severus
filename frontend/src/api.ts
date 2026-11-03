@@ -21,7 +21,8 @@ export async function createProject(request:RequestData,onStatus:(status:string)
  const statusUrl=started.status_url||`/api/v1/generations/${started.job_id}`;
  const projectUrl=started.project_url||`/api/v1/projects/${started.project_id}`;
 
- for(let i=0;i<90;i++){
+ const deadline = Date.now() + 15 * 60 * 1000;
+ while(Date.now() < deadline){
   const state=await getJson<{
    status:string;
    completed_variants?:number;
@@ -54,7 +55,7 @@ export async function createProject(request:RequestData,onStatus:(status:string)
   await new Promise(resolve=>setTimeout(resolve,1200));
  }
 
- throw new Error('Превышено время ожидания генерации');
+ throw new Error(`Превышено время ожидания генерации. Задание: ${started.job_id}. Генерация могла продолжиться на сервере.`);
 }
 
 export const DEMO_EVENTS:EventItem[]=[{id:'knowledge_day',title:'День знаний',category:'Праздники',supported_age_groups:['1-4','5-8','9-11'],supported_formats:['class_hour','school_event','interactive_lesson']},{id:'teacher_day',title:'День учителя',category:'Школьные праздники',supported_age_groups:['1-4','5-8','9-11'],supported_formats:['class_hour','school_event']}];

@@ -1,0 +1,9 @@
+{
+  "event_id": "knowledge_day",
+  "region_id": "RU-SVE",
+  "grade_group": "1-4",
+  "pupils_count": 8,
+  "duration_minutes": 30,
+  "format": "class_hour",
+  "generation": {"variants_count": 1, "language": "ru"}
+}

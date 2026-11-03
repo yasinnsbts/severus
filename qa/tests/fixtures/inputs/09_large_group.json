@@ -1,0 +1,9 @@
+{
+  "event_id": "new_year",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "pupils_count": 35,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "generation": {"variants_count": 1, "language": "ru"}
+}
