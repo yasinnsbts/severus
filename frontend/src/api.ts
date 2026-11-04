@@ -16,46 +16,114 @@ async function getJson<T>(path:string,init?:RequestInit):Promise<T>{
  return data as T;
 }
 export async function loadCatalog(){return Promise.all([getJson<EventItem[]>('/api/v1/catalog/events'),getJson<Options>('/api/v1/catalog/options')]);}
-export async function createProject(request:RequestData,onStatus:(status:string)=>void):Promise<Project>{
- const started=await getJson<{job_id:string;project_id:string;status_url:string;project_url:string}>('/api/v1/generations',{method:'POST',body:JSON.stringify(request)});
- const statusUrl=started.status_url||`/api/v1/generations/${started.job_id}`;
- const projectUrl=started.project_url||`/api/v1/projects/${started.project_id}`;
 
- const deadline = Date.now() + 15 * 60 * 1000;
- while(Date.now() < deadline){
-  const state=await getJson<{
-   status:string;
-   completed_variants?:number;
-   errors?:GenerationIssue[];
-   warnings?:GenerationWarning[];
-   variants?:{variant_id:string;status:string}[];
-  }>(statusUrl);
+export type ActiveGeneration = {
+  jobId: string;
+  projectId: string;
+  statusUrl: string;
+  projectUrl: string;
+  startedAt: number;
+};
 
-  onStatus(state.status);
+export async function startProject(request: RequestData): Promise<ActiveGeneration> {
+  const started = await getJson<{
+    job_id: string;
+    project_id: string;
+    status_url?: string;
+    project_url?: string;
+  }>('/api/v1/generations', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
 
-  if(state.status==='completed'||(state.status==='partial'&&(state.completed_variants??0)>0)){
-   const result=await getJson<Project>(projectUrl);
-   // Metadata belongs to the job status, not necessarily the project payload.
-   return {...result, generation_issues:state.errors||[], generation_warnings:state.warnings||[],
-    variant_statuses:state.variants||[], status:state.status};
+  return {
+    jobId: started.job_id,
+    projectId: started.project_id,
+    statusUrl: started.status_url || `/api/v1/generations/${started.job_id}`,
+    projectUrl: started.project_url || `/api/v1/projects/${started.project_id}`,
+    startedAt: Date.now(),
+  };
+}
+
+export async function waitForProject(
+  started: ActiveGeneration,
+  onStatus: (status: string) => void,
+  signal?: AbortSignal,
+): Promise<Project> {
+  const deadline = started.startedAt + 15 * 60 * 1000;
+
+  while (true) {
+    const state = await getJson<{
+      status: string;
+      completed_variants?: number;
+      errors?: GenerationIssue[];
+      warnings?: GenerationWarning[];
+      variants?: { variant_id: string; status: string }[];
+    }>(started.statusUrl, { signal });
+
+    onStatus(state.status);
+
+    if (
+      state.status === 'completed' ||
+      (state.status === 'partial' && (state.completed_variants ?? 0) > 0)
+    ) {
+      const result = await getJson<Project>(started.projectUrl, { signal });
+
+      return {
+        ...result,
+        generation_issues: state.errors || [],
+        generation_warnings: state.warnings || [],
+        variant_statuses: state.variants || [],
+        status: state.status,
+      };
+    }
+
+    if (state.status === 'failed' || state.status === 'partial') {
+      const reasons = (state.errors || [])
+        .map(error => error.message || error.code)
+        .filter(Boolean);
+
+      throw new Error(
+        reasons.length
+          ? reasons.join('; ')
+          : `Генерация не завершена (${state.status}). Сервис не передал подробную причину. Задание: ${started.jobId}`
+      );
+    }
+
+    if (Date.now() >= deadline) {
+  break;
+}
+
+    await new Promise<void>((resolve, reject) => {
+  if (signal?.aborted) {
+    reject(new DOMException('Ожидание отменено', 'AbortError'));
+    return;
   }
 
-  if(state.status==='failed'||state.status==='partial'){
-   const reasons=(state.errors||[])
-    .map(error=>error.message||error.code)
-    .filter(Boolean);
+  const timer = setTimeout(() => {
+    signal?.removeEventListener('abort', onAbort);
+    resolve();
+  }, 1200);
 
-   throw new Error(
-    reasons.length
-     ? reasons.join('; ')
-     : `Генерация не завершена (${state.status}). Сервис не передал подробную причину. Задание: ${started.job_id}`
-   );
+  function onAbort() {
+    clearTimeout(timer);
+    reject(new DOMException('Ожидание отменено', 'AbortError'));
   }
 
-  await new Promise(resolve=>setTimeout(resolve,1200));
- }
+  signal?.addEventListener('abort', onAbort, { once: true });
+});
+  }
 
- throw new Error(`Превышено время ожидания генерации. Задание: ${started.job_id}. Генерация могла продолжиться на сервере.`);
+  throw new Error(
+    `Превышено время ожидания генерации. Задание: ${started.jobId}. Генерация могла продолжиться на сервере.`
+  );
+}
+export async function createProject(
+  request: RequestData,
+  onStatus: (status: string) => void,
+): Promise<Project> {
+  const started = await startProject(request);
+  return waitForProject(started, onStatus);
 }
 
 export const DEMO_EVENTS:EventItem[]=[{id:'knowledge_day',title:'День знаний',category:'Праздники',supported_age_groups:['1-4','5-8','9-11'],supported_formats:['class_hour','school_event','interactive_lesson']},{id:'teacher_day',title:'День учителя',category:'Школьные праздники',supported_age_groups:['1-4','5-8','9-11'],supported_formats:['class_hour','school_event']}];

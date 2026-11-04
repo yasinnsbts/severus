@@ -567,7 +567,9 @@ background-size:270% 100%!important;background-clip:text!important;-webkit-backg
 
 /* Approved magical liquid-glass layout / release refinement */
 .app{background:radial-gradient(ellipse at 6% 20%,rgba(7,100,96,.7),transparent 36%),radial-gradient(ellipse at 94% 76%,rgba(13,119,99,.7),transparent 36%),#071c2b}
-.app-shell{background:linear-gradient(115deg,#fffaf0 0%,#faf8ed 56%,#f8f8eb 100%)!important}
+.app-shell {
+  background: #faf8ed !important;
+}
 .topbar{background:rgba(255,253,244,.56);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:3!important}
 .glass-doe-bg{left:44%!important;top:42%!important;width:min(54vw,760px)!important;height:min(88vh,920px)!important;transform:translate(-28%,-15%)!important;opacity:.39!important;filter:drop-shadow(0 0 23px rgba(46,150,169,.2))!important}
 .page-content{isolation:isolate;position:relative}.page-content>*{position:relative;z-index:1}
@@ -1512,4 +1514,18 @@ box-shadow: 0 8px 24px rgba(28, 72, 61, 0.08) !important;
   color: #d93636 !important;
   -webkit-text-fill-color: #d93636 !important;
   font-weight: 700 !important;
+}
+
+/* Сохраняем переносы строк в текстах материалов */
+.results .material-card p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Устранение артефакта фона при быстрой прокрутке */
+.app {
+  background: #faf8ed !important;
+}
+/* Убираем боковые тени центральной страницы */
+.app-shell {
+  box-shadow: none !important;
 }
