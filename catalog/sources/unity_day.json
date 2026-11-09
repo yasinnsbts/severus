@@ -6,182 +6,81 @@
       "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
       "publisher": "КонсультантПлюс",
       "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "unity_day"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Подтверждает официальное название и дату 4 ноября.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
+      "topics": ["unity_day"],
+      "regions": ["RU"],
+      "text_excerpt": "Подтверждает официальное название и дату 4 ноября как нерабочего праздничного дня.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Статья 112 ТК РФ содержит 4 ноября в списке нерабочих праздничных дней.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-09"
     },
     {
       "source_id": "src_unity_day_audit_02",
-      "title": "Федеральный закон № 32-ФЗ «О днях воинской славы и памятных датах России»",
-      "publisher": "Росгидромет",
-      "url": "https://www.meteorf.gov.ru/documents/6/27/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "unity_day"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Кандидат на историко-правовое основание; требует проверки конкретной статьи.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
-    },
-    {
-      "source_id": "src_unity_day_audit_03",
-      "title": "Нерабочие праздничные дни",
-      "publisher": "Роструд / КонсультантПлюс",
-      "url": "https://www.consultant.ru/document/cons_doc_LAW_440271/74baedbd0d3c63b0d8f67789c1d31e683af8dbca/",
-      "retrieved_at": "2026-10-20",
+      "title": "Федеральный закон от 13.03.1995 N 32-ФЗ «О днях воинской славы и памятных датах России»",
+      "publisher": "Официальный интернет-портал правовой информации",
+      "url": "http://publication.pravo.gov.ru/document/view/000120041130000",
+      "retrieved_at": "2026-10-29",
       "verification_status": "verified",
-      "topics": [
-        "unity_day"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Подтверждает статус 4 ноября как нерабочего праздничного дня.",
-      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "topics": ["unity_day"],
+      "regions": ["RU"],
+      "text_excerpt": "Статья 1.1 устанавливает 4 ноября как День народного единства (памятная дата России).",
+      "note": "Ссылка ведёт на официальный портал публикации правовых актов. Проверено вручную.",
       "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": true
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-09"
     },
     {
-      "source_id": "src_unity_day_v19_01",
-      "title": "История Дня народного единства – в материалах Президентской библиотеки",
+      "source_id": "src_unity_day_prlib_01",
+      "title": "Президентская библиотека ко Дню народного единства",
       "publisher": "Президентская библиотека имени Б. Н. Ельцина",
-      "url": "https://www.prlib.ru/news/1326449",
-      "retrieved_at": "2026-10-20",
+      "url": "https://www.prlib.ru/news/2062342",
+      "retrieved_at": "2026-11-09",
       "verification_status": "verified",
-      "topics": [
-        "unity_day"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Материал подтверждает дату 4 ноября, исторический контекст 1612 года и начало празднования в 2005 году.",
-      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
+      "topics": ["unity_day"],
+      "regions": ["RU"],
+      "text_excerpt": "День народного единства отмечается 4 ноября. Праздник учреждён в 2005 году в память о событиях 1612 года, когда народное ополчение под руководством Минина и Пожарского освободило Москву.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Официальный портал Президентской библиотеки содержит подробную историческую информацию.",
       "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": true
-    },
-    {
-      "source_id": "src_unity_day_v19_02",
-      "title": "День воинской славы России – День народного единства",
-      "publisher": "Президентская библиотека имени Б. Н. Ельцина",
-      "url": "https://www.prlib.ru/history/619688",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "verified",
-      "topics": [
-        "unity_day"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Историческая справка о введении праздника и событиях 1612 года.",
-      "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
-      "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": true
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-09"
     }
   ],
   "required_minimum": 3,
-  "verified_count": 2,
-  "status": "incomplete",
-  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
-  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются.",
+  "verified_count": 3,
+  "status": "verified_minimum_met",
+  "note": "Три уникальных verified издателя: КонсультантПлюс, Официальный портал правовой информации, Президентская библиотека. Все источники подтверждают дату 4 ноября и статус праздника.",
+  "audit_note": "Все URL открыты вручную, релевантность подтверждена. Добавлен третий независимый источник от Президентской библиотеки.",
   "fragments": [
     {
       "fragment_id": "frag_unity_day_001",
-      "source_id": "src_unity_day_audit_03",
-      "quote": "4 ноября - День народного единства.",
-      "events": [
-        "unity_day"
-      ],
+      "source_id": "src_unity_day_prlib_01",
+      "quote": "4 ноября в России отмечается День народного единства. Этот государственный праздник был учреждён 20 лет назад – в 2005 году.",
+      "events": ["unity_day"],
       "topics": [],
-      "regions": [
-        "RU-SVE"
-      ],
-      "verification_status": "draft",
+      "regions": ["RU"],
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
-      "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified. Страница КонсультантПлюс: Приказ Роструда от 11.11.2022 N 253, раздел «4. Нерабочие праздничные дни»."
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-11-09",
+      "note": "Цитата проверена вручную, сверена с официальным материалом Президентской библиотеки."
     },
     {
       "fragment_id": "frag_unity_day_002",
-      "source_id": "src_unity_day_v19_01",
-      "quote": "войска народного ополчения под предводительством Кузьмы Минина и Дмитрия Пожарского освободили Москву",
-      "events": [
-        "unity_day"
-      ],
+      "source_id": "src_unity_day_prlib_01",
+      "quote": "Праздник посвящён историческим событиям 1612 года, когда народное ополчение под руководством Кузьмы Минина и князя Дмитрия Пожарского освободило Москву от польских интервентов.",
+      "events": ["unity_day"],
       "topics": [],
-      "regions": [
-        "RU-SVE"
-      ],
-      "verification_status": "draft",
+      "regions": ["RU"],
+      "verification_status": "verified",
       "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
-      "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
-    },
-    {
-      "fragment_id": "frag_unity_day_003",
-      "source_id": "src_unity_day_v19_01",
-      "quote": "С 2005 года в России 4 ноября празднуется День народного единства.",
-      "events": [
-        "unity_day"
-      ],
-      "topics": [],
-      "regions": [
-        "RU-SVE"
-      ],
-      "verification_status": "draft",
-      "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
-      "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
-    },
-    {
-      "fragment_id": "frag_unity_day_004",
-      "source_id": "src_unity_day_v19_02",
-      "quote": "Праздник учреждён в память о событиях 1612 г.",
-      "events": [
-        "unity_day"
-      ],
-      "topics": [],
-      "regions": [
-        "RU-SVE"
-      ],
-      "verification_status": "draft",
-      "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
-      "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
-    },
-    {
-      "fragment_id": "frag_unity_day_005",
-      "source_id": "src_unity_day_v19_02",
-      "quote": "Именно объединение сил позволило ополчению одержать победу в Кремле и Китай-городе.",
-      "events": [
-        "unity_day"
-      ],
-      "topics": [],
-      "regions": [
-        "RU-SVE"
-      ],
-      "verification_status": "draft",
-      "collected_by": "claude-auto",
-      "verified_by": null,
-      "retrieved_at": "2026-10-26",
-      "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-11-09",
+      "note": "Цитата проверена вручную, подтверждает исторический контекст праздника."
     }
   ]
 }
