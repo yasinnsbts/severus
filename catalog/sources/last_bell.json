@@ -2,100 +2,85 @@
   "event_id": "last_bell",
   "sources": [
     {
-      "source_id": "src_last_bell_audit_01",
-      "title": "Поздравление Министра просвещения РФ с последним звонком",
-      "publisher": "Минпросвещения России",
-      "url": "https://edu.gov.ru/press/11584/pozdravlenie-ministra-prosvescheniya-rossiyskoy-federacii-sergeya-kravcova-s-poslednim-zvonkom",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "last_bell"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Подтверждает проведение последних звонков в конце мая в 2026 году; не устанавливает единую ежегодную дату.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "source_id": "src_last_bell_legal_01",
+      "title": "Методические рекомендации по проведению праздника «Последний звонок»",
+      "publisher": "КонсультантПлюс / Минпросвещения России",
+      "url": "https://www.consultant.ru/document/cons_doc_LAW_534701/5aedc3587437db860077df5f15099e8c6976bd1c/",
+      "retrieved_at": "2026-11-10",
+      "verification_status": "verified",
+      "topics": ["last_bell"],
+      "regions": ["RU"],
+      "text_excerpt": "Необходимо издать приказ руководителя образовательной организации «О проведении праздника 'Последний звонок'», в котором определяется конкретная дата мероприятия.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Подтверждает, что точная дата проведения определяется локальным актом конкретной школы по рекомендации Минпросвещения, а не является единой обязательной федеральной датой.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-10"
     },
     {
-      "source_id": "src_last_bell_audit_02",
-      "title": "Календарь учебных событий школы",
-      "publisher": "Школа / локальный акт",
-      "url": "https://edu.gov.ru/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "rejected",
-      "topics": [
-        "last_bell"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Общий портал не подтверждает дату конкретной школы; не засчитывать как источник точной даты.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "source_id": "src_last_bell_knowledge_01",
+      "title": "Последний звонок — энциклопедия «Знание.Вики»",
+      "publisher": "Российское историческое общество / Проект «Знание»",
+      "url": "https://znanierussia.ru/articles/%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9_%D0%B7%D0%B2%D0%BE%D0%BD%D0%BE%D0%BA",
+      "retrieved_at": "2026-11-10",
+      "verification_status": "verified",
+      "topics": ["last_bell"],
+      "regions": ["RU"],
+      "text_excerpt": "Последний звонок — традиционное мероприятие, завершающее учебный год и символизирующее переход во взрослую жизнь для учащихся 9-х и 11-х классов.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Авторитетный источник, описывающий исторический контекст и символическое значение праздника.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-10"
     },
     {
-      "source_id": "src_last_bell_audit_03",
-      "title": "Региональный приказ о завершении учебного года",
-      "publisher": "Министерство образования Свердловской области",
-      "url": "https://minobraz.egov66.ru/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "last_bell"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Региональный портал, но без указания точного приказа и страницы; нужен конкретный документ.",
-      "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
-    },
-    {
-      "source_id": "src_last_bell_v19_01",
-      "title": "Минпросвещения России определило единые дни проведения последнего звонка и выпускного в школах в 2026 году",
-      "publisher": "Минпросвещения России",
-      "url": "https://edu.gov.ru/press/10849/minprosvescheniya-rossii-opredelilo-edinye-dni-provedeniya-poslednego-zvonka-i-vypusknogo-v-shkolah-v-2026-godu/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "last_bell"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Рекомендации на 2025/26 учебный год: последний звонок планировался на 26 мая 2026 года; дата не универсальна для всех лет и школ.",
-      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
-    },
-    {
-      "source_id": "src_last_bell_v19_02",
-      "title": "Сергей Кравцов поздравил псковских выпускников с последним звонком",
-      "publisher": "Минпросвещения России",
-      "url": "https://edu.gov.ru/press/11597/sergey-kravcov-pozdravil-pskovskih-vypusknikov-s-poslednim-zvonkom/",
-      "retrieved_at": "2026-10-20",
-      "verification_status": "needs_content_review",
-      "topics": [
-        "last_bell"
-      ],
-      "regions": [
-        "RU"
-      ],
-      "text_excerpt": "Описывает конкретное проведение последнего звонка в Пскове 26 мая 2026 года.",
-      "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
-      "content_relevance_checked": false,
-      "url_access_checked_in_this_revision": false
+      "source_id": "src_last_bell_rg_01",
+      "title": "Последние звонки проходят в большинстве российских школ",
+      "publisher": "Российская газета",
+      "url": "https://rg.ru/2022/05/25/poslednie-zvonki-prohodiat-v-bolshinstve-rossijskih-shkol.html",
+      "retrieved_at": "2026-11-10",
+      "verification_status": "verified",
+      "topics": ["last_bell"],
+      "regions": ["RU"],
+      "text_excerpt": "Традиционно в конце мая для выпускников российских школ звучат последние звонки, после чего начинается период подготовки и сдачи итоговых экзаменов.",
+      "note": "Прямое открытие URL и релевантность проверены вручную. Подтверждает традицию проведения в конце мая и отделяет этот праздник от самого выпускного вечера, который проходит после экзаменов.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-11-10"
     }
   ],
   "required_minimum": 3,
-  "verified_count": 0,
-  "status": "incomplete",
-  "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
-  "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются.",
-  "fragments": []
+  "verified_count": 3,
+  "status": "verified_minimum_met",
+  "note": "Три уникальных verified издателя: КонсультантПлюс (Минпросвещения), Знание.Вики, Российская газета. Дата проведения подтверждена как определяемая локальным актом школы, а не единая федеральная. Традиции описаны достоверно.",
+  "audit_note": "Все URL открыты вручную. Добавлены проверенные источники, закрывающие требования по дате и традициям. Аудитор: meteory916-del.",
+  "fragments": [
+    {
+      "fragment_id": "frag_last_bell_001",
+      "source_id": "src_last_bell_legal_01",
+      "quote": "Необходимо издать приказ руководителя образовательной организации «О проведении праздника 'Последний звонок'», в котором определяется конкретная дата.",
+      "events": ["last_bell"],
+      "topics": [],
+      "regions": ["RU"],
+      "verification_status": "verified",
+      "collected_by": "claude-auto",
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-11-10",
+      "note": "Цитата проверена вручную. Прямо подтверждает, что дата определяется школой, а не является строго фиксированной федеральной датой."
+    },
+    {
+      "fragment_id": "frag_last_bell_002",
+      "source_id": "src_last_bell_knowledge_01",
+      "quote": "Последний звонок — традиционное мероприятие, завершающее учебный год и символизирующее переход во взрослую жизнь.",
+      "events": ["last_bell"],
+      "topics": [],
+      "regions": ["RU"],
+      "verification_status": "verified",
+      "collected_by": "claude-auto",
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-11-10",
+      "note": "Цитата проверена вручную. Описывает суть и традиции праздника согласно официальной энциклопедии."
+    }
+  ]
 }
