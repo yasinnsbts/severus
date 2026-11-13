@@ -1,6 +1,7 @@
-"""Очередь и межпроцессная блокировка локальной модели (ТЗ 4.7).
+"""Межпроцессная блокировка локальной модели (ТЗ 4.7).
 
-- Очередь внутри сервиса действует всегда: вызовы к локальной модели - строго по одному.
+- Очередь внутри сервиса - в `limits.py`: число одновременных обращений к локальной модели
+  задаёт `local_model_max_parallel` в `config/service.json` (по умолчанию 1 - строго по одному).
 - Межпроцессная блокировка - опция для случая, когда та же локальная модель используется
   не только этим сервисом. По умолчанию выключена (`LOCAL_LLM_MUTEX_ENABLED=false`).
   Реализована lock-файлом (`LOCAL_LLM_MUTEX_PATH`) и одинаково работает на любой ОС.
@@ -10,7 +11,6 @@
 from __future__ import annotations
 
 import sys
-import threading
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -19,9 +19,6 @@ from typing import Iterator
 
 class MutexTimeout(TimeoutError):
     pass
-
-
-_THREAD_LOCK = threading.Lock()  # очередь внутри процесса
 
 
 def _try_lock(fh) -> None:
@@ -98,19 +95,18 @@ def _file_lock(path: Path, wait_seconds: float) -> Iterator[dict]:
 
 @contextmanager
 def local_llm_lock(path: Path, wait_seconds: float, enabled: bool = False) -> Iterator[dict]:
-    """Очередь сервиса (всегда) + межпроцессная блокировка (если enabled). Возвращает сведения с `wait_ms`."""
+    """Межпроцессная блокировка (если enabled). Возвращает сведения с `wait_ms`.
+
+    Очередь внутри процесса берётся раньше, в `limits.llm_request_slot(local=True)`; здесь при
+    выключенной блокировке ничего не ждём (`kind=queue_only`).
+    """
     started = time.monotonic()
-    if not _THREAD_LOCK.acquire(timeout=wait_seconds):
-        raise MutexTimeout("Очередь локальной модели внутри сервиса занята слишком долго")
-    try:
-        if enabled:
-            with _file_lock(path, wait_seconds) as info:
-                info["wait_ms"] = int((time.monotonic() - started) * 1000)
-                yield info
-        else:
-            yield {"kind": "queue_only", "wait_ms": int((time.monotonic() - started) * 1000)}
-    finally:
-        _THREAD_LOCK.release()
+    if enabled:
+        with _file_lock(path, wait_seconds) as info:
+            info["wait_ms"] = int((time.monotonic() - started) * 1000)
+            yield info
+    else:
+        yield {"kind": "queue_only", "wait_ms": 0}
 
 
 def lock_from_settings(settings) -> dict:

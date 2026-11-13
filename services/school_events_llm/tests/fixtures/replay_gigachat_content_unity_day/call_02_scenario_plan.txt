@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Единство через разнообразие",
+  "concept": {
+    "summary": "Участники изучают культурное многообразие российского общества, работают с источниками и создают коллективный проект по укреплению гражданского единства.",
+    "goal": "Формирование понимания культурного многообразия и развитие гражданской ответственности через практическую деятельность.",
+    "tasks": [
+      "Развитие навыков межкультурного взаимодействия",
+      "Создание условий для проявления гражданской инициативы"
+    ],
+    "expected_outcomes": [
+      "Коллекция идей и предложений учащихся по развитию культуры взаимного уважения и сотрудничества в школе"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "cultural_diversity",
+        "mechanic_type": "culture_comparison",
+        "mechanic": "Участникам предлагается изучить и сравнить различные культурные традиции, представленные в карточках-свидетельствах.",
+        "block_ids": ["block_02"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Команды разрабатывают реальные проекты по укреплению гражданского единства в школьной среде.",
+        "block_ids": ["block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_02", "block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 26}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вводная беседа",
+      "purpose": "Знакомство с темой дня, создание мотивации",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Изучение культурных традиций",
+      "purpose": "Осознание культурного многообразия через работу с источниками",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["culture_cards"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Групповая разработка проекта",
+      "purpose": "Практическое применение знаний о гражданственности",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["project_template"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Представление проектов",
+      "purpose": "Обмен идеями и опытом между участниками",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_05",
+      "title": "Подведение итогов и рефлексия",
+      "purpose": "Закрепление полученных знаний и опыта",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "culture_cards",
+      "type": "activity_card",
+      "title": "Карточки с описанием культурных традиций",
+      "purpose": "Для изучения и сравнения культурных особенностей"
+    },
+    {
+      "material_id": "project_template",
+      "type": "worksheet",
+      "title": "Шаблоны для разработки проектов",
+      "purpose": "Структурирование идеи проекта"
+    }
+  ]
+}

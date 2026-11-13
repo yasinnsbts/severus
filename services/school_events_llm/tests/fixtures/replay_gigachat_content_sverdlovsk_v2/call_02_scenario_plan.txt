@@ -1,0 +1,119 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Путешествие по страницам истории нашей области",
+  "concept": {
+    "summary": "Ребята отправляются в путешествие по главным страницам истории Свердловской области, работая с историческими документами и создавая коллективный маршрут-путеводитель.",
+    "goal": "Формирование интереса к истории родного края и воспитание гражданской позиции через практическую деятельность.",
+    "tasks": [
+      "Развитие умения работать с историческими источниками",
+      "Формирование чувства принадлежности к малой родине"
+    ],
+    "expected_outcomes": [
+      "Создан коллективный маршрут-путеводитель по истории области",
+      "Повышение уровня знаний об истории Свердловской области"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "historical_memory",
+        "mechanic_type": "source_work",
+        "mechanic": "Работа с историческими свидетельствами позволяет учащимся самостоятельно изучать прошлое региона.",
+        "block_ids": ["block_04"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "class_collective_task",
+        "mechanic": "Совместное создание единого путеводителя развивает гражданские качества и ответственность за общее дело.",
+        "block_ids": ["block_06"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 5,
+    "block_ids": ["block_04", "block_05"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 25}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Встречаемся на старте!",
+      "purpose": "Приветствие, знакомство с темой мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Исторический брифинг",
+      "purpose": "Краткое введение в историю дня образования области",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_03",
+      "title": "Разделимся на экспедиции",
+      "purpose": "Организация команд для дальнейшей работы",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_04",
+      "title": "Изучение исторических свидетельств",
+      "purpose": "Работа с историческими источниками в командах",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["sources_cards"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Создание участка маршрута",
+      "purpose": "Подготовка командой своего участка исторического маршрута",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["route_templates", "markers"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Объединяем маршруты",
+      "purpose": "Сборка общего путеводителя и презентация",
+      "proposed_minutes": 7,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["final_map"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "sources_cards",
+      "type": "activity_card",
+      "title": "Карты и свидетельства",
+      "purpose": "Материалы для изучения истории области"
+    },
+    {
+      "material_id": "route_templates",
+      "type": "worksheet",
+      "title": "Шаблоны участков маршрута",
+      "purpose": "Бланки для создания частей путеводителя"
+    },
+    {
+      "material_id": "markers",
+      "type": "props_checklist",
+      "title": "Цветные маркеры",
+      "purpose": "Для оформления работ"
+    },
+    {
+      "material_id": "final_map",
+      "type": "handout",
+      "title": "Общий путеводитель",
+      "purpose": "Финальный продукт мероприятия"
+    }
+  ]
+}
+```

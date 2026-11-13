@@ -59,6 +59,98 @@ def _job_id() -> str:
     return f"job_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
 
 
+def cmd_load_test(args: argparse.Namespace, settings: Settings) -> int:
+    """Отправляет N генераций в запущенный HTTP-сервис одновременно и печатает, как они прошли.
+
+    Нужен, чтобы проверить параллельную работу на реальной модели: сколько задач шли сразу,
+    сколько ждали, сколько времени заняла каждая и не было ли ошибок `SERVICE_BUSY` или 429.
+    """
+    import threading
+    import time
+    import urllib.error
+    import urllib.request
+
+    base = (args.url or f"http://{settings.get('SERVICE_HOST', '127.0.0.1')}:{settings.get('SERVICE_PORT', '8090')}").rstrip("/")
+    headers = {"Content-Type": "application/json"}
+    if settings.get("SERVICE_AUTH_TOKEN"):
+        headers["X-Service-Token"] = settings.get("SERVICE_AUTH_TOKEN")
+    files = _batch_files(args.requests)
+    if not files:
+        _print({"error": {"code": "NO_REQUESTS", "message": "Не найдено ни одного файла запроса", "field": None, "retryable": False}})
+        return 2
+
+    def call(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
+        data = json.dumps(body, ensure_ascii=False).encode("utf-8") if body is not None else None
+        request = urllib.request.Request(base + path, data=data, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return response.status, json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            return exc.code, json.loads(exc.read().decode("utf-8") or "{}")
+
+    rows: list[dict] = [{} for _ in range(args.count)]
+    peak = {"running": 0, "waiting": 0, "llm": 0}
+    done = threading.Event()
+
+    def watch_load() -> None:
+        while not done.is_set():
+            try:
+                _, load = call("GET", "/api/v1/load")
+                peak["running"] = max(peak["running"], load.get("running_generations", 0))
+                peak["waiting"] = max(peak["waiting"], load.get("waiting_generations", 0))
+                peak["llm"] = max(peak["llm"], load.get("llm_requests_busy", 0))
+            except OSError:
+                pass
+            done.wait(1)
+
+    def one(index: int) -> None:
+        path = files[index % len(files)]
+        row = rows[index]
+        row["request"] = path.name
+        started = time.monotonic()
+        code, accepted = call("POST", "/api/v1/generations", json.loads(path.read_text(encoding="utf-8")))
+        if code != 202:
+            row.update(status=f"HTTP {code}", error=(accepted.get("error") or {}).get("code"), seconds=round(time.monotonic() - started, 1))
+            return
+        job_id = accepted["job_id"]
+        first_running = None
+        while time.monotonic() - started < args.timeout:
+            _, job = call("GET", f"/api/v1/generations/{job_id}")
+            if job.get("status") == "running" and first_running is None:
+                first_running = time.monotonic()
+            if job.get("status") not in ("queued", "running"):
+                errors = job.get("errors") or []
+                row.update(status=job.get("status"), error=errors[0].get("code") if errors else None)
+                break
+            time.sleep(2)
+        else:
+            row.update(status="timeout", error=None)
+        row["seconds"] = round(time.monotonic() - started, 1)
+        row["waited"] = round((first_running or started) - started, 1)
+
+    watcher = threading.Thread(target=watch_load, daemon=True)
+    watcher.start()
+    sys.stderr.write(f"Отправляю {args.count} генераций одновременно в {base} ...\n")
+    threads = [threading.Thread(target=one, args=(i,)) for i in range(args.count)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    done.set()
+
+    print("| # | Запрос | Статус | Ждал в очереди, с (±2) | Всего, с | Ошибка |")
+    print("|---|---|---|---|---|---|")
+    for i, row in enumerate(rows, 1):
+        print(f"| {i} | {row.get('request')} | {row.get('status')} | {row.get('waited', '-')} | {row.get('seconds')} | {row.get('error') or '-'} |")
+    completed = sum(1 for row in rows if row.get("status") == "completed")
+    times = sorted(row["seconds"] for row in rows if row.get("status") == "completed")
+    median = times[len(times) // 2] if times else "-"
+    print(f"\nИтого: completed {completed} из {args.count}; время min/медиана/max: "
+          f"{times[0] if times else '-'} / {median} / {times[-1] if times else '-'} с.")
+    print(f"Пик: генераций одновременно {peak['running']}, в очереди {peak['waiting']}, обращений к модели {peak['llm']}.")
+    return 0 if completed == args.count else 1
+
+
 def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
     """Запускает внутренний HTTP-сервис для основного Backend Severus.
 
@@ -458,6 +550,12 @@ def main(argv: list[str] | None = None) -> int:
         if name == "render":
             command.add_argument("--markdown", action="store_true", help="читаемая версия вместо JSON")
 
+    load_test = subparsers.add_parser("load-test", help="одновременно отправить N генераций в запущенный сервис (serve)")
+    load_test.add_argument("requests", nargs="+", help="файлы запросов или папки; запросы повторяются по кругу до --count")
+    load_test.add_argument("--count", type=int, default=5, help="сколько генераций отправить одновременно")
+    load_test.add_argument("--url", help="адрес сервиса, по умолчанию http://SERVICE_HOST:SERVICE_PORT")
+    load_test.add_argument("--timeout", type=float, default=1800, help="сколько секунд ждать завершения всех задач")
+
     subparsers.add_parser("export-schemas", help="обновить JSON Schema")
     subparsers.add_parser("sources-check", help="проверить кураторский корпус источников")
     subparsers.add_parser("catalog-check", help="проверить, что общий каталог событий подходит генератору")
@@ -481,6 +579,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_validate(args, settings)
         if args.cmd == "render":
             return cmd_validate(args, settings, render_output=True)
+        if args.cmd == "load-test":
+            return cmd_load_test(args, settings)
         if args.cmd == "export-schemas":
             return cmd_export_schemas(args, settings)
         if args.cmd == "sources-check":

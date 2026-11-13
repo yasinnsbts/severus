@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "description": "Параллельная работа HTTP-сервиса. max_parallel_generations - сколько генераций идёт одновременно сразу, без очереди; каждая генерация обращается к модели последовательно, поэтому одновременных обращений к модели не больше этого числа. max_waiting_generations - сколько генераций сверх этого ждут своей очереди; если и очередь заполнена, сервис отвечает SERVICE_BUSY (retryable). max_parallel_llm_requests - общий предел одновременных обращений к модели в процессе. local_model_max_parallel - одновременных обращений к локальной модели (LM Studio на одной видеокарте - 1). llm_slot_wait_seconds - сколько обращение к модели может ждать свободного места. results_keep_hours - сколько часов сервис хранит статусы и готовые проекты в памяти. llm_cache_bypass - не брать ответы из кэша шлюза LiteLLM (профили с gateway_cache в config/models.json): каждая генерация и каждое исправление - новый ответ модели.",
+  "max_parallel_generations": 30,
+  "max_waiting_generations": 100,
+  "max_parallel_llm_requests": 30,
+  "local_model_max_parallel": 1,
+  "llm_slot_wait_seconds": 600,
+  "results_keep_hours": 24,
+  "llm_cache_bypass": true
+}

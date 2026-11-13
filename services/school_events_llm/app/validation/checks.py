@@ -12,11 +12,34 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from ..catalog import Catalog
+from ..generation.humanize import leftover_ids
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
 from ..script_length import script_min_chars
+from .inner_timing import grouping_counts, inner_timing_problems
 
 _YEAR = re.compile(r"(?<!\d)(1[0-9]{3}|20[0-9]{2})(?!\d)")
+# Сведения о традициях конкретной страны или народа: без проверенного фрагмента это непроверенный факт.
+_PLACE_OR_PEOPLE = re.compile(
+    r"\bв[о]?\s+(?:Итали|Германи|Франци|Испани|Мексик|Англи|Великобритани|Швеци|Норвеги|Финлянди|Польш|Чехи|Греци|Япони|Кита|Инди|США|Америк"
+    r"|Австри|Нидерланд|Голланди|Бразили|Канад|Австрали|Эфиопи|Армени|Грузи|Беларус|Белорусси|Украин|Казахстан|Болгари|Серби|Ирланди|Шотланди"
+    r"|Филиппин|Росси)\w*"
+    r"|\b(?:у|для)\s+(?:народ\w*|татар|башкир|чуваш\w*|марийц\w*|удмурт\w*|мордв\w*|манси|ханты|ненц\w*|русских|казах\w*|армян|грузин|якут\w*|бурят\w*)\b"
+    r"|\bнарод\w*\s+(?:Кавказа|Поволжья|Сибири|Севера|Урала|Дагестана)"
+    r"|\b(?:татарск|башкирск|чувашск|марийск|удмуртск|мордовск|якутск|бурятск)\w*\s+народ"
+    r"|\bкоренн\w+\s+(?:жител|народ)\w*"
+    r"|\b(?i:итальян|немц|немецк|россиян|испанц|испанск|француз|англичан|британц|мексиканц|мексиканск|шведск|шведы|поляк|польск"
+    r"|грек|греческ|японц|японск|китайц|китайск|американц|американск|финск|финны|норвежц|норвежск)\w*",
+)
+_TRADITION_CLAIM = re.compile(
+    r"принято|существует\s+(?:традиц|обыча)|есть\s+(?:традиц|обыча)|по\s+традиции|традиционно|обычай|обряд|ритуал|празднуют|отмечают"
+    r"|популярн|готовят|украша|поют|устраивают|проходят|сохраняют|дарят|ставят|зажигают|любят|едят|пекут",
+    re.I,
+)
+_SENTENCE = re.compile(r"[^.!?\n]+[.!?]?")
+
+# Век: «в XVII веке», «XIX века», «в 17 веке», «18-го века».
+_CENTURY = re.compile(r"\b(?:[IVX]{1,5}|\d{1,2}(?:-?(?:м|ом|го|ого))?)\s+век(?:а|е|ом|ах|ов|и)?\b")
 _DATE = re.compile(r"\b\d{1,2}\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\b", re.I)
 
 
@@ -29,7 +52,9 @@ FAMILY_ALTERNATIVE = re.compile(
     r"|если\s+(?:\w+\s+){0,3}(?:сложно|трудно|неудобно|некогда)"
     r"|можешь\s+(?:\w+\s+){0,2}(?:написать|придумать|представить|нарисовать|рассказать|выбрать|вспомнить)"
     r"|или\s+(?:просто\s+)?(?:расскажи|придумай|напиши|нарисуй|представь|выбери)"
-    r"|геро\w*\s+(?:\w+\s+){0,2}(?:книг|книж|фильм|мультфильм|мультик|сказк|рассказ|истори)",
+    r"|геро\w*\s+(?:\w+\s+){0,2}(?:книг|книж|фильм|мультфильм|мультик|сказк|рассказ|истори)"
+    r"|не\s+с\s+кем|ничего\s+страшного"
+    r"|(?:прочитай|посмотри|послушай)\s+(?:\w+\s+){0,2}(?:книг|фильм|мультфильм|мультик|сказк|рассказ)",
     re.I,
 )
 
@@ -244,6 +269,23 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
         if len(b["pupil_actions"]) < 2:
             add("PUPIL-ACTIONS-FEW", "warning", f"timeline.{b['block_id']}", f"Действий учеников меньше двух ({len(b['pupil_actions'])})", "blocks")
 
+    # Время внутри этапа: только явные противоречия, остальное - эксперту (предупреждение, без исправления).
+    groups_count, pairs_count = grouping_counts(v)
+    for index, b in enumerate(timeline):
+        following = timeline[index + 1] if index + 1 < len(timeline) else {}
+        for problem in inner_timing_problems(b, groups_count=groups_count, pairs_count=pairs_count,
+                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", "")):
+            add("INNER-TIMING", "warning", f"timeline.{b['block_id']}", f"Время внутри этапа не сходится: {problem}", "blocks", repairable=False)
+
+    # Технические обозначения в тексте для педагога (после замены известных ID на названия).
+    human_texts = [(f"timeline.{b['block_id']}", [b["title"], b["purpose"], b["teacher_script"], *b["pupil_actions"]]) for b in timeline]
+    human_texts += [(f"materials.{m['material_id']}", [m["title"], m["content"], m["teacher_notes"]]) for m in materials]
+    human_texts.append(("teacher_instructions", list(v.get("teacher_instructions") or [])))
+    for loc, parts in human_texts:
+        found = sorted({token for part in parts for token in leftover_ids(part)})
+        if found:
+            add("TECH-ID-IN-TEXT", "warning", loc, f"В тексте для педагога технические обозначения: {', '.join(found[:5])}", "blocks", repairable=False)
+
     # Проверка связи ценностей с механиками по правилам VAL-001..VAL-004.
     vtm = v["concept"].get("values_to_mechanics", [])
     by_value = {x["value_id"]: x for x in vtm}
@@ -277,12 +319,36 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     texts = [(f"timeline.{b['block_id']}", b["teacher_script"] + " " + " ".join(b["pupil_actions"])) for b in timeline]
     texts += [(f"materials.{m['material_id']}", m["content"]) for m in materials]
     claimed = " ".join(c["text"] for c in claims)
+    # Дата самого события из карточки каталога («7 января» для Рождества) - не новый факт.
+    rule = (catalog.events.get(n.event_id) or {}).get("date_rule") or {}
+    card_dates = {m.group(0).lower() for m in _DATE.finditer(str(rule.get("note") or ""))}
     for loc, text in texts:
-        for match in list(_YEAR.finditer(text)) + list(_DATE.finditer(text)):
+        for match in list(_YEAR.finditer(text)) + list(_DATE.finditer(text)) + list(_CENTURY.finditer(text)):
             token = match.group(0)
-            if token not in claimed:
-                add("FACT-UNREGISTERED", "warning", loc, f"Дата/год «{token}» не зарегистрирован в fact_claims", "blocks")
+            if token not in claimed and token.lower() not in card_dates:
+                add("FACT-UNREGISTERED", "warning", loc, f"Дата, год или век «{token}» не зарегистрирован в fact_claims", "blocks")
                 break
+
+    # Традиции стран и народов без проверенных фрагментов события: предупреждение эксперту.
+    if not catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context):
+        for loc, text in texts:
+            for sentence in _SENTENCE.findall(text):
+                if _PLACE_OR_PEOPLE.search(sentence) and _TRADITION_CLAIM.search(sentence):
+                    quote = sentence.strip()
+                    quote = quote if len(quote) <= 110 else quote[:107] + "..."
+                    add("CULTURE-UNSOURCED", "warning", loc,
+                        f"Сведения о традициях страны или народа без проверенного источника: «{quote}»", "blocks", repairable=False)
+                    break
+
+    # Признаки близкого, но другого праздника (Дед Мороз в рождественском сценарии и т. п.).
+    boundary = ((catalog.boundaries or {}).get("events") or {}).get(n.event_id) or {}
+    markers = [re.compile(m, re.I) for m in boundary.get("markers", [])]
+    if markers:
+        for loc, text in texts + [("teacher_instructions", " ".join(v.get("teacher_instructions") or []))]:
+            found = sorted({m.group(0).lower() for rx in markers for m in rx.finditer(text)})
+            if found:
+                add("EVENT-MIXUP", "warning", loc,
+                    f"Похоже на атрибуты праздника «{boundary.get('confused_with', '?')}»: {', '.join(found[:4])}", "blocks", repairable=False)
     src_ids = {c.get("source_id") for c in claims if c.get("source_id")}
     for s in v.get("sources", []):
         if s["source_id"] not in src_ids:

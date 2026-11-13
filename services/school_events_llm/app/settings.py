@@ -195,6 +195,15 @@ class Settings:
         """Загружает настройки конвейера генерации и параметров LLM-этапов."""
         return read_json(self.generation_file)
 
+    def service(self) -> dict[str, Any]:
+        """Настройки параллельной работы сервиса `config/service.json`; без файла - значения по умолчанию."""
+        defaults = {"max_parallel_generations": 30, "max_waiting_generations": 100, "max_parallel_llm_requests": 30,
+                    "local_model_max_parallel": 1, "llm_slot_wait_seconds": 600, "results_keep_hours": 24,
+                    "llm_cache_bypass": True}
+        path = self.root / "config" / "service.json"
+        data = read_json(path) if path.is_file() else {}
+        return {**defaults, **{k: v for k, v in data.items() if k in defaults}}
+
     def experiment_modes(self) -> dict[str, Any]:
         """Загружает конфигурацию экспериментальных режимов full и universal."""
         return read_json(self.experiment_modes_file)

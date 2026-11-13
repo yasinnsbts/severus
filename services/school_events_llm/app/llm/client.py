@@ -17,6 +17,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from .jsonx import strip_reasoning
+from .limits import SlotTimeout, llm_request_slot
 from .mutex import local_llm_lock
 
 
@@ -199,6 +200,10 @@ class OpenAICompatibleClient(LLMClient):
         self.lock_cfg = lock_cfg if self.local else None
         self._model_id: str | None = None
         self._schema_unsupported = False
+        # Шлюз LiteLLM отдаёт сохранённый ответ на запрос, совпадающий до символа. Чтобы каждая генерация
+        # и каждое исправление получали новый ответ модели, кэш обходится (config/service.json: llm_cache_bypass).
+        self.cache_bypass = bool(cfg.get("gateway_cache")) and bool(cfg.get("cache_bypass", True))
+        self._cache_param_unsupported = False
 
     def _headers(self) -> dict[str, str]:
         """Формирует HTTP-заголовки авторизации для текущего LLM-провайдера.
@@ -249,11 +254,12 @@ class OpenAICompatibleClient(LLMClient):
         return {"model_key": self.model_key, "provider": self.provider, "base_url": self.base_url,
                 "models": self.list_models(), "selected_model_id": self.model_id()}
 
-    def _body(self, messages, model_id, max_tokens, temperature, schema, mode) -> dict:
+    def _body(self, messages, model_id, max_tokens, temperature, schema, mode, meta=None) -> dict:
         """Собирает тело OpenAI-совместимого запроса с настройками вывода и reasoning_mode.
 
         Параметры:
-            `messages`, `model_id`, `max_tokens`, `temperature`, `schema`, `mode`.
+            `messages`, `model_id`, `max_tokens`, `temperature`, `schema`, `mode`;
+            `meta` - `job_id` и `call_id` вызова: для обхода кэша шлюза.
 
         Возвращает:
             dict.
@@ -261,6 +267,14 @@ class OpenAICompatibleClient(LLMClient):
         msgs = [dict(m) for m in messages]
         body: dict[str, Any] = {"model": model_id, "messages": msgs, "temperature": temperature,
                                 "max_tokens": max_tokens, "stream": False}
+        if self.cache_bypass:
+            # Два способа сразу: параметр LiteLLM «не читать и не сохранять кэш» и служебная отметка вызова
+            # в конце запроса - она делает каждый запрос уникальным, даже если шлюз параметр не учитывает.
+            if not self._cache_param_unsupported:
+                body["cache"] = {"no-cache": True, "no-store": True}
+            marker = "/".join(str((meta or {}).get(k)) for k in ("job_id", "call_id") if (meta or {}).get(k))
+            if marker:
+                msgs[-1]["content"] = msgs[-1]["content"] + f"\n\n<!-- служебная отметка вызова {marker}, на ответ не влияет -->"
         if self.reasoning_mode == "disabled":
             if self.thinking_method == "no_think_tag":
                 msgs[-1]["content"] = msgs[-1]["content"] + "\n\n/no_think"
@@ -298,7 +312,7 @@ class OpenAICompatibleClient(LLMClient):
         mode = self.structured_mode
         if mode == "auto":
             mode = "none" if self._schema_unsupported or not output_schema else "json_schema"
-        body = self._body(messages, model_id, max_tokens, temperature, output_schema, mode)
+        body = self._body(messages, model_id, max_tokens, temperature, output_schema, mode, meta)
 
         def do_call() -> tuple[int, Any, int]:
             """Выполняет один OpenAI-совместимый запрос внутри локальной очереди и возвращает нормализованный результат.
@@ -310,23 +324,34 @@ class OpenAICompatibleClient(LLMClient):
             status, payload = self._call(body)
             return status, payload, int((time.monotonic() - started) * 1000)
 
-        wait_ms = 0
-        if self.lock_cfg:
-            with local_llm_lock(**self.lock_cfg) as info:
-                wait_ms = info.get("wait_ms", 0)
-                status, payload, latency = do_call()
-                if status == 400 and mode == "json_schema" and self.structured_mode == "auto":
-                    self._schema_unsupported = True
-                    mode = "none"
-                    body.pop("response_format", None)
-                    status, payload, latency = do_call()
-        else:
+        def call_with_fallback() -> tuple[int, Any, int]:
+            """Вызов модели; если провайдер не принял JSON-схему или параметр кэша, повтор без них."""
+            nonlocal mode
             status, payload, latency = do_call()
+            if status == 400 and "cache" in body:
+                # Шлюз не знает параметр кэша: дальше без него, уникальность запроса держит служебная отметка.
+                self._cache_param_unsupported = True
+                body.pop("cache", None)
+                status, payload, latency = do_call()
             if status == 400 and mode == "json_schema" and self.structured_mode == "auto":
                 self._schema_unsupported = True
                 mode = "none"
                 body.pop("response_format", None)
                 status, payload, latency = do_call()
+            return status, payload, latency
+
+        # Место для обращения к модели: общий предел процесса и предел локальной модели (config/service.json).
+        try:
+            with llm_request_slot(local=self.local) as slot_wait_ms:
+                if self.lock_cfg:
+                    with local_llm_lock(**self.lock_cfg) as info:
+                        wait_ms = slot_wait_ms + info.get("wait_ms", 0)
+                        status, payload, latency = call_with_fallback()
+                else:
+                    wait_ms = slot_wait_ms
+                    status, payload, latency = call_with_fallback()
+        except SlotTimeout as exc:
+            raise LLMError("SERVICE_BUSY", f"Сервис перегружен: {exc}", retryable=True) from exc
         _raise_for_status(status, payload)
         try:
             message = payload["choices"][0]["message"]
@@ -400,14 +425,18 @@ def build_client(settings, model_key: str | None = None) -> LLMClient:
     Возвращает:
         LLMClient.
     """
+    from .limits import configure
     from .mutex import lock_from_settings
 
+    service = settings.service()
+    configure(service)
     models = settings.models()
     key = settings.active_model_key(model_key)
     raw_cfg = models.get("models", {}).get(key)
     if not raw_cfg:
         raise LLMError("MODEL_UNAVAILABLE", f"Модель {key} не описана в config/models.json")
     cfg = dict(raw_cfg)
+    cfg["cache_bypass"] = bool(service.get("llm_cache_bypass", True))
     if not cfg.get("enabled", False):
         raise LLMError("MODEL_UNAVAILABLE", f"Модель {key} выключена (enabled=false) в config/models.json")
     if cfg.get("base_url_env"):

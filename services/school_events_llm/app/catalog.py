@@ -36,6 +36,8 @@ class Catalog:
     fragments: dict[str, dict[str, Any]]
     school_profile: dict[str, Any]
     hashes: dict[str, str] = field(default_factory=dict)
+    # Близкие праздники и названия региональных тем (`config/event_boundaries.json`).
+    boundaries: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def load(cls, settings: Settings) -> "Catalog":
@@ -87,7 +89,12 @@ class Catalog:
         if profile_path.is_file():
             hashes["config/school_profile.json"] = sha256_file(profile_path)
 
-        catalog = cls(events, values, deps, sources, fragments, profile, hashes)
+        boundaries_path = settings.root / "config" / "event_boundaries.json"
+        boundaries = read_json(boundaries_path) if boundaries_path.is_file() else {}
+        if boundaries_path.is_file():
+            hashes["config/event_boundaries.json"] = sha256_file(boundaries_path)
+
+        catalog = cls(events, values, deps, sources, fragments, profile, hashes, boundaries)
         problems += catalog.integrity_problems(settings.root / "prompts")
         if problems:
             raise CatalogError(shared, problems)

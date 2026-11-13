@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Рождественские традиции мира",
+      "summary": "Участники знакомятся с разными культурными традициями празднования Рождества, обсуждают семейные практики и создают коллективный информационный стенд.",
+      "narrative_approach": "Событие начинается с обсуждения известных детям рождественских обычаев, затем они работают в командах над созданием информационных листов о традиционных практиках разных стран, завершают создание общего информационного стенда и презентацией результатов.",
+      "primary_mechanic": "creative_workshop",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Вводное обсуждение",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Работа в командах",
+          "activity_type": "team_task",
+          "approx_minutes": 12
+        },
+        {
+          "order": 3,
+          "title": "Создание совместного продукта",
+          "activity_type": "joint_product",
+          "approx_minutes": 8
+        },
+        {
+          "order": 4,
+          "title": "Подведение итогов",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "team_task",
+          "description": "Команды исследуют традиционные практики празднования Рождества в разных странах и готовят информационные листы."
+        },
+        {
+          "activity_type": "joint_product",
+          "description": "Совместное оформление информационного стенда на основе собранных материалов."
+        }
+      ],
+      "distinctive_result": "Информационный стенд о рождественских традициях разных стран, созданный участниками.",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "cultural_diversity",
+          "mechanic_type": "culture_comparison",
+          "mechanic": "Участникам предлагается исследовать и представить различные национальные традиции празднования Рождества, выявляя сходства и различия между ними."
+        },
+        {
+          "value_id": "family",
+          "mechanic_type": "family_research",
+          "mechanic": "Обсуждаются семейные рождественские традиции участников, подчеркивается важность семейных практик в праздновании."
+        }
+      ]
+    }
+  ]
+}

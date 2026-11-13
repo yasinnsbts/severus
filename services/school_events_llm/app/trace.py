@@ -14,9 +14,14 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+# Общий журнал runs.jsonl пишут все генерации процесса: строки не должны перемешиваться.
+_RUN_LOG_LOCK = threading.Lock()
 
 
 class RunTrace:
@@ -118,7 +123,7 @@ class RunTrace:
             return
         line, _ = self._redact(json.dumps(record, ensure_ascii=False, default=str))
         try:
-            with (self.run_dir.parent / "runs.jsonl").open("a", encoding="utf-8") as fh:
+            with _RUN_LOG_LOCK, (self.run_dir.parent / "runs.jsonl").open("a", encoding="utf-8") as fh:
                 fh.write(line + "\n")
         except OSError:
             pass

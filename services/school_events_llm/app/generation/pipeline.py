@@ -28,8 +28,9 @@ from ..render import render_project, render_variant
 from ..settings import Settings, sha256_file
 from ..trace import RunTrace
 from ..usage import TokenTally
-from ..validation.checks import Issue, diversity_issues, report_status, validate_variant
+from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
+from .humanize import humanize_variant
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
@@ -221,6 +222,82 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
             fix(m, "type", "material_type", f"materials.{j}.type")
 
 
+_CLAIM_TEXT_KEYS = ("claim", "statement", "fact", "claim_text", "text_claim")
+
+
+def _fix_fact_claims(data: Any, changes: list[dict[str, Any]]) -> None:
+    """Факт без обязательных полей: `{"claim": "...", "source_id", "fragment_id"}` вместо `{"claim_id", "text", "location"}`.
+
+    Текст берётся из `claim` и подобных ключей, `claim_id` и `location` ставятся по умолчанию
+    (программа всё равно перенумеровывает факты при сборке варианта). Источник не придумывается.
+    """
+    if not isinstance(data, dict) or not isinstance(data.get("fact_claims"), list):
+        return
+    block = data.get("block") if isinstance(data.get("block"), dict) else {}
+    for index, claim in enumerate(data["fact_claims"], 1):
+        if not isinstance(claim, dict):
+            continue
+        fixed = []
+        if not claim.get("text"):
+            key = next((k for k in _CLAIM_TEXT_KEYS if isinstance(claim.get(k), str) and claim[k].strip()), None)
+            if key:
+                claim["text"] = claim.pop(key).strip()
+                fixed.append("text")
+        if not claim.get("claim_id"):
+            claim["claim_id"] = f"fc_{index:02d}"
+            fixed.append("claim_id")
+        if not claim.get("location"):
+            claim["location"] = block.get("block_id") or "text"
+            fixed.append("location")
+        if fixed:
+            changes.append({"kind": "fact_claim_fields", "index": index - 1, "fields": fixed})
+
+
+FAMILY_TASK_MARK = "(по желанию, до мероприятия)"
+FAMILY_ALTERNATIVE_TO_PUPIL = ("Если дома обсудить не с кем или некогда, ничего страшного: выполни задание сам - "
+                               "вспомни, придумай или нарисуй свой вариант. Это так же ценно.")
+FAMILY_ALTERNATIVE_TO_PARENTS = ("Если дома выполнить задание не получается, ребёнок может сделать его сам: "
+                                 "вспомнить, придумать или нарисовать свой вариант. Это так же ценно.")
+
+
+def fix_family_tasks(materials: list[dict[str, Any]], values: list[str]) -> list[dict[str, Any]]:
+    """Задание семье (`family_task`) приводится к правилам VAL-005 программой, без повторного вызова модели.
+
+    Раньше любое нарушение отправляло все материалы на переделку (30-55 с на вызов, до двух повторов),
+    хотя чинить нужно одно поле одного материала:
+    - ценности «Семья» в запросе нет - `family_task` снимается, материал остаётся обычным раздаточным;
+    - тип не `handout` - ставится `handout`;
+    - в названии нет «по желанию» - дописывается «(по желанию, до мероприятия)»;
+    - в тексте не найдена альтернатива для ребёнка, которому дома помочь некому, - дописывается
+      стандартная фраза (обращение к ребёнку или к родителям - по тексту задания).
+    Возвращает список исправлений для трассы (`family_task_fixed`).
+    """
+    fixes: list[dict[str, Any]] = []
+    for m in materials:
+        if not m.get("family_task"):
+            continue
+        done: list[str] = []
+        if "family" not in values:
+            m["family_task"] = False
+            fixes.append({"material_id": m.get("material_id"), "fixed": ["family_task_cleared"]})
+            continue
+        if m.get("type") != "handout":
+            m["type"] = "handout"
+            done.append("type")
+        if "по желанию" not in str(m.get("title") or "").lower():
+            m["title"] = f"{str(m.get('title') or 'Задание семье').strip()} {FAMILY_TASK_MARK}"
+            done.append("title")
+        content = str(m.get("content") or "")
+        if not FAMILY_ALTERNATIVE.search(content):
+            to_parents = bool(re.search(r"уважаем\w*\s+родител|дорогие\s+родител", content, re.I))
+            sentence = FAMILY_ALTERNATIVE_TO_PARENTS if to_parents else FAMILY_ALTERNATIVE_TO_PUPIL
+            m["content"] = f"{content.rstrip()}\n\n{sentence}"
+            done.append("alternative")
+        if done:
+            fixes.append({"material_id": m.get("material_id"), "fixed": done})
+    return fixes
+
+
 def prepare_stage_output(stage: str, data: Any, resources: set[str],
                          dependency_ids: set[str] | None = None) -> list[dict[str, Any]]:
     """Исправляет до проверки схемы ошибки ответа, которые однозначно понятны программе.
@@ -247,6 +324,7 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
         normalize_material_fields(data, changes)
         if dependency_ids is not None:
             normalize_dependencies(data, dependency_ids, changes)
+    _fix_fact_claims(data, changes)
     grouping = data.get("grouping_request") if stage == "scenario_plan" else None
     if isinstance(grouping, dict) and grouping.get("groups_count") in (None, "", 0):
         grouping["groups_count"] = 1  # программа сама считает группы (`compute_grouping`)
@@ -496,7 +574,7 @@ class Generator:
                     stage, call_id, variant_id,
                     messages=composed.messages, task_name=stage, output_schema=model_cls.model_json_schema(),
                     max_tokens=self.max_output_tokens(stage, n), temperature=float(task_cfg["temperature_hint"]),
-                    meta=meta or {})
+                    meta={**(meta or {}), "call_id": call_id})
                 raw = result.text
                 data = extract_json(raw)
                 fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies))
@@ -626,9 +704,10 @@ class Generator:
         for vm in plan["concept"]["values_to_mechanics"]:
             lines.append(f"- {vm['value_id']} ({vm['mechanic_type']}): {vm['mechanic']} - блоки {', '.join(vm.get('block_ids', []))}")
         if plan.get("planned_materials"):
-            lines.append("\nМатериалы (тексты создаются на следующем этапе):")
+            lines.append("\nМатериалы (тексты создаются на следующем этапе; в репликах и действиях называй их по названию, не по ID):")
             for m in plan["planned_materials"]:
-                lines.append(f"- `{m['material_id']}` - {m['type']} - {m['purpose']}")
+                title = f" «{m['title'].strip('«»')}»" if m.get("title") else ""
+                lines.append(f"- `{m['material_id']}`{title} - {m['type']} - {m['purpose']}")
         if previous_excerpt:
             lines.append(f"\nКонец предыдущего блока (для связности): «{previous_excerpt}»")
         return "\n".join(lines)
@@ -639,7 +718,8 @@ class Generator:
         items = plan.get("planned_materials") or []
         if not items:
             return "в плане материалов нет; создавай материал, только если без него блок невыполним"
-        return ", ".join(f"`{m['material_id']}` ({m['type']})" for m in items)
+        return ", ".join(f"`{m['material_id']}` ({m['type']}" + (f", название «{m['title'].strip('«»')}»" if m.get("title") else "") + ")"
+                         for m in items)
 
     @staticmethod
     def blocks_text(blocks: list[dict]) -> str:
@@ -872,6 +952,14 @@ class Generator:
             except ValidationError as exc:
                 issues.append(Issue("SCHEMA", "critical", "variant", self._format_error(exc), "blocks"))
             else:
+                # Задание семье чинится программой: повторный вызов модели ради одного поля не нужен.
+                family_fixes = fix_family_tasks(body["materials"], n.values)
+                if family_fixes:
+                    self.trace.event("family_task_fixed", variant_id=vid, fixes=family_fixes)
+                # Технические ID в тексте для педагога заменяются названиями материалов и этапов.
+                tech = humanize_variant(body, self.catalog.dependencies, plan.get("planned_materials"))
+                if tech:
+                    self.trace.event("tech_ids_replaced", variant_id=vid, count=len(tech), fields=tech[:30])
                 issues += validate_variant(body, n, self.catalog, self.cfg)
                 if self.defaults.get("llm_quality_review", False):
                     review_input = "## Вход этапа: готовый вариант для проверки\n```json\n" + json.dumps(body, ensure_ascii=False, indent=2) + "\n```"
