@@ -48,7 +48,8 @@
   "source_collection": "sverdlovsk_oblast_day",
   "source_ids": [
     "src_sverdlovsk_oblast_day_regional_01",
-    "src_sverdlovsk_oblast_day_regional_02"
+    "src_sverdlovsk_oblast_day_regional_02",
+    "src_sverdlovsk_oblast_day_regional_03"
   ],
   "review": {
     "historical_accuracy_required": true,

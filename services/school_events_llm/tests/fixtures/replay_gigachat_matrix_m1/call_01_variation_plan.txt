@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Сердечные открытки",
+      "summary": "Дети создают яркие открытки-букеты для близкого взрослого, который о них заботится, и играют в игру-викторину про добрые поступки.",
+      "narrative_approach": "Мероприятие начинается с обсуждения добрых слов и поступков, затем дети переходят к созданию открыток-букетов, украшенных сердечками-добрыми словами. Завершается событием игровая викторина \"Кто самый внимательный?\", где дети отвечают на вопросы о заботливых действиях.",
+      "primary_mechanic": "creative_workshop",
+      "engagement_mode": "whole_class",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Доброе слово",
+          "activity_type": "discussion",
+          "approx_minutes": 3
+        },
+        {
+          "order": 2,
+          "title": "Создание открыток-букетов",
+          "activity_type": "creative_product",
+          "approx_minutes": 15
+        },
+        {
+          "order": 3,
+          "title": "Игра-викторина \"Кто самый внимательный?\"",
+          "activity_type": "game",
+          "approx_minutes": 7
+        },
+        {
+          "order": 4,
+          "title": "Подведение итогов",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "creative_product",
+          "description": "Дети рисуют открытки-букеты, украшают их сердечками с добрыми словами и рисунками"
+        },
+        {
+          "activity_type": "game",
+          "description": "Викторина с вопросами о том, какие действия показывают заботу и любовь"
+        }
+      ],
+      "distinctive_result": "Яркие открытки-букеты с сердечками-добрыми словами, которые дети подарят близким взрослым",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "family",
+          "mechanic_type": "joint_product",
+          "mechanic": "Совместное создание открыток-букетов для близкого взрослого, выражающее уважение и благодарность"
+        }
+      ]
+    }
+  ]
+}

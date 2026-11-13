@@ -11,7 +11,9 @@
     "block_detail_mode": "per_block",
     "per_block_from_minutes": 60,
     "llm_quality_review": false,
-    "max_repair_attempts_per_stage": 2
+    "max_repair_attempts_per_stage": 2,
+    "provider_retry_attempts": 2,
+    "provider_retry_backoff_seconds": [3, 10]
   },
   "script_length": {
     "base_chars": {

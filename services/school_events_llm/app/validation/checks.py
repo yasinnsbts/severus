@@ -26,6 +26,8 @@ FAMILY_ALTERNATIVE = re.compile(
     r"альтернатив|если дома|если некому|можно вместо|вместо этого|если нет возможност|если рядом нет"
     r"|если\s+(?:\w+\s+){0,3}не\s+(?:получа|получит|получил|може|сможе|хоч|успе)"
     r"|если\s+(?:\w+\s+){0,3}нет\b|(?:подумай|придумай)\s+сам"
+    r"|если\s+(?:\w+\s+){0,3}(?:сложно|трудно|неудобно|некогда)"
+    r"|можешь\s+(?:\w+\s+){0,2}(?:написать|придумать|представить|нарисовать|рассказать|выбрать|вспомнить)"
     r"|или\s+(?:просто\s+)?(?:расскажи|придумай|напиши|нарисуй|представь|выбери)"
     r"|геро\w*\s+(?:\w+\s+){0,2}(?:книг|книж|фильм|мультфильм|мультик|сказк|рассказ|истори)",
     re.I,
@@ -174,8 +176,10 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
             if eng == "audience_award" and "award_instruction" not in types:
                 add("AWARD-INSTRUCTION", "warning", "materials", "Нет инструкции к награждению (award_instruction)", "materials")
         else:
+            # Инструкция к награждению уместна и по итогам оценки жюри (как и сказано в промпте этапа материалов).
+            jury = any(r.get("role_mode") == "evaluator" for r in parent_roles)
             for m in materials:
-                if m["type"] in ("audience_ballot", "award_instruction"):
+                if m["type"] == "audience_ballot" or (m["type"] == "award_instruction" and not jury):
                     add("BALLOT-NOT-ALLOWED", "critical", f"materials.{m['material_id']}", "Бюллетень/приз без выбранного режима голосования", "materials")
         if any(r.get("role_mode") == "helper" for r in parent_roles) and "parent_instruction" not in types:
             add("PARENT-INSTRUCTION", "warning", "materials", "Есть родители-помощники, но нет памятки для них (parent_instruction)", "materials")

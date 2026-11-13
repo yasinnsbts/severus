@@ -178,7 +178,15 @@ def build(cards: dict, sources: dict) -> dict[Path, str]:
     out: dict[Path, str] = {}
     for eid, data in sources.items():
         data = dict(data)
-        verified = sum(1 for s in data.get("sources", []) if s.get("verification_status") == "verified")
+        verified = len({
+            s["publisher"].strip().casefold()
+            for s in data.get("sources", [])
+            if s.get("verification_status") == "verified"
+            and s.get("content_relevance_checked") is True
+            and s.get("url_access_checked_in_this_revision") is True
+            and isinstance(s.get("publisher"), str)
+            and s["publisher"].strip()
+        })
         data["verified_count"] = verified
         if "required_minimum" in data:
             data["status"] = "verified_minimum_met" if verified >= data["required_minimum"] else "incomplete"

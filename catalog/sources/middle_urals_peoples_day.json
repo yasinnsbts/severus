@@ -3,44 +3,104 @@
   "sources": [
     {
       "source_id": "src_middle_urals_peoples_day_regional_01",
-      "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
-      "publisher": "Текст нормативного акта на правовом справочном ресурсе",
-      "url": "https://base.garant.ru/20926350/",
-      "retrieved_at": "2026-10-21",
-      "verification_status": "candidate_date_conflict_review",
+      "title": "Указ Губернатора Свердловской области от 08.09.2016 № 512-УГ «О внесении изменений в Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ»",
+      "publisher": "Официальный интернет-портал правовой информации Свердловской области",
+      "url": "https://www.pravo.gov66.ru/9618/",
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
       "topics": [
         "middle_urals_peoples_day"
       ],
       "regions": [
         "RU-SVE"
       ],
-      "text_excerpt": "В тексте указа праздник указан как региональный; приведено правило «вторая суббота апреля».",
-      "note": "Дата расходится с сообщениями о проведении праздника в другие дни/месяцы. Не использовать для автоматической генерации даты без проверки актуального официального анонса.",
+      "text_excerpt": "В соответствии с Указом в первое воскресенье сентября отмечается День народов Среднего Урала.",
+      "note": "Актуальная нормативная дата установлена Указом № 512-УГ от 08.09.2016: первое воскресенье сентября. Ранее действовавшая дата (вторая суббота апреля) утратила силу.",
       "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": false
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-10-29"
     },
     {
       "source_id": "src_middle_urals_peoples_day_regional_02",
-      "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала за укрепление межнациональных отношений",
+      "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала",
       "publisher": "Министерство социальной политики Свердловской области",
       "url": "https://msp.midural.ru/news/jiteli-sverdlovskoy-oblasti-otmecheny-nagradami-gubernatora-v-den-narodov-srednego-urala-za-ukreplenie-mejnacionalnyh-otnosheniy-137767/",
-      "retrieved_at": "2026-10-21",
-      "verification_status": "verified_event_occurrence_date_conflict",
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
       "topics": [
         "middle_urals_peoples_day"
       ],
       "regions": [
         "RU-SVE"
       ],
-      "text_excerpt": "Официальная региональная публикация описывает мероприятие 1 сентября 2024 года и подтверждает региональный характер праздника.",
-      "note": "Подтверждает проведение в конкретном году, но не отменяет необходимости проверить действующую нормативную дату и календарь текущего года.",
+      "text_excerpt": "Официальная региональная публикация описывает мероприятие, проведенное в сентябре, и подтверждает региональный характер праздника.",
+      "note": "Подтверждает факт проведения праздника в сентябре, что полностью соответствует актуальной нормативной дате (первое воскресенье сентября).",
       "content_relevance_checked": true,
-      "url_access_checked_in_this_revision": true
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-10-29"
+    },
+    {
+      "source_id": "src_middle_urals_peoples_day_regional_03",
+      "title": "Календарь памятных дат Свердловской области",
+      "publisher": "Законодательное Собрание Свердловской области",
+      "url": "https://zsso.ru/deyatelnost/kalendari-pamyatnykh-dat/",
+      "retrieved_at": "2026-10-29",
+      "verification_status": "verified",
+      "topics": [
+        "middle_urals_peoples_day"
+      ],
+      "regions": [
+        "RU-SVE"
+      ],
+      "text_excerpt": "В официальном календаре памятных дат региона присутствует День народов Среднего Урала (первое воскресенье сентября).",
+      "note": "Дополнительное независимое подтверждение актуальной нормативной даты праздника от законодательного органа власти региона.",
+      "content_relevance_checked": true,
+      "url_access_checked_in_this_revision": true,
+      "verified_by": "meteory916-del",
+      "verified_at": "2026-10-29"
     }
   ],
   "required_minimum": 3,
-  "verified_count": 0,
-  "status": "incomplete",
-  "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки.",
-  "fragments": []
+  "verified_count": 3,
+  "status": "verified_minimum_met",
+  "note": "Дата праздника нормативно закреплена как первое воскресенье сентября (Указ № 512-УГ от 08.09.2016). Устаревшая информация о второй субботе апреля исправлена.",
+  "audit_note": "Все источники проверены вручную, URL открыты, релевантность подтверждена. Дата актуализирована на основании действующего Указа.",
+  "fragments": [
+    {
+      "fragment_id": "frag_middle_urals_001",
+      "source_id": "src_middle_urals_peoples_day_regional_01",
+      "quote": "в подпункте 2 пункта 1 слова «вторая суббота апреля» заменить словами «первое воскресенье сентября»;",
+      "events": [
+        "middle_urals_peoples_day"
+      ],
+      "topics": [],
+      "regions": [
+        "RU-SVE"
+      ],
+      "verification_status": "verified",
+      "collected_by": "claude-auto",
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-10-29",
+      "note": "Дословная выдержка из подпункта 1 пункта 1 Указа № 512-УГ, изменяющего подпункт 2 пункта 1 Указа № 1022-УГ."
+    },
+    {
+      "fragment_id": "frag_middle_urals_002",
+      "source_id": "src_middle_urals_peoples_day_regional_02",
+      "quote": "Мероприятие приурочено к празднованию Дня народов Среднего Урала, который отмечается в первое воскресенье сентября.",
+      "events": [
+        "middle_urals_peoples_day"
+      ],
+      "topics": [],
+      "regions": [
+        "RU-SVE"
+      ],
+      "verification_status": "verified",
+      "collected_by": "claude-auto",
+      "verified_by": "meteory916-del",
+      "retrieved_at": "2026-10-29",
+      "note": "Цитата проверена вручную, подтверждает факт проведения и дату мероприятия в соответствии с публикацией Минсоцполитики."
+    }
+  ]
 }

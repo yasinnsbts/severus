@@ -30,6 +30,7 @@ from ..trace import RunTrace
 from ..usage import TokenTally
 from ..validation.checks import Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
+from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
 STAGE_ORDER = {"plan": 0, "blocks": 1, "materials": 2}
@@ -128,8 +129,26 @@ _SYNONYMS: dict[str, dict[str, str]] = {
         "pair": "pair_task", "pair_work": "pair_task", "vote": "voting",
         "summary": "reflection", "conclusion": "reflection", "final": "reflection", "closing": "reflection",
         "interview": "research", "source_research": "source_work",
+        "class_collective_task": "team_task", "collaborative_planning": "team_task", "real_problem_solving": "team_task",
+        "joint_product": "creative_product", "family_research": "research", "interview_research": "research",
+        "culture_comparison": "discussion",
+    },
+    "primary_mechanic": {
+        "joint_product": "creative_workshop", "creative_product": "creative_workshop", "class_collective_task": "collaborative_planning",
+        "real_problem_solving": "collaborative_planning", "team_task": "team_game", "game": "team_game", "quest": "quest_route",
+        "family_research": "interview_research", "research": "interview_research", "interview": "interview_research",
+        "source_work": "source_research", "discussion": "discussion_club", "culture_comparison": "discussion_club",
+        "pair_task": "discussion_club", "quiz": "quiz_competition", "project": "mini_project", "project_pitch": "mini_project",
+        "concert": "performance", "show": "performance",
+    },
+    "mechanic_type": {
+        "creative_workshop": "joint_product", "creative_product": "joint_product", "mini_project": "joint_product",
+        "performance": "joint_product", "team_game": "team_task", "quest_route": "team_task", "quiz_competition": "team_task",
+        "game": "team_task", "collaborative_planning": "class_collective_task", "interview_research": "family_research",
+        "source_research": "source_work", "research": "source_work", "discussion_club": "discussion",
     },
     "material_type": {
+        "reward": "props_checklist", "award": "award_instruction", "diploma": "handout", "certificate": "handout",
         "template": "handout", "examples": "handout", "example": "handout", "reference": "handout", "memo": "handout",
         "sheet": "handout", "printout": "handout", "card": "activity_card", "cards": "activity_card", "task_card": "activity_card",
         "instruction": "teacher_instruction", "teacher_notes": "teacher_instruction", "script": "teacher_instruction",
@@ -144,7 +163,8 @@ _SYNONYMS: dict[str, dict[str, str]] = {
 }
 # Если значение так и не распозналось, берём нейтральное, чтобы этап не падал целиком: для описательных полей концепции
 # и для типа материала (раздаточный лист - самый общий тип; проверки по типам касаются только бюллетеней, листов жюри и памяток).
-_FALLBACK = {"activity_type": "discussion", "engagement_mode": "mixed", "material_type": "handout"}
+_FALLBACK = {"activity_type": "discussion", "engagement_mode": "mixed", "material_type": "handout",
+             "primary_mechanic": "collaborative_planning"}
 
 
 def _fix_enum(value: Any, kind: str) -> Any:
@@ -201,15 +221,19 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
             fix(m, "type", "material_type", f"materials.{j}.type")
 
 
-def prepare_stage_output(stage: str, data: Any, resources: set[str]) -> list[dict[str, Any]]:
+def prepare_stage_output(stage: str, data: Any, resources: set[str],
+                         dependency_ids: set[str] | None = None) -> list[dict[str, Any]]:
     """Исправляет до проверки схемы ошибки ответа, которые однозначно понятны программе.
 
     - План: материалы с ID ресурса (`paper`, `markers`) убираются из `planned_materials` и из блоков.
     - Материалы: такие же материалы убираются; адресат вида `parent_audience` приводится к `parent`.
+    - Все этапы: `material_id`, `role_id` и ссылки на них - к виду `^[a-z][a-z0-9_]*$`, ID блоков - к `block_NN`
+      (`ids.normalize_ids`); зависимости материалов - только из словаря (`ids.normalize_dependencies`).
     Всё остальное проверяет схема, и при ошибке модель исправляет ответ сама.
 
     Параметры:
-        stage: этап; data: разобранный JSON ответа (меняется на месте); resources: см. `resource_ids`.
+        stage: этап; data: разобранный JSON ответа (меняется на месте); resources: см. `resource_ids`;
+        dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать).
 
     Возвращает:
         Список исправлений для трассы.
@@ -218,9 +242,22 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str]) -> list[dic
     if not isinstance(data, dict):
         return changes
     _fix_enums(data, stage, changes)
+    normalize_ids(stage, data, changes)
+    if stage == "materials":
+        normalize_material_fields(data, changes)
+        if dependency_ids is not None:
+            normalize_dependencies(data, dependency_ids, changes)
+    grouping = data.get("grouping_request") if stage == "scenario_plan" else None
+    if isinstance(grouping, dict) and grouping.get("groups_count") in (None, "", 0):
+        grouping["groups_count"] = 1  # программа сама считает группы (`compute_grouping`)
+        changes.append({"kind": "groups_count_default", "mode": grouping.get("mode")})
     if stage == "scenario_plan" and isinstance(data.get("planned_materials"), list):
         drop = {m.get("material_id") for m in data["planned_materials"]
                 if isinstance(m, dict) and str(m.get("material_id", "")).lower() in resources}
+        # Блоки тоже могут ссылаться на расходники напрямую, не объявляя их в planned_materials.
+        for b in data.get("blocks") or []:
+            if isinstance(b, dict) and isinstance(b.get("planned_material_ids"), list):
+                drop |= {mid for mid in b["planned_material_ids"] if str(mid).lower() in resources}
         if drop:
             data["planned_materials"] = [m for m in data["planned_materials"] if not (isinstance(m, dict) and m.get("material_id") in drop)]
             for b in data.get("blocks") or []:
@@ -310,6 +347,45 @@ def reconcile_material_ids(planned_materials: list[dict], materials: list[Any]) 
     return mapping
 
 
+def fix_material_refs(mat: Any, timeline: list[dict]) -> list[dict[str, Any]]:
+    """Оставляет в ответе этапа материалов только ссылки на существующие блоки и материалы.
+
+    - `used_in_blocks`: блоки, которых нет в сценарии, убираются; если не осталось ни одного,
+      берутся блоки, которые ссылаются на этот материал по плану.
+    - `voting.material_ids`: только созданные материалы; если ни одного - все бюллетени (`audience_ballot`).
+    - `voting.block_id`: если такого блока нет - блок, где используется бюллетень.
+
+    Параметры: mat - ответ этапа материалов (Pydantic, меняется на месте); timeline - блоки сценария.
+    Возвращает: список исправлений для трассы.
+    """
+    fixes: list[dict[str, Any]] = []
+    valid = [b["block_id"] for b in timeline]
+    for m in mat.materials:
+        kept = [bid for bid in m.used_in_blocks if bid in valid]
+        if len(kept) != len(m.used_in_blocks):
+            if not kept:
+                kept = [b["block_id"] for b in timeline if m.material_id in b["material_ids"]]
+            if not kept and timeline:
+                kept = [timeline[0]["block_id"]]
+            fixes.append({"kind": "used_in_blocks", "material_id": m.material_id, "from": list(m.used_in_blocks), "to": kept})
+            m.used_in_blocks = kept or m.used_in_blocks
+    voting = getattr(mat, "voting", None)
+    if voting:
+        created = {m.material_id for m in mat.materials}
+        ids = [mid for mid in voting.material_ids if mid in created]
+        if not ids:
+            ids = [m.material_id for m in mat.materials if m.type == "audience_ballot"]
+        if ids != list(voting.material_ids):
+            fixes.append({"kind": "voting_material_ids", "from": list(voting.material_ids), "to": ids})
+            voting.material_ids = ids
+        if voting.block_id not in valid:
+            ballot_blocks = [bid for m in mat.materials if m.material_id in ids for bid in m.used_in_blocks if bid in valid]
+            if ballot_blocks:
+                fixes.append({"kind": "voting_block_id", "from": voting.block_id, "to": ballot_blocks[-1]})
+                voting.block_id = ballot_blocks[-1]
+    return fixes
+
+
 def complete_block_roles(plan: dict) -> dict[str, list[str]]:
     """Дополняет `role_ids` блоков плана теми, кто присутствует на мероприятии всё время.
 
@@ -367,6 +443,7 @@ class Generator:
         self.trace = trace or RunTrace(None)
         self.calls = 0
         self.tokens = TokenTally()
+        self._sleep = time.sleep  # подменяется в тестах, чтобы не ждать паузы между повторами
 
     # Лимит ответа модели для этапа.
     def max_output_tokens(self, stage: str, n: NormalizedRequest) -> int:
@@ -415,14 +492,14 @@ class Generator:
             error_code = None
             result = None
             try:
-                self.calls += 1
-                result = self.client.generate(messages=composed.messages, task_name=stage,
-                                              output_schema=model_cls.model_json_schema(),
-                                              max_tokens=self.max_output_tokens(stage, n),
-                                              temperature=float(task_cfg["temperature_hint"]), meta=meta or {})
+                result = self._generate_with_retry(
+                    stage, call_id, variant_id,
+                    messages=composed.messages, task_name=stage, output_schema=model_cls.model_json_schema(),
+                    max_tokens=self.max_output_tokens(stage, n), temperature=float(task_cfg["temperature_hint"]),
+                    meta=meta or {})
                 raw = result.text
                 data = extract_json(raw)
-                fixes = prepare_stage_output(stage, data, resource_ids(n))
+                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies))
                 if fixes:
                     self.trace.event("stage_output_fixed", call_id=call_id, stage=stage, variant_id=variant_id, fixes=fixes)
                 parsed_obj = model_cls.model_validate(data)
@@ -459,6 +536,29 @@ class Generator:
                                  stage=stage, variant_id=variant_id, attempt=attempt, error_code=error_code)
                 parent_call_id = call_id
         raise StageFailed(stage, f"Этап {stage}: ответ модели не прошёл схему после {attempts} попыток: {last_error}")
+
+    def _generate_with_retry(self, stage: str, call_id: str, variant_id: str | None, **kwargs: Any) -> Any:
+        """Вызывает модель; при временной ошибке провайдера повторяет вызов с паузой (ТЗ: RATE_LIMITED, backoff).
+
+        Повторяются только ошибки с `retryable=True`: 429, 5xx, таймаут, недоступность сети.
+        Ошибки авторизации и конфигурации (`MODEL_AUTH_ERROR`, неизвестная модель) не повторяются.
+        Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`.
+        Каждый повтор - отдельный вызов модели: учитывается в `calls` и пишется в трассу (`llm_call_retry`).
+        """
+        retries = int(self.defaults.get("provider_retry_attempts", 2))
+        backoff = list(self.defaults.get("provider_retry_backoff_seconds", [3, 10])) or [0]
+        for retry in range(retries + 1):
+            self.calls += 1
+            try:
+                return self.client.generate(**kwargs)
+            except LLMError as exc:
+                if not exc.retryable or retry >= retries:
+                    raise
+                wait = float(backoff[min(retry, len(backoff) - 1)])
+                self.trace.event("llm_call_retry", call_id=call_id, stage=stage, variant_id=variant_id,
+                                 retry=retry + 1, error_code=exc.code, message=exc.message, wait_seconds=wait)
+                self._sleep(wait)
+        raise AssertionError("недостижимо")  # pragma: no cover
 
     @staticmethod
     def _format_error(exc: Exception) -> str:
@@ -616,6 +716,10 @@ class Generator:
         voting = None
         if n.parent_audience_engagement in ("vote", "audience_award") and mat.voting:
             voters = sum(a["count"] for a in assignments if a["role_mode"] == "audience" and mat.voting.block_id in a["block_ids"])
+            if not voters:
+                # Модель иногда делает всех родителей помощниками и не выделяет зрителей.
+                # Голосуют родители, которые есть в блоке голосования (помощники тоже), иначе все пришедшие.
+                voters = sum(a["count"] for a in assignments if mat.voting.block_id in a["block_ids"]) or n.parents_count
             voting = {"enabled": True,
                       "award_title": mat.voting.award_title if n.parent_audience_engagement == "audience_award" else None,
                       "voters_count_planned": voters, "criterion": mat.voting.criterion, "method": "paper_ballot",
@@ -735,6 +839,9 @@ class Generator:
                 if mat.voting:
                     mat.voting.material_ids = [renamed.get(mid, mid) for mid in mat.voting.material_ids]
                 self.trace.event("material_ids_reconciled", variant_id=vid, renamed=renamed)
+            ref_fixes = fix_material_refs(mat, timeline)
+            if ref_fixes:
+                self.trace.event("material_refs_fixed", variant_id=vid, fixes=ref_fixes)
             # Блок ссылается на материал, если материал указан для этого блока.
             created = {m.material_id for m in mat.materials}
             for b in timeline:

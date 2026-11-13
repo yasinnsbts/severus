@@ -15,6 +15,7 @@ from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Re
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from . import job_status
 from .catalog import Catalog
 from .generation.pipeline import Generator
 from .llm.client import LLMClient, LLMError, build_client
@@ -182,52 +183,15 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
             job["completed_variants"] = outcome.project["completed_variants"]
             job["status"] = outcome.project["status"]
             job["warnings"] = outcome.warnings
-            variant_statuses = {
-                variant.variant_id: variant.status
-                for variant in outcome.variants
-            }
-            job["variants"] = [
-                {
-                    "variant_id": f"v{i}",
-                    "status": variant_statuses.get(f"v{i}", "failed"),
-                    "revision": 1,
-                }
-                for i in range(1, job["requested_variants"] + 1)
-            ]
-            # Передаём причины отклонения вариантов в статус задачи.
-            errors = []
-            for variant in outcome.variants:
-                if variant.status == "completed":
-                    continue
-
-                critical_issues = [
-                    issue for issue in variant.issues
-                    if issue.severity == "critical"
-                ]
-
-                if critical_issues:
-                    for issue in critical_issues:
-                        errors.append(_error(
-                            issue.code,
-                            f"Вариант {variant.variant_id}: {issue.message}",
-                            field=issue.location,
-                        )["error"])
-                else:
-                    errors.append(_error(
-                        "VARIANT_GENERATION_FAILED",
-                        f"Вариант {variant.variant_id}: сценарий не удалось сформировать",
-                    )["error"])
-
-            job["errors"] = errors
+            job["variants"] = job_status.variant_statuses(outcome, job["requested_variants"])
+            # Причины, по которым варианты не готовы, в формате ошибок контракта 02.
+            job["errors"] = job_status.variant_errors(outcome)
         except RequestError as exc:
             job["status"] = "failed"
             job["errors"] = [exc.to_dict()["error"]]
-        except LLMError as exc:
+        except Exception as exc:  # ошибка модели, этап не прошёл схему или сбой сервиса
             job["status"] = "failed"
-            job["errors"] = [_error(exc.code, exc.message, retryable=exc.retryable)["error"]]
-        except Exception as exc:  # pragma: no cover - страховка фоновой задачи
-            job["status"] = "failed"
-            job["errors"] = [_error("INTERNAL_ERROR", str(exc))["error"]]
+            job["errors"] = [job_status.exception_error(exc)]
 
     @app.get("/api/v1/health", dependencies=[Depends(require_service_token)])
     def health() -> dict[str, str]:

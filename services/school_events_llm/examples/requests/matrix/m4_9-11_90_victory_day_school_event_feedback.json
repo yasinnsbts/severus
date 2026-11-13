@@ -1,0 +1,42 @@
+{
+  "event_id": "victory_day",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 11,
+  "pupils_count": 30,
+  "duration_minutes": 90,
+  "format": "school_event",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 20,
+    "parent_roles": [
+      "audience"
+    ],
+    "parent_audience_engagement": "feedback"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": true,
+    "room": "assembly_hall",
+    "available_materials": [
+      "paper"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "research",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "high",
+    "group_work": true,
+    "preparation_effort": "standard",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

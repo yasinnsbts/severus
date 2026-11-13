@@ -1,0 +1,101 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Классный старт: вместе строим год!",
+  "concept": {
+    "summary": "На Дне знаний учащиеся совместно планируют важные моменты нового учебного года, ставят коллективные цели и решают реальные задачи школьного сообщества.",
+    "goal": "Создать мотивацию к новому учебному году через совместное планирование и развитие гражданской позиции учащихся.",
+    "tasks": [
+      "Формирование чувства принадлежности к классу через создание общей карты целей.",
+      "Развитие навыка сотрудничества и взаимопомощи."
+    ],
+    "expected_outcomes": [
+      "Готовая коллективная карта целей класса.",
+      "Предложения по улучшению школьной жизни."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "pair_task",
+        "mechanic": "Работа в парах по выбору над идеями улучшения школьной жизни.",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Совместное определение реальных задач и предложений по улучшению школьной среды.",
+        "block_ids": ["block_02"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "whole_class | pairs",
+    "groups_count": 1,
+    "block_ids": ["block_02", "block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "teacher_2", "participant_type": "teacher", "title": "Помогающий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 32},
+    {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "title": "Родители-зрители", "count": 15}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вводное слово",
+      "purpose": "Настроить атмосферу начала учебного года, задать позитивный тон.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Создание карты целей класса",
+      "purpose": "Определить коллективные цели и ожидания от учебного года.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "teacher_2", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["class_map_template"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Практическая взаимопомощь в парах",
+      "purpose": "Разработать идеи по улучшению школьной жизни, развивая навыки сотрудничества.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "teacher_2", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["idea_cards"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Представление лучших инициатив",
+      "purpose": "Познакомить аудиторию с предложениями учащихся, организовать голосование.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["audience_ballot"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Подведение итогов и награждение",
+      "purpose": "Объявить результаты голосования, отметить вклад каждого участника.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["award_instruction"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Общая фотография",
+      "purpose": "Закрепить память о событии, создать чувство единства класса.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "teacher_2", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {"material_id": "class_map_template", "type": "worksheet", "purpose": "Для создания коллективной карты целей"},
+    {"material_id": "idea_cards", "type": "activity_card", "purpose": "Для разработки идей в парах"},
+    {"material_id": "audience_ballot", "type": "audience_ballot", "purpose": "Бюллетени для голосования родителей"},
+    {"material_id": "award_instruction", "type": "award_instruction", "purpose": "Инструкция по проведению награждения"}
+  ]
+}
+```

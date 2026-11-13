@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Новогодний квест: Вместе создадим чудо!",
+      "summary": "Участники отправляются в увлекательный новогодний квест, проходя испытания и создавая вместе праздничные украшения для класса.",
+      "narrative_approach": "Мероприятие начинается с волшебного письма от Деда Мороза, в котором он приглашает ребят отправиться в путешествие по станциям-квестам. Завершается созданием общей композиции из собранных деталей.",
+      "primary_mechanic": "quest_route",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Волшебное письмо",
+          "activity_type": "performance",
+          "approx_minutes": 3
+        },
+        {
+          "order": 2,
+          "title": "Разделение на команды",
+          "activity_type": "whole_class",
+          "approx_minutes": 2
+        },
+        {
+          "order": 3,
+          "title": "Станция 'Семейные традиции'",
+          "activity_type": "team_task",
+          "approx_minutes": 10
+        },
+        {
+          "order": 4,
+          "title": "Станция 'Новогодняя мастерская'",
+          "activity_type": "creative_product",
+          "approx_minutes": 15
+        },
+        {
+          "order": 5,
+          "title": "Создание общей композиции",
+          "activity_type": "joint_product",
+          "approx_minutes": 10
+        },
+        {
+          "order": 6,
+          "title": "Подведение итогов",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "team_task",
+          "description": "Дети выполняют задания на станции 'Семейные традиции', рассказывая друг другу о праздниках в семьях"
+        },
+        {
+          "activity_type": "creative_product",
+          "description": "На станции 'Новогодняя мастерская' ребята изготавливают декоративные элементы"
+        },
+        {
+          "activity_type": "joint_product",
+          "description": "Вместе собирают общую композицию из сделанных элементов"
+        }
+      ],
+      "distinctive_result": "Общая композиция из декоративных элементов, созданных участниками",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "family",
+          "mechanic_type": "family_research",
+          "mechanic": "Рассказы детей о семейных традициях празднования Нового года"
+        },
+        {
+          "value_id": "labour_creation",
+          "mechanic_type": "joint_product",
+          "mechanic": "Совместное создание декоративной композиции из индивидуальных работ"
+        }
+      ]
+    }
+  ]
+}

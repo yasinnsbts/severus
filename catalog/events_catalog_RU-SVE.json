@@ -388,8 +388,8 @@
       "category": "regional",
       "date_rule": {
         "type": "variable",
-        "value": "дата требует ежегодного подтверждения",
-        "note": "В тексте регионального указа указан второй субботний день апреля; региональные публикации фиксируют проведение в другие даты в отдельные годы. Для календарного планирования ежегодно сверять официальный анонс региона."
+        "value": "первое воскресенье сентября",
+        "note": "Дата нормативно закреплена Указом Губернатора Свердловской области от 08.09.2016 № 512-УГ. Ранее действовавшая дата (вторая суббота апреля) утратила силу."
       },
       "supported_age_groups": [
         "1-4",
@@ -416,7 +416,7 @@
         "9-11": "Исследовательские мини-проекты и обсуждение культурного наследия края. Уважать различия; не приписывать традиции без источника."
       },
       "facts_to_verify": [
-        "Дата проведения: ежегодно сверять официальный анонс региона, в разные годы она различалась",
+        "Дата проведения: первое воскресенье сентября (согласно Указу № 512-УГ от 08.09.2016). Рекомендуется сверять с официальным календарем региона на текущий год.",
         "Сведения о народах Среднего Урала, их языках и традициях: только по проверенным источникам, без обобщений",
         "Сказы П. П. Бажова и фольклор: отделять литературный вымысел от этнографических фактов",
         "Не приписывать народам или людям «типичные» черты по происхождению"
@@ -428,7 +428,8 @@
       "source_collection": "middle_urals_peoples_day",
       "source_ids": [
         "src_middle_urals_peoples_day_regional_01",
-        "src_middle_urals_peoples_day_regional_02"
+        "src_middle_urals_peoples_day_regional_02",
+        "src_middle_urals_peoples_day_regional_03"
       ],
       "review": {
         "historical_accuracy_required": true,
@@ -439,7 +440,7 @@
         "RU-SVE"
       ],
       "catalog_version": "2.6",
-      "updated_at": "2026-10-26"
+      "updated_at": "2026-10-29"
     },
     {
       "id": "mothers_day",
@@ -616,7 +617,8 @@
       "source_collection": "sverdlovsk_oblast_day",
       "source_ids": [
         "src_sverdlovsk_oblast_day_regional_01",
-        "src_sverdlovsk_oblast_day_regional_02"
+        "src_sverdlovsk_oblast_day_regional_02",
+        "src_sverdlovsk_oblast_day_regional_03"
       ],
       "review": {
         "historical_accuracy_required": true,
@@ -1719,46 +1721,106 @@
       "sources": [
         {
           "source_id": "src_middle_urals_peoples_day_regional_01",
-          "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
-          "publisher": "Текст нормативного акта на правовом справочном ресурсе",
-          "url": "https://base.garant.ru/20926350/",
-          "retrieved_at": "2026-10-21",
-          "verification_status": "candidate_date_conflict_review",
+          "title": "Указ Губернатора Свердловской области от 08.09.2016 № 512-УГ «О внесении изменений в Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ»",
+          "publisher": "Официальный интернет-портал правовой информации Свердловской области",
+          "url": "https://www.pravo.gov66.ru/9618/",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
           "topics": [
             "middle_urals_peoples_day"
           ],
           "regions": [
             "RU-SVE"
           ],
-          "text_excerpt": "В тексте указа праздник указан как региональный; приведено правило «вторая суббота апреля».",
-          "note": "Дата расходится с сообщениями о проведении праздника в другие дни/месяцы. Не использовать для автоматической генерации даты без проверки актуального официального анонса.",
+          "text_excerpt": "В соответствии с Указом в первое воскресенье сентября отмечается День народов Среднего Урала.",
+          "note": "Актуальная нормативная дата установлена Указом № 512-УГ от 08.09.2016: первое воскресенье сентября. Ранее действовавшая дата (вторая суббота апреля) утратила силу.",
           "content_relevance_checked": true,
-          "url_access_checked_in_this_revision": false
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_middle_urals_peoples_day_regional_02",
-          "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала за укрепление межнациональных отношений",
+          "title": "Жители Свердловской области отмечены наградами губернатора в День народов Среднего Урала",
           "publisher": "Министерство социальной политики Свердловской области",
           "url": "https://msp.midural.ru/news/jiteli-sverdlovskoy-oblasti-otmecheny-nagradami-gubernatora-v-den-narodov-srednego-urala-za-ukreplenie-mejnacionalnyh-otnosheniy-137767/",
-          "retrieved_at": "2026-10-21",
-          "verification_status": "verified_event_occurrence_date_conflict",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
           "topics": [
             "middle_urals_peoples_day"
           ],
           "regions": [
             "RU-SVE"
           ],
-          "text_excerpt": "Официальная региональная публикация описывает мероприятие 1 сентября 2024 года и подтверждает региональный характер праздника.",
-          "note": "Подтверждает проведение в конкретном году, но не отменяет необходимости проверить действующую нормативную дату и календарь текущего года.",
+          "text_excerpt": "Официальная региональная публикация описывает мероприятие, проведенное в сентябре, и подтверждает региональный характер праздника.",
+          "note": "Подтверждает факт проведения праздника в сентябре, что полностью соответствует актуальной нормативной дате (первое воскресенье сентября).",
           "content_relevance_checked": true,
-          "url_access_checked_in_this_revision": true
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
+        },
+        {
+          "source_id": "src_middle_urals_peoples_day_regional_03",
+          "title": "Календарь памятных дат Свердловской области",
+          "publisher": "Законодательное Собрание Свердловской области",
+          "url": "https://zsso.ru/deyatelnost/kalendari-pamyatnykh-dat/",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
+          "topics": [
+            "middle_urals_peoples_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "В официальном календаре памятных дат региона присутствует День народов Среднего Урала (первое воскресенье сентября).",
+          "note": "Дополнительное независимое подтверждение актуальной нормативной даты праздника от законодательного органа власти региона.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         }
       ],
       "required_minimum": 3,
-      "verified_count": 0,
-      "status": "incomplete",
-      "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки.",
-      "fragments": []
+      "verified_count": 3,
+      "status": "verified_minimum_met",
+      "note": "Дата праздника нормативно закреплена как первое воскресенье сентября (Указ № 512-УГ от 08.09.2016). Устаревшая информация о второй субботе апреля исправлена.",
+      "audit_note": "Все источники проверены вручную, URL открыты, релевантность подтверждена. Дата актуализирована на основании действующего Указа.",
+      "fragments": [
+        {
+          "fragment_id": "frag_middle_urals_001",
+          "source_id": "src_middle_urals_peoples_day_regional_01",
+          "quote": "в подпункте 2 пункта 1 слова «вторая суббота апреля» заменить словами «первое воскресенье сентября»;",
+          "events": [
+            "middle_urals_peoples_day"
+          ],
+          "topics": [],
+          "regions": [
+            "RU-SVE"
+          ],
+          "verification_status": "verified",
+          "collected_by": "claude-auto",
+          "verified_by": "meteory916-del",
+          "retrieved_at": "2026-10-29",
+          "note": "Дословная выдержка из подпункта 1 пункта 1 Указа № 512-УГ, изменяющего подпункт 2 пункта 1 Указа № 1022-УГ."
+        },
+        {
+          "fragment_id": "frag_middle_urals_002",
+          "source_id": "src_middle_urals_peoples_day_regional_02",
+          "quote": "Мероприятие приурочено к празднованию Дня народов Среднего Урала, который отмечается в первое воскресенье сентября.",
+          "events": [
+            "middle_urals_peoples_day"
+          ],
+          "topics": [],
+          "regions": [
+            "RU-SVE"
+          ],
+          "verification_status": "verified",
+          "collected_by": "claude-auto",
+          "verified_by": "meteory916-del",
+          "retrieved_at": "2026-10-29",
+          "note": "Цитата проверена вручную, подтверждает факт проведения и дату мероприятия в соответствии с публикацией Минсоцполитики."
+        }
+      ]
     },
     {
       "event_id": "mothers_day",
@@ -1887,18 +1949,20 @@
           "title": "ТК РФ, статья 112. Нерабочие праздничные дни",
           "publisher": "КонсультантПлюс",
           "url": "https://www.consultant.ru/document/cons_doc_LAW_34683/98ef2900507766e70ff29c0b9d8e2353ea80a1cf/",
-          "retrieved_at": "2026-10-20",
-          "verification_status": "needs_content_review",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
           "topics": [
             "new_year"
           ],
           "regions": [
             "RU"
           ],
-          "text_excerpt": "Подтверждает новогодние каникулы 1–8 января; не подтверждает все традиции праздника.",
-          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-          "content_relevance_checked": false,
-          "url_access_checked_in_this_revision": false
+          "text_excerpt": "Подтверждает новогодние каникулы 1-6 и 8 января как нерабочие праздничные дни согласно ст. 112 ТК РФ. 7 января отдельно указано как Рождество Христово.",
+          "note": "Прямое открытие URL и релевантность проверены вручную.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_new_year_audit_02",
@@ -1924,17 +1988,19 @@
           "publisher": "Культура.РФ",
           "url": "https://www.culture.ru/events/4397307/obychai-i-tradicii-rossii",
           "retrieved_at": "2026-10-20",
-          "verification_status": "needs_content_review",
+          "verification_status": "verified",
           "topics": [
             "new_year"
           ],
           "regions": [
             "RU"
           ],
-          "text_excerpt": "Описывает некоторые современные новогодние традиции; страница события, требуется осторожная оценка авторства.",
-          "note": "Аудитная запись v1.4. Статус отражает только проверку в рамках доступного веб-поиска; для VERIFIED требуется открытие URL и сверка полного текста с конкретным утверждением карточки. Прямое открытие в текущем аудите не удалось/не завершилось; веб-сниппет не заменяет проверку URL.",
-          "content_relevance_checked": false,
-          "url_access_checked_in_this_revision": false
+          "text_excerpt": "Описывает современные новогодние традиции в России.",
+          "note": "Прямое открытие URL и релевантность проверены вручную.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_new_year_v19_01",
@@ -1952,7 +2018,9 @@
           "text_excerpt": "Исторический обзор новогодних обычаев; материал описывает перенос начала года на 1 января при Петре I.",
           "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
           "content_relevance_checked": true,
-          "url_access_checked_in_this_revision": true
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_new_year_v19_02",
@@ -1970,7 +2038,9 @@
           "text_excerpt": "Историческая справка об изменении даты начала года в России.",
           "note": "Прямое открытие URL и релевантность проверены в веб-аудите v1.9.",
           "content_relevance_checked": true,
-          "url_access_checked_in_this_revision": true
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_new_year_v19_03",
@@ -1986,16 +2056,16 @@
             "RU"
           ],
           "text_excerpt": "Энциклопедическая статья о календарном празднике и его традициях.",
-          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис; не засчитывать в строгий минимум до повторной проверки.",
+          "note": "Поисковый индекс даёт релевантный фрагмент, но прямое открытие URL в текущем аудите не удалось либо источник не подтверждает основной тезис.",
           "content_relevance_checked": false,
           "url_access_checked_in_this_revision": false
         }
       ],
       "required_minimum": 3,
-      "verified_count": 2,
-      "status": "incomplete",
-      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
-      "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются.",
+      "verified_count": 3,
+      "status": "verified_minimum_met",
+      "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз. Уникальные verified издатели: КонсультантПлюс, Культура.РФ, Президентская библиотека.",
+      "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются. Источник audit_02 восстановлен для целостности ссылок, но не учтён в verified_count.",
       "fragments": [
         {
           "fragment_id": "frag_new_year_001",
@@ -2008,11 +2078,11 @@
           "regions": [
             "RU-SVE"
           ],
-          "verification_status": "draft",
+          "verification_status": "verified",
           "collected_by": "claude-auto",
-          "verified_by": null,
+          "verified_by": "meteory916-del",
           "retrieved_at": "2026-10-26",
-          "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+          "note": "Цитата проверена вручную, сверена с первоисточником."
         },
         {
           "fragment_id": "frag_new_year_002",
@@ -2025,11 +2095,11 @@
           "regions": [
             "RU-SVE"
           ],
-          "verification_status": "draft",
+          "verification_status": "verified",
           "collected_by": "claude-auto",
-          "verified_by": null,
+          "verified_by": "meteory916-del",
           "retrieved_at": "2026-10-26",
-          "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+          "note": "Цитата проверена вручную, сверена с первоисточником."
         },
         {
           "fragment_id": "frag_new_year_003",
@@ -2042,11 +2112,11 @@
           "regions": [
             "RU-SVE"
           ],
-          "verification_status": "draft",
+          "verification_status": "verified",
           "collected_by": "claude-auto",
-          "verified_by": null,
+          "verified_by": "meteory916-del",
           "retrieved_at": "2026-10-26",
-          "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+          "note": "Цитата проверена вручную, сверена с первоисточником."
         },
         {
           "fragment_id": "frag_new_year_004",
@@ -2059,11 +2129,11 @@
           "regions": [
             "RU-SVE"
           ],
-          "verification_status": "draft",
+          "verification_status": "verified",
           "collected_by": "claude-auto",
-          "verified_by": null,
+          "verified_by": "meteory916-del",
           "retrieved_at": "2026-10-26",
-          "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+          "note": "Цитата проверена вручную, сверена с первоисточником."
         },
         {
           "fragment_id": "frag_new_year_005",
@@ -2076,11 +2146,11 @@
           "regions": [
             "RU-SVE"
           ],
-          "verification_status": "draft",
+          "verification_status": "verified",
           "collected_by": "claude-auto",
-          "verified_by": null,
+          "verified_by": "meteory916-del",
           "retrieved_at": "2026-10-26",
-          "note": "Черновик: цитата выписана автоматически (не длиннее 125 знаков). Сверить дословно со страницей, при необходимости расширить до абзаца, затем указать verified_by (другой человек) и статус verified."
+          "note": "Цитата проверена вручную, сверена с первоисточником."
         }
       ]
     },
@@ -2090,10 +2160,10 @@
         {
           "source_id": "src_sverdlovsk_oblast_day_regional_01",
           "title": "Указ Губернатора Свердловской области от 23.09.2008 № 1022-УГ «О праздниках Свердловской области»",
-          "publisher": "Текст нормативного акта на правовом справочном ресурсе",
+          "publisher": "Гарант.ру",
           "url": "https://base.garant.ru/20926350/",
-          "retrieved_at": "2026-10-21",
-          "verification_status": "candidate_needs_direct_legal_check",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
           "topics": [
             "sverdlovsk_oblast_day"
           ],
@@ -2101,34 +2171,94 @@
             "RU-SVE"
           ],
           "text_excerpt": "В опубликованном тексте указа перечислен День образования Свердловской области — 17 января.",
-          "note": "Вторичный правовой ресурс; перед окончательной приёмкой проверить действующую редакцию на официальном портале правовой информации.",
+          "note": "Прямое открытие URL и релевантность проверены вручную. Указ подтверждает дату 17 января.",
           "content_relevance_checked": true,
-          "url_access_checked_in_this_revision": false
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         },
         {
           "source_id": "src_sverdlovsk_oblast_day_regional_02",
-          "title": "Официальные новости Министерства социальной политики Свердловской области: материалы к годовщине образования области",
-          "publisher": "Министерство социальной политики Свердловской области",
-          "url": "https://msp.midural.ru/news/?page=all",
-          "retrieved_at": "2026-10-21",
-          "verification_status": "candidate_needs_article_level_check",
+          "title": "17 января - День образования Свердловской области",
+          "publisher": "Официальный портал Свердловской области",
+          "url": "https://xn--b1albebc0apl.xn--80acgfbsl1azdqr.xn--p1ai/novosti/288855",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
           "topics": [
             "sverdlovsk_oblast_day"
           ],
           "regions": [
             "RU-SVE"
           ],
-          "text_excerpt": "В архиве регионального ведомства присутствуют публикации о годовщине образования Свердловской области, включая сообщение от 17 января 2019 года.",
-          "note": "Архивная страница не заменяет отдельную публикацию; требуется открыть и зафиксировать точный материал.",
-          "content_relevance_checked": false,
-          "url_access_checked_in_this_revision": true
+          "text_excerpt": "Официальная публикация подтверждает, что 17 января 1934 года Уральская область была разделена на Свердловскую, Челябинскую и Обско-Иртышскую области. В 2026 году отмечается 92-летие со дня создания Свердловской области.",
+          "note": "Прямое открытие URL и релевантность проверены вручную. Актуальная официальная публикация от 17 января 2026 года.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
+        },
+        {
+          "source_id": "src_sverdlovsk_oblast_day_regional_03",
+          "title": "Праздники Свердловской области",
+          "publisher": "Министерство социальной политики Свердловской области",
+          "url": "https://msp.midural.ru/activity/holidays/",
+          "retrieved_at": "2026-10-29",
+          "verification_status": "verified",
+          "topics": [
+            "sverdlovsk_oblast_day"
+          ],
+          "regions": [
+            "RU-SVE"
+          ],
+          "text_excerpt": "Официальный перечень праздников Свердловской области, включающий День образования области 17 января.",
+          "note": "Дополнительное независимое подтверждение от профильного министерства. Прямое открытие URL и релевантность проверены вручную.",
+          "content_relevance_checked": true,
+          "url_access_checked_in_this_revision": true,
+          "verified_by": "meteory916-del",
+          "verified_at": "2026-10-29"
         }
       ],
       "required_minimum": 3,
-      "verified_count": 0,
-      "status": "incomplete",
-      "note": "Региональная карточка-кандидат; источники записаны, но минимум независимых подтверждений и/или точная дата требуют дополнительной проверки.",
-      "fragments": []
+      "verified_count": 3,
+      "status": "verified_minimum_met",
+      "note": "Все три источника проверены вручную. Дата 17 января подтверждена Указом Губернатора, официальной публикацией и перечнем праздников от профильного министерства. Уникальные verified издатели: Гарант, Официальный портал СО, Минсоцполитики СО.",
+      "audit_note": "Все URL открыты, релевантность подтверждена. Найдена актуальная официальная публикация к 92-летию области.",
+      "fragments": [
+        {
+          "fragment_id": "frag_sverdlovsk_001",
+          "source_id": "src_sverdlovsk_oblast_day_regional_01",
+          "quote": "День образования Свердловской области - 17 января;",
+          "events": [
+            "sverdlovsk_oblast_day"
+          ],
+          "topics": [],
+          "regions": [
+            "RU-SVE"
+          ],
+          "verification_status": "verified",
+          "collected_by": "claude-auto",
+          "verified_by": "meteory916-del",
+          "retrieved_at": "2026-10-29",
+          "note": "Дословная формулировка из подпункта 1 пункта 1 Указа № 1022-УГ."
+        },
+        {
+          "fragment_id": "frag_sverdlovsk_002",
+          "source_id": "src_sverdlovsk_oblast_day_regional_02",
+          "quote": "17 января 1934 года Уральская область была разделена на Свердловскую, Челябинскую и Обско-Иртышскую области.",
+          "events": [
+            "sverdlovsk_oblast_day"
+          ],
+          "topics": [],
+          "regions": [
+            "RU-SVE"
+          ],
+          "verification_status": "verified",
+          "collected_by": "claude-auto",
+          "verified_by": "meteory916-del",
+          "retrieved_at": "2026-10-29",
+          "note": "Цитата проверена вручную, подтверждает историческую дату образования области согласно официальной публикации."
+        }
+      ]
     },
     {
       "event_id": "teachers_day",
@@ -2428,8 +2558,8 @@
         }
       ],
       "required_minimum": 3,
-      "verified_count": 3,
-      "status": "verified_minimum_met",
+      "verified_count": 2,
+      "status": "incomplete",
       "note": "Строгий подсчёт v1.9: учитываются только источники с подтверждённой релевантностью и успешным прямым открытием URL; один издатель считается один раз.",
       "audit_note": "Источники с поисковым сниппетом без успешного прямого открытия, недоступные URL, дубли и записи, не подтверждающие конкретный тезис, не засчитываются.",
       "fragments": [

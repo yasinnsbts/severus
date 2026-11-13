@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Новогодний мастер-план",
+  "concept": {
+    "summary": "На мероприятии учащиеся объединяются в команды, совместно планируют оформление класса к Новому году, создавая эскизы и представляя идеи зрителям и родителям, которые выбирают лучший проект.",
+    "goal": "Развитие творческих способностей, сплочённость коллектива и формирование позитивного отношения к празднику Нового года.",
+    "tasks": [
+      "Создать атмосферу праздника и сотрудничества среди учащихся",
+      "Организовать совместное проектирование и презентацию планов украшения класса"
+    ],
+    "expected_outcomes": [
+      "Совместно созданные эскизы дизайна новогоднего класса",
+      "Выбор лучшего проекта путём демократического голосования"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "family",
+        "mechanic_type": "family_research",
+        "mechanic": "Сбор детьми информации о семейных новогодних традициях (по желанию до мероприятия), использование этих знаний в совместной разработке проектов.",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "labour_creation",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное создание командами эскизов оформления класса и презентация проектов зрителям.",
+        "block_ids": ["block_03", "block_04"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 26},
+    {"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "title": "Помощники", "count": 3},
+    {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "title": "Зрители", "count": 12}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и введение",
+      "purpose": "Настроить участников на праздничный лад, объяснить цели мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Разделение на команды и знакомство",
+      "purpose": "Распределить детей по командам, организовать взаимодействие",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_03",
+      "title": "Планирование и создание эскизов",
+      "purpose": "Командная разработка и визуализация идей оформления класса",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["paper", "markers", "family_handout"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Представление проектов",
+      "purpose": "Демонстрация командных работ зрителям и родителям",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["projector", "audience_ballot"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Голосование и награждение",
+      "purpose": "Организация голосования и определение победителя конкурса",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["audience_ballot"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Рефлексия и завершение",
+      "purpose": "Подвести итоги, поблагодарить участников",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {"material_id": "paper", "type": "props_checklist", "purpose": "Бумага для создания эскизов"},
+    {"material_id": "markers", "type": "props_checklist", "purpose": "Маркеры для рисования эскизов"},
+    {"material_id": "projector", "type": "props_checklist", "purpose": "Проектор для демонстрации презентаций (при наличии)"},
+    {"material_id": "family_handout", "type": "handout", "purpose": "Домашняя анкета для сбора семейных традиций (по желанию)", "family_task": true},
+    {"material_id": "parent_instruction", "type": "parent_instruction", "purpose": "Памятка для родителей-помощников"},
+    {"material_id": "audience_ballot", "type": "audience_ballot", "purpose": "Бюллетени для голосования зрителей"}
+  ]
+}
