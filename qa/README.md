@@ -8,7 +8,8 @@
 |---|---|
 | `qa/validators/` | Валидаторы структуры, тайминга и возрастных эвристик |
 | `qa/tests/` | Юнит-тесты валидаторов |
-| `qa/tests/e2e/` | E2E-прогон по HTTP, `run_e2e.py` |
+| `qa/tests/e2e/` | E2E-прогон по HTTP: `run_e2e.py`, `regression_cases.py` |
+| `qa/tests/ui/` | UI-регрессия на Playwright: `regression.mjs` |
 | `qa/tests/fixtures/` | Входные запросы и эталонные ответы для тестов |
 | `qa/schemas/` | JSON-схемы, используемые проверками |
 | `qa/docs/` | Документация: приёмка, тест-кейсы, баги, отчёты, ТЗ |

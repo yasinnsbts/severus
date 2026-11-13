@@ -24,6 +24,8 @@
 8. **Насколько полно покрыто:** `qa/docs/testing/COVERAGE.md`.
 9. **Где смотреть артефакты прогона:** `qa/docs/testing/ARTIFACTS.md`.
 10. **Готовые сценарии (локально):** `qa/docs/review/generated/` — в git не коммитятся.
+11. **Регрессия 13.11:** `qa/docs/testing/REGRESSION_CHECKLIST_2026-11-13.md` и `qa/docs/testing/REGRESSION_REPORT_2026-11-13.md`.
+12. **Содержательная проверка 13.11:** `qa/docs/review/CONTENT_REVIEW_2026-11-13.md`.
 
 ## Роли
 
