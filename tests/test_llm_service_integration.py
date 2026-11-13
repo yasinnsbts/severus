@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -25,11 +26,27 @@ from app.settings import Settings  # noqa: E402
 
 
 class ServiceClientBridge:
-    """Адаптирует FastAPI TestClient LLM-сервиса к интерфейсу backend-клиента."""
+    """Адаптирует FastAPI TestClient LLM-сервиса к интерфейсу backend-клиента.
+
+    Генерация в сервисе идёт в фоновом пуле, поэтому мост дожидается завершения задачи
+    перед чтением статуса и проекта: тесты проверяют итог, а не момент гонки.
+    """
 
     def __init__(self, client: TestClient):
         """Сохраняет тестовый HTTP-клиент внутреннего сервиса."""
         self.client = client
+        self.job_by_project = {}
+
+    def _wait(self, job_id, headers, timeout=15.0):
+        """Ждёт, пока задача выйдет из статусов queued и running."""
+        deadline = time.monotonic() + timeout
+        while True:
+            response = self.client.get(f"/api/v1/generations/{job_id}", headers=headers)
+            if response.status_code >= 400 or response.json().get("status") not in ("queued", "running"):
+                return response
+            if time.monotonic() > deadline:
+                raise AssertionError(f"Задача {job_id} не завершилась за {timeout} с")
+            time.sleep(0.02)
 
     @staticmethod
     def _json(response):
@@ -45,16 +62,20 @@ class ServiceClientBridge:
             headers["X-Request-Id"] = request_id
         if idempotency_key:
             headers["Idempotency-Key"] = idempotency_key
-        return self._json(self.client.post("/api/v1/generations", json=payload, headers=headers))
+        accepted = self._json(self.client.post("/api/v1/generations", json=payload, headers=headers))
+        self.job_by_project[accepted["project_id"]] = accepted["job_id"]
+        return accepted
 
     def get_generation(self, job_id, *, request_id=None):
-        """Получает статус задачи из тестового LLM-сервиса."""
+        """Получает итоговый статус задачи из тестового LLM-сервиса."""
         headers = {"X-Request-Id": request_id} if request_id else {}
-        return self._json(self.client.get(f"/api/v1/generations/{job_id}", headers=headers))
+        return self._json(self._wait(job_id, headers))
 
     def get_project(self, project_id, *, request_id=None):
-        """Получает проект из тестового LLM-сервиса."""
+        """Получает проект из тестового LLM-сервиса после завершения его задачи."""
         headers = {"X-Request-Id": request_id} if request_id else {}
+        if project_id in self.job_by_project:
+            self._wait(self.job_by_project[project_id], headers)
         return self._json(self.client.get(f"/api/v1/projects/{project_id}", headers=headers))
 
     def health(self):

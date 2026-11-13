@@ -241,6 +241,7 @@ class PlanBlock(_Model):
 class PlannedMaterial(_Model):
     material_id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
     type: MaterialType
+    title: str | None = None
     purpose: str
 
 

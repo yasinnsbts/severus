@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Рождественские традиции мира",
+  "concept": {
+    "summary": "Участники знакомятся с различными культурными традициями празднования Рождества, обсуждают семейные практики и совместно оформляют информационный стенд.",
+    "goal": "Формирование уважительного отношения к культурному разнообразию через изучение традиций празднования Рождества в разных странах.",
+    "tasks": [
+      "Изучение культурных особенностей празднования Рождества в различных странах.",
+      "Развитие навыков совместной творческой деятельности."
+    ],
+    "expected_outcomes": [
+      "Созданный учениками информационный стенд о рождественских традициях разных стран."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "cultural_diversity",
+        "mechanic_type": "culture_comparison",
+        "mechanic": "Групповая исследовательская деятельность по изучению и сравнению традиций празднования Рождества в разных странах.",
+        "block_ids": ["block_02"]
+      },
+      {
+        "value_id": "family",
+        "mechanic_type": "family_research",
+        "mechanic": "Обсуждение семейных рождественских традиций участников, подчёркивающее значимость семейных практик.",
+        "block_ids": ["block_01"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_02", "block_03"]
+  },
+  "roles": [
+    {
+      "role_id": "teacher_1",
+      "participant_type": "teacher",
+      "title": "Ведущий педагог",
+      "count": 1
+    },
+    {
+      "role_id": "pupils_all",
+      "participant_type": "pupils_group",
+      "title": "Учащиеся",
+      "count": 24
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Семейные традиции",
+      "purpose": "Знакомство с личными впечатлениями участников о празднике",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Исследовательская работа в группах",
+      "purpose": "Сбор информации о рождественских традициях разных стран",
+      "proposed_minutes": 12,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["country_cards", "research_notes"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Оформление информационного стенда",
+      "purpose": "Совместное оформление визуального продукта",
+      "proposed_minutes": 8,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["display_board", "art_supplies"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Подведение итогов",
+      "purpose": "Осознание значимости культурного разнообразия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "country_cards",
+      "type": "activity_card",
+      "title": "Карточки с информацией о странах",
+      "purpose": "Предоставить базовую информацию для исследования"
+    },
+    {
+      "material_id": "research_notes",
+      "type": "worksheet",
+      "title": "Листы для записей исследований",
+      "purpose": "Организовать процесс сбора информации"
+    },
+    {
+      "material_id": "display_board",
+      "type": "props_checklist",
+      "title": "Доска или стенд для оформления",
+      "purpose": "Представление конечного продукта"
+    },
+    {
+      "material_id": "art_supplies",
+      "type": "props_checklist",
+      "title": "Материалы для творчества (цветные карандаши, маркеры)",
+      "purpose": "Оформление информационного стенда"
+    }
+  ]
+}

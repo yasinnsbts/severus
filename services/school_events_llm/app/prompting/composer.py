@@ -281,11 +281,21 @@ class Composer:
         date_line = (rule.get("note") or rule.get("value") or "не задана").strip()
         age_note = (event.get("age_appropriateness_notes") or {}).get(n.age_group, "").strip() or "особых указаний нет."
         facts = [f.strip() for f in event.get("facts_to_verify", []) if f.strip()]
+        boundary = (self.catalog.boundaries.get("events") or {}).get(n.event_id) or {}
+        not_confuse = (f"\n- **Не путать с праздником «{boundary['confused_with']}»:** {boundary['hint']}"
+                       if boundary.get("hint") and boundary.get("confused_with") else "")
+        topic_titles = self.catalog.boundaries.get("topic_titles") or {}
+        topics = [topic_titles.get(t.split("/", 1)[-1], t.split("/", 1)[-1]) for t in event.get("regional_topics", [])]
+        regional = (f"\n- **Региональные темы (только если по ним есть справочный фрагмент):** {', '.join(topics)}"
+                    if topics and n.cultural_context else "")
         return {
+            "event_title": str(event.get("title") or n.event_id),
             "date_line": date_line,
             "age_group": n.age_group,
             "age_note": age_note,
             "facts_to_verify": "\n".join(f"  - {f}" for f in facts) if facts else "  - особых пунктов нет",
+            "not_confuse": not_confuse,
+            "regional_topics": regional,
         }
 
     def values_variables(self, n: NormalizedRequest) -> dict[str, str]:
@@ -388,7 +398,11 @@ class Composer:
             text = (
                 "Проверенных фрагментов для этого события нет. Не делай фактических утверждений "
                 "о датах, именах, событиях и традициях. Если без утверждения не обойтись, "
-                "добавь его в `fact_claims` с `needs_teacher_check: true`."
+                "добавь его в `fact_claims` с `needs_teacher_check: true`.\n\n"
+                "О традициях и истории говори обобщённо и осторожно («во многих семьях», «в разных странах», "
+                "«есть обычай»), без годов, веков, чисел, имён и рассказов о происхождении обычаев "
+                "(«впервые», «появился в … веке», «по легенде»). Опирайся на опыт и наблюдения учеников, "
+                "а не на сведения, которых нет в данных."
             )
             return {"fragments": text}
         items: list[str] = []
@@ -399,6 +413,8 @@ class Composer:
                 f'<fragment source_id="{fragment["source_id"]}" fragment_id="{fragment["fragment_id"]}" '
                 f'title="{source.get("title", "")}">\n{body}\n</fragment>'
             )
+        items.append("Сведения, которых нет в этих фрагментах (годы, века, имена, происхождение обычаев), "
+                     "не добавляй: о них говори обобщённо или не говори совсем.")
         return {"fragments": "\n\n".join(items)}
 
     def compose(

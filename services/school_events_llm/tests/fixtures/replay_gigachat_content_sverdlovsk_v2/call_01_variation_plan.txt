@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Путешествие по страницам истории нашей области",
+      "summary": "Участники отправятся в путешествие по ключевым страницам истории Свердловской области через карты, фотографии и документы, подготовят коллективный маршрут-путеводитель для будущих поколений.",
+      "narrative_approach": "Мероприятие начинается с обсуждения значения Дня образования области, затем ребята делятся на команды и получают реальные исторические свидетельства (карты, письма, фотографии). Команды изучают источники, обсуждают и составляют свой участок маршрута путешествия по истории области. Итог – объединённый маршрут-путеводитель, созданный всеми участниками.",
+      "primary_mechanic": "mini_project",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Встречаемся на старте!",
+          "activity_type": "introduction",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Исторический брифинг",
+          "activity_type": "lecture",
+          "approx_minutes": 5
+        },
+        {
+          "order": 3,
+          "title": "Разделимся на экспедиции",
+          "activity_type": "grouping",
+          "approx_minutes": 3
+        },
+        {
+          "order": 4,
+          "title": "Изучение исторических свидетельств",
+          "activity_type": "source_work",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "Создание участка маршрута",
+          "activity_type": "creative_product",
+          "approx_minutes": 15
+        },
+        {
+          "order": 6,
+          "title": "Объединяем маршруты",
+          "activity_type": "class_collective_task",
+          "approx_minutes": 7
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "source_work",
+          "description": "Команды получают исторические свидетельства (карты, фотографии, воспоминания) и изучают их"
+        },
+        {
+          "activity_type": "creative_product",
+          "description": "Каждая команда создаёт часть общего маршрута-путеводителя по истории области"
+        },
+        {
+          "activity_type": "class_collective_task",
+          "description": "Класс объединяет части маршрутов в единый путеводитель"
+        }
+      ],
+      "distinctive_result": "Коллективный маршрут-путеводитель по истории Свердловской области, созданный учениками",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "historical_memory",
+          "mechanic_type": "source_work",
+          "mechanic": "Работа с историческими свидетельствами помогает участникам понять историю региона через оригинальные материалы."
+        },
+        {
+          "value_id": "citizenship",
+          "mechanic_type": "class_collective_task",
+          "mechanic": "Совместное создание единого путеводителя формирует чувство ответственности и причастности к общему делу."
+        }
+      ]
+    }
+  ]
+}

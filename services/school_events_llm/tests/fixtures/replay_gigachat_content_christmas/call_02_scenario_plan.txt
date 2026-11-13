@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Рождественские традиции мира",
+  "concept": {
+    "summary": "Участники знакомятся с разными праздничными обычаями, создают коллаж традиций и обсуждают семейные практики празднования.",
+    "goal": "Формирование уважительного отношения к культурному многообразию и расширение представлений о традиционных практиках празднования Рождества.",
+    "tasks": [
+      "Знакомство с различными культурными традициями празднования Рождества.",
+      "Развитие навыков совместной творческой деятельности и общения."
+    ],
+    "expected_outcomes": [
+      "Созданный совместно коллаж традиций Рождества в разных культурах.",
+      "Расширение знаний о культурных особенностях празднования."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "cultural_diversity",
+        "mechanic_type": "culture_comparison",
+        "mechanic": "Команды изучают и представляют разные традиции создания единого коллажа.",
+        "block_ids": ["block_02"]
+      },
+      {
+        "value_id": "family",
+        "mechanic_type": "discussion",
+        "mechanic": "Добровольное обсуждение семейных практик празднования.",
+        "block_ids": ["block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_02"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 24}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Вводная беседа",
+      "purpose": "Актуализация знаний о праздновании Рождества, создание интереса к теме.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Создание коллажа традиций",
+      "purpose": "Изучение и представление различных культурных традиций празднования Рождества.",
+      "proposed_minutes": 12,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["collage_template", "research_cards"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Обсуждение семейных традиций",
+      "purpose": "Осознание особенностей семейного опыта празднования (добровольно)",
+      "proposed_minutes": 8,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["family_handout"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Подведение итогов",
+      "purpose": "Закрепление полученных знаний, выражение впечатлений.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "collage_template",
+      "type": "props_checklist",
+      "title": "Шаблоны для коллажей",
+      "purpose": "Используются командами для оформления общей информации о традициях."
+    },
+    {
+      "material_id": "research_cards",
+      "type": "activity_card",
+      "title": "Карточки-исследования",
+      "purpose": "Предоставляют информацию для изучения традиций командам."
+    },
+    {
+      "material_id": "family_handout",
+      "type": "handout",
+      "title": "Лист семейной традиции (по желанию, до мероприятия)",
+      "purpose": "Позволяет участникам подготовить рассказ о семейных традициях добровольно.",
+      "family_task": true
+    }
+  ]
+}

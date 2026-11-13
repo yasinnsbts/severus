@@ -296,6 +296,18 @@ class BatchCliTest(unittest.TestCase):
         self.assertEqual({g for g, _ in seen}, {"1-4", "5-8", "9-11"})
         self.assertEqual({d for _, d in seen}, {30, 45, 60, 90})
 
+    def test_content_check_requests_are_valid(self):
+        """Контрольные запросы по содержанию (Рождество, День единства, День знаний, региональное событие) проходят нормализацию."""
+        from app.normalize import normalize
+        files = sorted((EXAMPLES / "requests" / "content_check").glob("*.json"))
+        events = set()
+        for path in files:
+            with self.subTest(path=path.name):
+                n = normalize(json.loads(path.read_text(encoding="utf-8")), catalog(), settings())
+                events.add((n.event_id, n.grade, n.duration_minutes))
+                self.assertEqual([w.code for w in n.warnings], [])
+        self.assertTrue({("christmas", 7, 30), ("unity_day", 10, 45), ("knowledge_day", 2, 45)} <= events)
+
 
 if __name__ == "__main__":
     unittest.main()
