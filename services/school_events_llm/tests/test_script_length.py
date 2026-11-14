@@ -91,3 +91,72 @@ class PerBlockModeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReasoningStageTest(unittest.TestCase):
+    """Рассуждения по этапам: по умолчанию выключены; включаются в config/generation.json или LLM_REASONING."""
+
+    def generator(self):
+        return Generator(settings(), catalog(), FixtureLLM([golden("ex1_knowledge_day")]))
+
+    def test_default_off_and_override(self):
+        import os
+        from unittest.mock import patch
+        gen = self.generator()
+        n = normalize(request("ex1_knowledge_day"), catalog(), settings())
+        base = gen.max_output_tokens("scenario_plan", n)
+        self.assertIsNone(gen.reasoning_effort("scenario_plan"))
+        with patch.dict(os.environ, {"LLM_REASONING": "scenario_plan=medium, materials=extreme"}):
+            self.assertEqual(gen.reasoning_effort("scenario_plan"), "medium")
+            self.assertIsNone(gen.reasoning_effort("materials"))  # неизвестный уровень не передаётся
+            self.assertIsNone(gen.reasoning_effort("scenario_block"))
+            self.assertEqual(gen.max_output_tokens("scenario_plan", n), base + gen.cfg["reasoning_extra_output_tokens"])
+        with patch.dict(os.environ, {"LLM_REASONING": "*=low"}):
+            self.assertEqual(gen.reasoning_effort("materials"), "low")
+        gen.cfg = {**gen.cfg, "tasks": {**gen.cfg["tasks"], "scenario_block": {**gen.cfg["tasks"]["scenario_block"], "reasoning_effort": "high"}}}
+        self.assertEqual(gen.reasoning_effort("scenario_block"), "high")
+
+    def test_from_dotenv(self):
+        """`LLM_REASONING` из `.env` (настройки сервиса), а не только из окружения процесса."""
+        import os
+        from unittest.mock import patch
+        from app.settings import Settings
+        from tests.helpers import ROOT
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("LLM_REASONING", None)
+            gen = Generator(Settings(root=ROOT, env={"LLM_REASONING": "scenario_plan=high"}), catalog(),
+                            FixtureLLM([golden("ex1_knowledge_day")]))
+            self.assertEqual(gen.reasoning_effort("scenario_plan"), "high")
+            self.assertIsNone(gen.reasoning_effort("materials"))
+
+    def test_reasoning_saved_in_trace(self):
+        """Рассуждения модели - отдельным файлом в трассе вызова, уровень и объём - в manifest; JSON разбирается как обычно."""
+        import dataclasses
+        import json
+        import os
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from app.trace import RunTrace
+        from tests.test_material_ids import ReplayLLM
+
+        class Thinking(ReplayLLM):
+            def generate(self, **kwargs):
+                result = super().generate(**kwargs)
+                effort = (kwargs.get("meta") or {}).get("reasoning_effort")
+                return dataclasses.replace(result, reasoning=f"рассуждения ({effort})") if effort else result
+
+        directory = Path(__file__).parent / "fixtures" / "replay_gigachat_bug14_jury"
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"LLM_REASONING": "scenario_plan=medium"}):
+            trace = RunTrace(Path(tmp), secrets=[])
+            outcome = Generator(settings(), catalog(), Thinking(directory), trace=trace).run(
+                json.loads((directory / "request.json").read_text(encoding="utf-8")))
+            self.assertEqual(outcome.project["status"], "completed")
+            plan_calls = [p.parent for p in Path(tmp).glob("calls/*/manifest.json")
+                          if json.loads(p.read_text(encoding="utf-8"))["stage"] == "scenario_plan"]
+            manifest = json.loads((plan_calls[0] / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["reasoning_effort"], "medium")
+            self.assertEqual((plan_calls[0] / "response.reasoning.txt").read_text(encoding="utf-8"), "рассуждения (medium)")
+            block = next(p.parent for p in Path(tmp).glob("calls/*/manifest.json")
+                         if json.loads(p.read_text(encoding="utf-8"))["stage"] == "scenario_block")
+            self.assertFalse((block / "response.reasoning.txt").exists())

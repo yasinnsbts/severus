@@ -191,6 +191,13 @@ python -m app batch examples/requests/content_check
 
 `reasoning_mode` и `disable_thinking_method` управляют обработкой рассуждений модели. Независимо от способа отключения reasoning, служебные блоки `<think>` и `<analysis>` не должны попадать в parsed JSON.
 
+**Уровень рассуждений GigaChat** (`reasoning_effort`: `low`, `medium`, `high`). GigaChat API принимает параметр `reasoning_effort` в OpenAI-совместимом формате, шлюз LiteLLM УрФУ передаёт его дальше (проверено 14.11.2026: рассуждения приходят отдельным полем `reasoning_content`, в `content` - только ответ). По умолчанию рассуждения выключены. Включаются:
+- для этапа - `tasks.<этап>.reasoning_effort` в `config/generation.json` (например, `"scenario_plan": {..., "reasoning_effort": "medium"}`);
+- для модели целиком - `reasoning_effort` в профиле `config/models.json`;
+- без правки конфига - `LLM_REASONING` в `.env` (действует для `serve`, `generate`, `batch`; после правки `.env` сервис перезапустить) или разово `python -m app batch <запросы> --reasoning scenario_plan=medium,scenario_block=low`; формат `этап=уровень` через запятую, `*=low` - все этапы. `LLM_REASONING` важнее значения в `config/generation.json`.
+
+Рассуждения расходуют тот же лимит ответа, что и JSON, поэтому для этапа с рассуждениями лимит увеличивается на `reasoning_extra_output_tokens` (2000). Текст рассуждений сохраняется в трассе вызова (`calls/<call>/response.reasoning.txt`), уровень и объём - в `manifest.json` (`reasoning_effort`, `reasoning_chars`); в разбор JSON рассуждения не попадают. Если модель или шлюз не принимают параметр (ответ 400), вызов повторяется без него, генерация не падает. Для моделей с `reasoning_mode: disabled` (Qwen) параметр не передаётся.
+
 ## Параллельная работа и очередь
 
 Сервисом пользуется вся школа, поэтому генерации разных педагогов идут одновременно. Настройки - в `config/service.json`:

@@ -571,9 +571,13 @@ SERVICE_AUTH_TOKEN=
 LLM_SERVICE_FIXTURE_MODE=false
 LLM_SERVICE_FIXTURES=
 
+LLM_REASONING=
+
 LITELLM_BASE_URL=
 LITELLM_API_KEY=
 ```
+
+`LLM_REASONING` - рассуждения модели по этапам генерации (`scenario_plan=medium`, `*=low`); пусто - как в `config/generation.json`, где по умолчанию рассуждения выключены.
 
 Для локальной модели также доступны настройки общего lock-файла:
 
@@ -1085,6 +1089,8 @@ disable_thinking_method
 задают правила обработки рассуждений конкретной модели.
 
 Независимо от провайдера служебные `<think>` / `<analysis>` не должны попадать в итоговый JSON проекта.
+
+Уровень рассуждений GigaChat (`reasoning_effort`: `low`, `medium`, `high`) задаётся по этапам в `services/school_events_llm/config/generation.json` (`tasks.<этап>.reasoning_effort`, по умолчанию `null` - выключено), для модели целиком - в `config/models.json`, без правки конфига - через `LLM_REASONING` в `.env` или `python -m app batch ... --reasoning scenario_plan=medium`. Рассуждения сохраняются в трассе вызова отдельным файлом `response.reasoning.txt`; подробности - в README сервиса.
 
 ### Параллельная работа
 

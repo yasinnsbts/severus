@@ -46,6 +46,8 @@ class LLMResult:
     reasoning_stripped: bool = False
     structured_mode: str = "none"
     request_params: dict[str, Any] = field(default_factory=dict)
+    # Рассуждения модели (`reasoning_content` в ответе): пишутся в трассу отдельно, в разбор JSON не попадают.
+    reasoning: str | None = None
 
 
 class LLMClient:
@@ -196,6 +198,9 @@ class OpenAICompatibleClient(LLMClient):
         self.structured_mode = cfg.get("structured_output_mode", "auto")
         self.reasoning_mode = cfg.get("reasoning_mode", "disabled")
         self.thinking_method = cfg.get("disable_thinking_method", "strip_only")
+        # Уровень рассуждений по умолчанию для модели (`low` / `medium` / `high`); этап может задать свой через meta.
+        self.reasoning_effort = cfg.get("reasoning_effort")
+        self._reasoning_param_unsupported = False
         self.local = bool(cfg.get("local", _is_local(self.base_url)))
         self.lock_cfg = lock_cfg if self.local else None
         self._model_id: str | None = None
@@ -275,6 +280,10 @@ class OpenAICompatibleClient(LLMClient):
             marker = "/".join(str((meta or {}).get(k)) for k in ("job_id", "call_id") if (meta or {}).get(k))
             if marker:
                 msgs[-1]["content"] = msgs[-1]["content"] + f"\n\n<!-- служебная отметка вызова {marker}, на ответ не влияет -->"
+        effort = (meta or {}).get("reasoning_effort") or self.reasoning_effort
+        if effort and effort != "none" and self.reasoning_mode != "disabled" and not self._reasoning_param_unsupported:
+            # GigaChat API (OpenAI-совместимый формат) и шлюз LiteLLM УрФУ принимают параметр как есть (проверено 14.11).
+            body["reasoning_effort"] = effort
         if self.reasoning_mode == "disabled":
             if self.thinking_method == "no_think_tag":
                 msgs[-1]["content"] = msgs[-1]["content"] + "\n\n/no_think"
@@ -328,10 +337,20 @@ class OpenAICompatibleClient(LLMClient):
             """Вызов модели; если провайдер не принял JSON-схему или параметр кэша, повтор без них."""
             nonlocal mode
             status, payload, latency = do_call()
+            # 400 на параметр рассуждений: по тексту ошибки, иначе отключили бы обход кэша зря.
+            if status == 400 and "reasoning_effort" in body and "reason" in str(payload).lower():
+                self._reasoning_param_unsupported = True
+                body.pop("reasoning_effort", None)
+                status, payload, latency = do_call()
             if status == 400 and "cache" in body:
                 # Шлюз не знает параметр кэша: дальше без него, уникальность запроса держит служебная отметка.
                 self._cache_param_unsupported = True
                 body.pop("cache", None)
+                status, payload, latency = do_call()
+            if status == 400 and "reasoning_effort" in body:
+                # Модель или шлюз не знают параметр рассуждений: дальше без него, генерация не падает.
+                self._reasoning_param_unsupported = True
+                body.pop("reasoning_effort", None)
                 status, payload, latency = do_call()
             if status == 400 and mode == "json_schema" and self.structured_mode == "auto":
                 self._schema_unsupported = True
@@ -363,8 +382,9 @@ class OpenAICompatibleClient(LLMClient):
         return LLMResult(text=text, model_key=self.model_key, provider=self.provider, provider_model_id=model_id,
                          usage=usage, latency_ms=latency, mutex_wait_ms=wait_ms,
                          reasoning_stripped=had_reasoning or bool(message.get("reasoning_content")),
-                         structured_mode=mode,
-                         request_params={"temperature": temperature, "max_tokens": max_tokens, "structured_mode": mode})
+                         structured_mode=mode, reasoning=message.get("reasoning_content") or None,
+                         request_params={"temperature": temperature, "max_tokens": max_tokens, "structured_mode": mode,
+                                         "reasoning_effort": body.get("reasoning_effort")})
 
 
 class GigaChatClient(OpenAICompatibleClient):

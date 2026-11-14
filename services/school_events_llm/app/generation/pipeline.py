@@ -8,6 +8,7 @@ scenario_blocks (или scenario_block по одному) → materials → сб
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 import uuid
@@ -581,6 +582,10 @@ def _issue_lines(issues: list[Issue]) -> list[dict[str, str]]:
     return [{"code": i.code, "location": i.location, "message": i.message} for i in issues]
 
 
+# Уровни рассуждений GigaChat API (`reasoning_effort`): чем выше, тем дольше модель думает перед ответом.
+REASONING_LEVELS = ("low", "medium", "high")
+
+
 class Generator:
     def __init__(self, settings: Settings, catalog: Catalog, client: LLMClient, *, trace: RunTrace | None = None):
         """Инициализирует генератор и связывает настройки, каталог, LLM-клиент, Composer и трассировку.
@@ -600,6 +605,18 @@ class Generator:
         self._sleep = time.sleep  # подменяется в тестах, чтобы не ждать паузы между повторами
 
     # Лимит ответа модели для этапа.
+    def reasoning_effort(self, stage: str) -> str | None:
+        """Уровень рассуждений модели для этапа.
+
+        Порядок: `LLM_REASONING` («scenario_plan=medium,scenario_block=low», `*=low` - все этапы) из окружения процесса
+        (так его ставит `batch --reasoning`) или из `.env`; затем `tasks.<этап>.reasoning_effort` в config/generation.json.
+        None - рассуждения не запрашиваются (по умолчанию для всех этапов).
+        """
+        value = os.environ.get("LLM_REASONING") or self.settings.get("LLM_REASONING") or ""
+        override = dict(item.split("=", 1) for item in value.replace(" ", "").split(",") if "=" in item)
+        effort = override.get(stage) or override.get("*") or self.cfg["tasks"][stage].get("reasoning_effort")
+        return effort if effort in REASONING_LEVELS else None
+
     def max_output_tokens(self, stage: str, n: NormalizedRequest) -> int:
         """Возвращает лимит ответа модели для этапа.
 
@@ -611,9 +628,11 @@ class Generator:
         task_cfg = self.cfg["tasks"][stage]
         cap = int(task_cfg["max_output_tokens"])
         per_variant = task_cfg.get("max_output_tokens_per_variant")
-        if per_variant is None:
-            return cap
-        return min(cap, int(per_variant) * n.variants_count)
+        limit = cap if per_variant is None else min(cap, int(per_variant) * n.variants_count)
+        # Рассуждения входят в тот же лимит ответа, что и JSON: без запаса ответ обрезается.
+        if self.reasoning_effort(stage):
+            limit += int(self.cfg.get("reasoning_extra_output_tokens", 2000))
+        return limit
 
     # Выполнение этапа с ограниченным числом попыток исправления.
     def call_stage(self, stage: str, n: NormalizedRequest, *, stage_input: str = "", output_vars: dict | None = None,
@@ -650,7 +669,7 @@ class Generator:
                     stage, call_id, variant_id,
                     messages=composed.messages, task_name=stage, output_schema=model_cls.model_json_schema(),
                     max_tokens=self.max_output_tokens(stage, n), temperature=float(task_cfg["temperature_hint"]),
-                    meta={**(meta or {}), "call_id": call_id})
+                    meta={**(meta or {}), "call_id": call_id, "reasoning_effort": self.reasoning_effort(stage)})
                 raw = result.text
                 data = extract_json(raw)
                 mechanics = {vid: list(value.get("allowed_mechanic_types") or []) for vid, value in self.catalog.values.items()}
@@ -682,13 +701,16 @@ class Generator:
                     "latency_ms": getattr(result, "latency_ms", None), "mutex_wait_ms": getattr(result, "mutex_wait_ms", None),
                     "usage": getattr(result, "usage", None), "usage_source": "provider" if getattr(result, "usage", None) else "unavailable",
                     "reasoning_stripped": getattr(result, "reasoning_stripped", None),
+                    "reasoning_effort": self.reasoning_effort(stage),
+                    "reasoning_chars": len(getattr(result, "reasoning", None) or ""),
                     "request_params": getattr(result, "request_params", None),
                     "status": status, "error_code": error_code, "error": last_error if status == "failed" else None,
                 }
                 if result is not None:
                     self.tokens.add(stage, getattr(result, "usage", None))
                 self.trace.save_call(call_id, manifest=manifest, messages=composed.messages, prompt_md=composed.as_markdown(),
-                                     raw=raw, parsed=parsed_obj.model_dump() if parsed_obj is not None else None)
+                                     raw=raw, parsed=parsed_obj.model_dump() if parsed_obj is not None else None,
+                                     reasoning=getattr(result, "reasoning", None))
                 self.trace.event("llm_call_completed" if status == "completed" else "llm_call_invalid", call_id=call_id,
                                  stage=stage, variant_id=variant_id, attempt=attempt, error_code=error_code)
                 parent_call_id = call_id

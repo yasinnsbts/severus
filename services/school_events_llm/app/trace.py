@@ -4,7 +4,8 @@ data/runs/runs.jsonl                - журнал: одна строка на �
 data/runs/<job_id>/
   input.json, normalized_request.json, metadata.json, concepts.json, final_result.json
   events.jsonl                      - события этапов и вызовов (одна JSON-запись на строку)
-  calls/call_0001/                  - manifest.json, messages.json, prompt.md, response.raw.txt, response.parsed.json
+  calls/call_0001/                  - manifest.json, messages.json, prompt.md, response.raw.txt, response.parsed.json,
+                                      response.reasoning.txt (если включены рассуждения)
   variants/v1/variant_package.json  - внутренний результат (контракт 03) и validation.json
 Секреты (известные значения ключей из .env) маскируются во всех файлах.
 """
@@ -138,7 +139,7 @@ class RunTrace:
         return f"call_{self._call_seq:04d}"
 
     def save_call(self, call_id: str, *, manifest: dict[str, Any], messages: list[dict[str, str]] | None,
-                  prompt_md: str | None, raw: str | None, parsed: Any) -> None:
+                  prompt_md: str | None, raw: str | None, parsed: Any, reasoning: str | None = None) -> None:
         """Сохраняет манифест, сообщения, сырой ответ и разобранный результат одного LLM-вызова.
 
         Параметры:
@@ -156,6 +157,8 @@ class RunTrace:
             redacted |= self.write_text(f"{base}/prompt.md", prompt_md or "")
         if raw is not None and self.full_responses:
             redacted |= self.write_text(f"{base}/response.raw.txt", raw)
+        if reasoning and self.full_responses:
+            redacted |= self.write_text(f"{base}/response.reasoning.txt", reasoning)
         if parsed is not None:
             self.write_json(f"{base}/response.parsed.json", parsed)
         self.write_json(f"{base}/manifest.json", {**manifest, "secret_redacted": redacted})

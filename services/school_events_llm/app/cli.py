@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from datetime import datetime
@@ -365,6 +366,9 @@ def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
     import time
 
     rows: list[dict[str, Any]] = []
+    if getattr(args, "reasoning", None):
+        os.environ["LLM_REASONING"] = args.reasoning
+        print(f"Рассуждения модели: {args.reasoning}")
     files = _batch_files(args.requests)
     for index, path in enumerate(files, 1):
         sys.stderr.write(f"[{index}/{len(files)}] {path.name} ...\n")
@@ -535,6 +539,8 @@ def main(argv: list[str] | None = None) -> int:
     batch.add_argument("requests", nargs="+", help="файлы запросов или папки с ними, например examples/requests/matrix")
     batch.add_argument("--model")
     batch.add_argument("--fixture", nargs="*", help="эталоны вместо модели (для проверки самого прогона)")
+    batch.add_argument("--reasoning", help="рассуждения модели по этапам без правки конфига: scenario_plan=medium,scenario_block=low "
+                                           "(уровни low, medium, high; * - все этапы)")
 
     experiment = subparsers.add_parser("experiment", help="запустить внутренний эксперимент H2/H3")
     _add_generation_arguments(experiment)
