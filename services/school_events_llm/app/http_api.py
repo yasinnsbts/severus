@@ -2,22 +2,34 @@
 
 Frontend не обращается к этому приложению напрямую. Общий Backend передаёт сюда
 тот же JSON контракта 01 и получает ответы контракта 02 без преобразования полей.
+
+Параллельная работа (`config/service.json`): генерации выполняются в собственном пуле потоков
+на `max_parallel_generations` мест - столько задач идут сразу, без очереди. Следующие
+`max_waiting_generations` задач ждут со статусом `queued`; если занято и это, создание задачи
+отвечает 503 `SERVICE_BUSY` (retryable). Каждая задача изолирована: свой `job_id` и `project_id`,
+свой генератор, клиент модели и папка трассы; общие только каталог (только чтение) и пределы.
+Статусы и проекты хранятся в памяти `results_keep_hours` часов после завершения.
 """
 
 from __future__ import annotations
 
 import json
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Callable
 from uuid import uuid4
 
-from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Request, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import job_status
 from .catalog import Catalog
 from .generation.pipeline import Generator
+from .llm import limits
 from .llm.client import LLMClient, LLMError, build_client
 from .llm.fixture import FixtureLLM
 from .normalize import RequestError, normalize
@@ -83,12 +95,14 @@ def build_runtime_client(settings: Settings) -> LLMClient:
     return build_client(settings)
 
 
-def create_app(settings: Settings | None = None, client_factory: ClientFactory | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, client_factory: ClientFactory | None = None,
+               service_config: dict[str, Any] | None = None) -> FastAPI:
     """Создаёт FastAPI-приложение внутреннего LLM-сервиса.
 
     Параметры:
         `settings`: Настройки сервиса. Если не переданы, читаются из окружения.
         `client_factory`: Фабрика LLM-клиента. Используется тестами для fixture.
+        `service_config`: Поверх `config/service.json` (для тестов).
 
     Возвращает:
         FastAPI.
@@ -96,17 +110,35 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
     runtime_settings = settings or Settings.load()
     catalog = Catalog.load(runtime_settings)
     runtime_client_factory = client_factory or (lambda: build_runtime_client(runtime_settings))
+    service_cfg = {**runtime_settings.service(), **(service_config or {})}
+    limits.configure(service_cfg)
+    max_parallel = int(service_cfg["max_parallel_generations"])
+    max_waiting = int(service_cfg["max_waiting_generations"])
+    keep_seconds = float(service_cfg["results_keep_hours"]) * 3600
+    # Свой пул потоков: длинные генерации не занимают потоки, которые отвечают на запросы статуса.
+    executor = ThreadPoolExecutor(max_workers=max_parallel, thread_name_prefix="generation")
+    load_lock = threading.Lock()
+    load = {"running": 0, "waiting": 0}
+    finished_at: dict[str, float] = {}
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        yield
+        executor.shutdown(wait=False, cancel_futures=True)
 
     app = FastAPI(
         title="Severus School Events LLM Service",
         description="Внутренний сервис генерации сценариев школьных мероприятий",
-        version="0.2.0",
+        version="0.3.0",
+        lifespan=lifespan,
     )
     app.state.settings = runtime_settings
     app.state.catalog = catalog
     app.state.client_factory = runtime_client_factory
     app.state.jobs = {}
     app.state.projects = {}
+    app.state.service_config = service_cfg
+    app.state.executor = executor
 
     @app.middleware("http")
     async def echo_request_id(request: Request, call_next):
@@ -174,7 +206,8 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
                 full_responses=runtime_settings.flag("LOG_FULL_RESPONSES", True),
                 secrets=runtime_settings.secret_values(),
             )
-            outcome = Generator(runtime_settings, catalog, client, trace=trace).run(
+            outcome = Generator(runtime_settings, catalog, client, trace=trace,
+                                parallel_variants=int(service_cfg["max_parallel_variants"])).run(
                 raw_request,
                 job_id=job_id,
                 project_id=project_id,
@@ -192,6 +225,42 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
         except Exception as exc:  # ошибка модели, этап не прошёл схему или сбой сервиса
             job["status"] = "failed"
             job["errors"] = [job_status.exception_error(exc)]
+
+    def run_job(job_id: str, project_id: str, raw_request: dict[str, Any]) -> None:
+        """Задача пула: учёт нагрузки вокруг генерации."""
+        with load_lock:
+            load["waiting"] -= 1
+            load["running"] += 1
+        try:
+            finish_generation(job_id, project_id, raw_request)
+        finally:
+            with load_lock:
+                load["running"] -= 1
+                finished_at[job_id] = time.monotonic()
+
+    def purge_finished() -> None:
+        """Убирает из памяти статусы и проекты, завершённые раньше `results_keep_hours`."""
+        now = time.monotonic()
+        with load_lock:
+            old = [job_id for job_id, ended in finished_at.items() if now - ended > keep_seconds]
+            for job_id in old:
+                finished_at.pop(job_id, None)
+                job = app.state.jobs.pop(job_id, None)
+                if job:
+                    app.state.projects.pop(job["project_id"], None)
+
+    @app.get("/api/v1/load", dependencies=[Depends(require_service_token)])
+    def service_load() -> dict[str, Any]:
+        """Текущая нагрузка: сколько генераций идёт, сколько ждёт, сколько обращений к модели сейчас."""
+        with load_lock:
+            current = dict(load)
+        return {
+            "running_generations": current["running"],
+            "waiting_generations": current["waiting"],
+            "max_parallel_generations": max_parallel,
+            "max_waiting_generations": max_waiting,
+            **limits.load(),
+        }
 
     @app.get("/api/v1/health", dependencies=[Depends(require_service_token)])
     def health() -> dict[str, str]:
@@ -220,12 +289,21 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
         status_code=status.HTTP_202_ACCEPTED,
         dependencies=[Depends(require_service_token)],
     )
-    def create_generation(raw_request: dict[str, Any], background_tasks: BackgroundTasks) -> dict[str, Any]:
-        """Принимает контракт 01, проверяет его и ставит генерацию в фоновую очередь."""
+    def create_generation(raw_request: dict[str, Any]) -> dict[str, Any]:
+        """Принимает контракт 01, проверяет его и запускает генерацию: сразу, если есть свободное место, иначе в очередь."""
         try:
             normalized = normalize(raw_request, catalog, runtime_settings)
         except RequestError as exc:
             raise HTTPException(status_code=422, detail=exc.to_dict()["error"]) from exc
+
+        purge_finished()
+        with load_lock:
+            if load["running"] + load["waiting"] >= max_parallel + max_waiting:
+                raise HTTPException(status_code=503, detail=_error(
+                    "SERVICE_BUSY",
+                    f"Сервис занят: идут {load['running']} генераций и ещё {load['waiting']} ждут. Повторите через минуту.",
+                    retryable=True)["error"])
+            load["waiting"] += 1
 
         job_id = f"job_{uuid4().hex}"
         project_id = f"evt_{uuid4().hex}"
@@ -238,7 +316,13 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
             "warnings": [warning.__dict__ for warning in normalized.warnings],
             "errors": [],
         }
-        background_tasks.add_task(finish_generation, job_id, project_id, raw_request)
+        try:
+            executor.submit(run_job, job_id, project_id, raw_request)
+        except RuntimeError as exc:  # пул остановлен: сервис завершает работу
+            with load_lock:
+                load["waiting"] -= 1
+            app.state.jobs.pop(job_id, None)
+            raise HTTPException(status_code=503, detail=_error("SERVICE_BUSY", "Сервис останавливается", retryable=True)["error"]) from exc
         return {
             "job_id": job_id,
             "project_id": project_id,

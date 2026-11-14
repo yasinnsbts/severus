@@ -1,4 +1,4 @@
-<!-- id: output.scenario_plan | version: 1.0.0 -->
+<!-- id: output.scenario_plan | version: 1.1.0 -->
 ## Формат ответа
 
 Верни один JSON-объект плана для варианта `{{variant_id}}`. Сумма `proposed_minutes` = {{duration_minutes}}.
@@ -27,7 +27,7 @@
     {"block_id": "block_01", "title": "Название", "purpose": "Зачем нужен блок", "proposed_minutes": 5, "role_ids": ["teacher_1", "pupils_all"], "planned_material_ids": []}
   ],
   "planned_materials": [
-    {"material_id": "card_task", "type": "activity_card", "purpose": "Для чего"}
+    {"material_id": "card_task", "type": "activity_card", "title": "Карточки заданий", "purpose": "Для чего"}
   ]
 }
 ```

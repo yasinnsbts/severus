@@ -1,0 +1,298 @@
+"""Баг-лист QA от 14.11.2026 (сборка PR #30, 03c6b0c) на записанных ответах GigaChat из трасс Максима.
+
+- BUG-14: жюри (`labour_day`, 10 класс) - лист назван `jury_scorecard`, тип `quiz`; вариант падал после двух исправлений.
+- BUG-17: 12 родителей, помощники и зрители - 12 + 1 = 13; вариант терялся после двух пересборок (30 вызовов).
+- BUG-09: помощники есть, памятки `parent_instruction` нет; при «призе зрительских симпатий» нет `award_instruction`.
+- BUG-16: `teacher_fallback` в памятке педагогу, `colored_papers` в заметках (это писала программа).
+- BUG-11: «1 сентября 2023 г.» в шаблоне письма; проверенный факт с годом без записи в `fact_claims`.
+"""
+
+import json
+import unittest
+
+from app.generation.humanize import DATE_BLANK, blank_template_dates
+from app.generation.ids import normalize_dependencies
+from app.generation.pipeline import prepare_stage_output
+from app.generation.plan_fixes import fix_plan_for_request
+from app.generation.source_refs import register_fragment_facts
+from app.validation.inner_timing import inner_timing_problems
+from tests.helpers import ROOT, catalog
+from tests.test_gigachat_matrix_replays import replay
+
+
+def issues(variant):
+    return {(i["code"], i["location"]) for i in variant["quality_report"]["issues"]}
+
+
+class Bug14JuryTest(unittest.TestCase):
+    def test_recorded_run_completes(self):
+        outcome, client = replay("replay_gigachat_bug14_jury")
+        self.assertEqual(outcome.project["status"], "completed")
+        self.assertEqual(len(client.calls), 8)  # было 10 вызовов и failed
+        variant = outcome.project["variants"][0]
+        self.assertIn(("jury_scorecard", "jury_scorecard"), {(m["material_id"], m["type"]) for m in variant["materials"]})
+        self.assertNotIn("JURY-SCORECARD", {code for code, _ in issues(variant)})
+
+    def test_type_by_id(self):
+        data = {"planned_materials": [{"material_id": "jury_scorecard", "type": "quiz", "purpose": "p"},
+                                      {"material_id": "audience_ballot_2", "type": "handout", "purpose": "p"},
+                                      {"material_id": "quiz_cards", "type": "quiz", "purpose": "p"}], "roles": []}
+        fixes = prepare_stage_output("scenario_plan", data, set())
+        self.assertEqual([m["type"] for m in data["planned_materials"]], ["jury_scorecard", "audience_ballot", "quiz"])
+        self.assertEqual(sum(f["kind"] == "type_by_id" for f in fixes), 2)
+
+
+class Bug17ParentsTest(unittest.TestCase):
+    def test_recorded_run_keeps_both_variants(self):
+        outcome, client = replay("replay_gigachat_bug17_parents")
+        self.assertEqual(outcome.project["status"], "completed")
+        self.assertEqual(len(client.calls), 15)  # было 30 вызовов и partial
+        self.assertEqual([v["status"] for v in outcome.project["variants"]], ["completed", "completed"])
+        v1 = outcome.project["variants"][0]
+        self.assertEqual({(a["role_mode"], a["count"]) for a in v1["parent_participation_plan"]["assignments"]},
+                         {("helper", 11), ("audience", 1)})
+        self.assertNotIn("PARENTS-OVER", {code for code, _ in issues(v1)})
+
+    def test_zero_count_and_balance(self):
+        data = {"roles": [{"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "count": 12},
+                          {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "count": 0}]}
+        prepare_stage_output("scenario_plan", data, set())
+        self.assertEqual(data["roles"][1]["count"], 1)
+        plan = {"roles": data["roles"], "planned_materials": [{"material_id": "parent_instruction", "type": "parent_instruction"}],
+                "blocks": [{"block_id": "block_01", "role_ids": ["parent_helpers", "parent_audience"]},
+                           {"block_id": "block_02", "role_ids": ["parent_helpers"]}]}
+        fixes = fix_plan_for_request(plan, True, 12, "none")
+        self.assertEqual([r["count"] for r in plan["roles"]], [11, 1])
+        self.assertEqual(fixes[0]["kind"], "parent_counts_balanced")
+
+    def test_roles_in_different_blocks_untouched(self):
+        """Прогон 14.11 (r03): 12 помощников в этапах 2-4 и 12 зрителей в этапе 6 - те же родители в разное время.
+        Первая версия правки делила их на 6 + 6; одновременно больше 12 нигде не занято, менять нечего."""
+        plan = {"roles": [{"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "count": 12},
+                          {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "count": 12}],
+                "blocks": [{"block_id": "block_02", "role_ids": ["parent_helpers"]}, {"block_id": "block_06", "role_ids": ["parent_audience"]}],
+                "planned_materials": [{"material_id": "parent_instruction", "type": "parent_instruction"}]}
+        self.assertEqual(fix_plan_for_request(plan, True, 12, "none"), [])
+        self.assertEqual([r["count"] for r in plan["roles"]], [12, 12])
+
+    def test_counts_within_limit_untouched(self):
+        plan = {"roles": [{"role_id": "a", "participant_type": "parent", "role_mode": "audience", "count": 5}], "blocks": [],
+                "planned_materials": []}
+        self.assertEqual(fix_plan_for_request(plan, True, 12, "none"), [])
+        self.assertEqual(plan["roles"][0]["count"], 5)
+
+
+class Bug09RequiredMaterialsTest(unittest.TestCase):
+    def test_recorded_run_has_memos(self):
+        """Записанные материалы памятки не содержат: программа добавила её в план и написала простую версию."""
+        outcome, _ = replay("replay_gigachat_bug09_helpers")
+        self.assertEqual(outcome.project["status"], "completed")
+        for variant in outcome.project["variants"]:
+            with self.subTest(variant=variant["variant_id"]):
+                types = {m["type"] for m in variant["materials"]}
+                self.assertLessEqual({"parent_instruction", "award_instruction"}, types)
+                codes = {code for code, _ in issues(variant)}
+                self.assertFalse(codes & {"PARENT-INSTRUCTION", "AWARD-INSTRUCTION", "REF-MATERIAL"})
+                memo = next(m for m in variant["materials"] if m["type"] == "parent_instruction")
+                if variant["variant_id"] != "v1":  # в v1 модель написала памятку сама, в v2 и v3 - простая версия программы
+                    self.assertIn("мин)", memo["content"])
+
+    def test_added_to_plan_and_blocks(self):
+        plan = {"roles": [{"role_id": "teacher_1", "participant_type": "teacher", "count": 1},
+                          {"role_id": "helpers", "participant_type": "parent", "role_mode": "helper", "count": 3},
+                          {"role_id": "jury", "participant_type": "parent", "role_mode": "evaluator", "count": 2},
+                          {"role_id": "audience", "participant_type": "parent", "role_mode": "audience", "count": 4}],
+                "blocks": [{"block_id": "block_01", "role_ids": ["teacher_1", "helpers"], "planned_material_ids": []},
+                           {"block_id": "block_02", "role_ids": ["teacher_1", "jury", "audience"], "planned_material_ids": []},
+                           {"block_id": "block_03", "role_ids": ["teacher_1", "audience"], "planned_material_ids": []}],
+                "planned_materials": []}
+        fix_plan_for_request(plan, True, 9, "audience_award")
+        self.assertEqual({m["type"] for m in plan["planned_materials"]}, {"parent_instruction", "jury_scorecard", "award_instruction"})
+        self.assertEqual([b["planned_material_ids"] for b in plan["blocks"]],
+                         [["parent_instruction"], ["jury_scorecard"], ["award_instruction"]])
+        again = fix_plan_for_request(plan, True, 9, "audience_award")
+        self.assertEqual(again, [])
+
+
+class Bug16TechIdsTest(unittest.TestCase):
+    def test_recorded_runs_clean(self):
+        outcome, _ = replay("replay_gigachat_bug16_e2e18")
+        self.assertNotIn(("TECH-ID-IN-TEXT", "materials.poster_materials"), issues(outcome.project["variants"][0]))
+        outcome, _ = replay("replay_gigachat_bug09_helpers")
+        self.assertNotIn(("TECH-ID-IN-TEXT", "teacher_instructions"), issues(outcome.project["variants"][0]))
+        self.assertIn("запасной план", " ".join(outcome.project["variants"][0]["teacher_instructions"]))
+
+    def test_unknown_dependencies_readable(self):
+        data = {"materials": [{"material_id": "m", "teacher_notes": "Раздайте.",
+                               "dependencies": ["whatman", "colored_papers", "envelopes", "glitter_glue"]}]}
+        normalize_dependencies(data, set(catalog().dependencies), [])
+        material = data["materials"][0]
+        self.assertEqual(material["dependencies"], ["whatman", "paper"])
+        self.assertEqual(material["teacher_notes"], "Раздайте. Также понадобится: конверты, glitter glue.")
+
+
+class FieldLabelsTest(unittest.TestCase):
+    def test_english_labels_in_text(self):
+        """Прогон qa_check_1114b v2 (r02): «1. station_name: Школа будущего; Задание: …» в карточках станций.
+        Меняется только текст материала; поля JSON (`material_id`, `type`, `teacher_fallback`…) не трогаются."""
+        from app.generation.humanize import drop_meta_notes
+        variant = {"timeline": [], "teacher_instructions": [], "materials": [{"material_id": "station_tasks", "teacher_notes": "",
+                   "content": "1. station_name: Школа будущего; Задание: Подумайте.\n2. station_name: Помощь школе; task: Предложите.\n"
+                              "- Question: Какой праздник? Answer: Новый год.\nСсылка: https://example.org/a. Excel: таблица."}]}
+        drop_meta_notes(variant)
+        self.assertEqual(variant["materials"][0]["content"],
+                         "1. Станция: Школа будущего; Задание: Подумайте.\n2. Станция: Помощь школе; Задание: Предложите.\n"
+                         "- Вопрос: Какой праздник? Ответ: Новый год.\nСсылка: https://example.org/a. Excel: таблица.")
+        self.assertEqual(variant["materials"][0]["material_id"], "station_tasks")
+
+
+class Bug16ContentClaimsTest(unittest.TestCase):
+    """Второй баг-лист 14.11: «…1700 года.; fact_claims:; fragment_id: frag_new_year_001» в слайдах и карточках станций -
+    модель вложила fact_claims в пункты содержания материала, а программа склеила их в текст."""
+
+    def test_recorded_runs_clean(self):
+        for name, event_source in (("replay_gigachat_bug16_new_year_slides", "src_new_year_v19_01"),
+                                   ("replay_gigachat_bug16_sverdlovsk_cards", "src_sverdlovsk_oblast_day_regional_02")):
+            with self.subTest(name=name):
+                outcome, _ = replay(name)
+                variant = outcome.project["variants"][0]
+                self.assertNotIn("TECH-ID-IN-TEXT", {code for code, _ in issues(variant)})
+                text = " ".join(m["content"] + m["teacher_notes"] for m in variant["materials"])
+                for leftover in ("fact_claims", "fragment_id", "frag_", "src_"):
+                    self.assertNotIn(leftover, text)
+                self.assertIn(event_source, {s["source_id"] for s in variant["sources"]})
+
+    def test_claims_pulled_from_content_items(self):
+        from app.generation.ids import pull_content_claims, content_to_text
+        content = [{"title": "Указ Петра I", "text": "Пётр I издал указ… с 1 января 1700 года.",
+                    "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_x"}]}, {"title": "Без источника", "text": "Текст."}]
+        claims = pull_content_claims(content)
+        self.assertEqual(claims, [{"text": "Пётр I издал указ… с 1 января 1700 года.", "source_id": "src_x", "fragment_id": "frag_x"}])
+        self.assertEqual(content_to_text(content), "1. Название: Указ Петра I; Текст: Пётр I издал указ… с 1 января 1700 года.\n"
+                                                   "2. Название: Без источника; Текст: Текст.")
+
+
+class Bug18StationsTest(unittest.TestCase):
+    """BUG-18: станции по кругу. Команды работают одновременно, но каждая проходит все станции подряд."""
+
+    def check(self, case):
+        data = json.loads((ROOT / "tests" / "fixtures" / "qa_stations_blocks.json").read_text(encoding="utf-8"))[case]
+        following = data["next"]
+        return inner_timing_problems(data["block"], groups_count=data["groups"], pairs_count=0,
+                                     next_duration=following["duration_minutes"], next_title=following["title"],
+                                     next_text=" ".join([following["teacher_script"], *following["pupil_actions"]]))
+
+    def test_rotation_message(self):
+        """5 станций по 5 минут в 20-минутном этапе: круг 25 минут - сообщение о станциях, а не о выступлениях групп."""
+        self.assertEqual(self.check("bug18_five_stations_20min"),
+                         ["станции по кругу: каждая команда проходит 5 станций × 5 мин = 25 мин, а на блок 20 мин"])
+
+    def test_rotation_fits(self):
+        """«Квест из пяти станций», по 4 минуты, этап 20 минут - сходится."""
+        self.assertEqual(self.check("five_stations_4min_fits"), [])
+
+    def test_route_announced_for_next_blocks(self):
+        """Вводный этап объявляет маршрут («примерно десять минут на каждой станции»), а станции - следующие этапы."""
+        self.assertEqual(self.check("route_announced_next_blocks"), [])
+
+
+class GraduationRunTest(unittest.TestCase):
+    """Прогон qa_check_1114c (c06, выпускной, жюри): QUIZ-KEY на листе голосования учеников и RESOURCE-INTERNET
+    на вопросе «кто-то видел примеры в интернете?» - оба ложные."""
+
+    def test_recorded_run_clean(self):
+        outcome, _ = replay("replay_gigachat_c06_graduation")
+        variant = outcome.project["variants"][0]
+        self.assertEqual(variant["quality_report"]["issues"], [])
+        self.assertEqual({m["material_id"]: m["type"] for m in variant["materials"]}["vote_bulletins"], "handout")
+
+    def test_vote_is_not_quiz(self):
+        from app.generation.plan_fixes import fix_vote_quiz
+        items = [{"material_id": "vote_bulletins", "type": "quiz", "title": "Бюллетени", "content": "Выберите НОМЕР идеи: [ ] Идея №1"},
+                 {"material_id": "quiz_cards", "type": "quiz", "title": "Викторина", "content": "1. Когда День Победы? а) 9 мая. Правильный ответ: а"}]
+        fix_vote_quiz(items, "materials", [])
+        self.assertEqual([m["type"] for m in items], ["handout", "quiz"])
+
+    def test_online_task_not_mention(self):
+        from app.validation.checks import _ONLINE_TASK
+        for text in ("Найдите в интернете фото салюта.", "Вы можете воспользоваться интернетом, книгами.",
+                     "Используйте интернет-ресурсы и энциклопедии.", "Отсканируйте QR-код на карточке.", "Проведём онлайн-опрос."):
+            with self.subTest(text=text):
+                self.assertTrue(_ONLINE_TASK.search(text))
+        for text in ("Может быть, кто-то видел интересные примеры в интернете или книгах?",
+                     "Обсудите, как правильно общаться онлайн.", "Расскажите, какие сайты вы знаете."):
+            with self.subTest(text=text):
+                self.assertFalse(_ONLINE_TASK.search(text))
+
+
+class MechanicNotAllowedTest(unittest.TestCase):
+    def test_val004_fixed_by_program(self):
+        """Прогон qa_check_1114b (r02 v2): «citizenship: механика joint_product не из допустимых» - ближайшая разрешённая."""
+        mechanics = {vid: v.get("allowed_mechanic_types", []) for vid, v in catalog().values.items()}
+        data = {"concept": {"values_to_mechanics": [{"value_id": "citizenship", "mechanic_type": "joint_product"},
+                                                    {"value_id": "family", "mechanic_type": "team_task"},
+                                                    {"value_id": "mutual_aid", "mechanic_type": "team_task"}]}}
+        fixes = prepare_stage_output("scenario_plan", data, set(), None, mechanics)
+        self.assertEqual([r["mechanic_type"] for r in data["concept"]["values_to_mechanics"]],
+                         ["class_collective_task", "joint_product", "team_task"])
+        self.assertEqual([f["kind"] for f in fixes if f["kind"] == "mechanic_not_allowed"], ["mechanic_not_allowed"] * 2)
+
+
+class Bug11DatesTest(unittest.TestCase):
+    def test_letter_date_blanked(self):
+        outcome, _ = replay("replay_gigachat_bug09_helpers")
+        v3 = outcome.project["variants"][2]
+        letter = next(m for m in v3["materials"] if m["material_id"] == "letter_template")
+        self.assertNotIn("2023", letter["content"])
+        self.assertIn(DATE_BLANK, letter["content"])
+        self.assertNotIn("FACT-UNREGISTERED", {code for code, _ in issues(v3)})
+
+    def test_certificate_year_blanked(self):
+        """Второй баг-лист 14.11: «___________ 2023 г.»» в сертификате для 2 класса."""
+        variant = {"materials": [{"material_id": "certificate", "content": 'Класс _______\n___________ 2023 г."\nМесто для подписи'}]}
+        blank_template_dates(variant)
+        self.assertEqual(variant["materials"][0]["content"], f'Класс _______\n{DATE_BLANK}"\nМесто для подписи')
+
+    def test_only_date_lines_blanked(self):
+        variant = {"materials": [{"material_id": "m", "content": "С уважением, Маша\n1 сентября 2023 г.\nДата: 01.09.2023\n"
+                                                                    "17 января 1934 года область разделили."}]}
+        blank_template_dates(variant)
+        self.assertEqual(variant["materials"][0]["content"],
+                         f"С уважением, Маша\n{DATE_BLANK}\nДата: {DATE_BLANK}\n17 января 1934 года область разделили.")
+
+    def test_recorded_new_year_run(self):
+        """Трасса BUG-11 (Новый год, 5-8): лист «Исторические факты» с 1 января 1700 года и 1 сентября,
+        в fact_claims только одна фраза. Теперь факты записаны с проверенными фрагментами, предупреждений нет."""
+        outcome, _ = replay("replay_gigachat_bug11_new_year")
+        variant = outcome.project["variants"][0]
+        self.assertEqual(variant["quality_report"]["issues"], [])
+        self.assertIn("src_new_year_v19_01", {s["source_id"] for s in variant["sources"]})
+
+    def test_list_number_is_not_document_number(self):
+        """«Исторический факт №2: До указа Петра I…» - номер пункта, а не номер указа; «указ… №1022-УГ» - номер указа."""
+        from app.generation.source_refs import document_mentions
+        self.assertFalse(document_mentions("Исторический факт №2: До указа Петра I Новый год начинался 1 сентября."))
+        self.assertTrue(document_mentions("Выдержка из указа губернатора Свердловской области №1022-УГ."))
+
+    def test_decree_confirmed_by_fragment_verb(self):
+        """«Пётр I издал указ… с 1 января 1700 года» подтверждает фрагмент «…постановил начать год с 1 января 1700 года»."""
+        from app.generation.source_refs import document_confirmed
+        quotes = " ".join(f.get("quote", "") for f in catalog().verified_fragments("new_year", "RU-SVE")).lower()
+        self.assertTrue(document_confirmed("указ", quotes))
+        sverdlovsk = " ".join(f.get("quote", "") for f in catalog().verified_fragments("sverdlovsk_oblast_day", "RU-SVE")).lower()
+        self.assertFalse(document_confirmed("указ", sverdlovsk))
+
+    def test_fact_from_fragment_registered(self):
+        """«…начать год с 1 января 1700 года» есть в проверенной цитате о Новом годе - факт записывается программой."""
+        fragments = catalog().verified_fragments("new_year", "RU-SVE")
+        variant = {"timeline": [{"block_id": "block_02",
+                                 "teacher_script": "Пётр I постановил начать год с 1 января 1700 года. А в 1800 году всё изменилось."}],
+                   "materials": [], "fact_claims": []}
+        changes = register_fragment_facts(variant, fragments)
+        self.assertEqual([c["fragment_id"] for c in variant["fact_claims"]], ["frag_new_year_001"])
+        self.assertEqual(variant["fact_claims"][0]["text"], "Пётр I постановил начать год с 1 января 1700 года.")
+        self.assertEqual(len(changes), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

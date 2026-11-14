@@ -76,7 +76,8 @@ class JsonRepairTest(unittest.TestCase):
 class MaterialFieldsTest(unittest.TestCase):
     def test_content_to_text(self):
         self.assertEqual(content_to_text(["Вопрос один", "Вопрос два"]), "1. Вопрос один\n2. Вопрос два")
-        self.assertEqual(content_to_text([{"question": "Что?", "answer": "Это"}]), "1. Вопрос: Что?; Ответ: Это")
+        # После «?» точка с запятой не нужна: «Что?; Ответ» читается как опечатка.
+        self.assertEqual(content_to_text([{"question": "Что?", "answer": "Это"}]), "1. Вопрос: Что? Ответ: Это")
         self.assertEqual(content_to_text({"Язык": "Башкирский", "приветствие": "Сәлам!"}), "Язык: Башкирский\nприветствие: Сәлам!")
 
     def test_empty_used_in_blocks_and_props(self):
@@ -149,7 +150,8 @@ class MatrixReplayTest(unittest.TestCase):
         self.assertEqual(client.calls.count("materials"), 1)
         variant = outcome.project["variants"][0]
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
-        self.assertEqual(codes, {"SCRIPT-SHORT"})
+        # Реплики 764 из 800 и 559 из 600 символов (93-95% нормы) с 14.11 не дают SCRIPT-SHORT (порог 90%).
+        self.assertEqual(codes, set())
         self.assertIn("award_instruction", {m["type"] for m in variant["materials"]})
 
     def test_ballot_still_forbidden_with_jury(self):

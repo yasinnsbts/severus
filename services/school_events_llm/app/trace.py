@@ -4,7 +4,8 @@ data/runs/runs.jsonl                - журнал: одна строка на �
 data/runs/<job_id>/
   input.json, normalized_request.json, metadata.json, concepts.json, final_result.json
   events.jsonl                      - события этапов и вызовов (одна JSON-запись на строку)
-  calls/call_0001/                  - manifest.json, messages.json, prompt.md, response.raw.txt, response.parsed.json
+  calls/call_0001/                  - manifest.json, messages.json, prompt.md, response.raw.txt, response.parsed.json,
+                                      response.reasoning.txt (если включены рассуждения)
   variants/v1/variant_package.json  - внутренний результат (контракт 03) и validation.json
 Секреты (известные значения ключей из .env) маскируются во всех файлах.
 """
@@ -14,9 +15,14 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+# Общий журнал runs.jsonl пишут все генерации процесса: строки не должны перемешиваться.
+_RUN_LOG_LOCK = threading.Lock()
 
 
 class RunTrace:
@@ -31,6 +37,9 @@ class RunTrace:
         self.full_responses = full_responses
         self.secrets = [s for s in (secrets or []) if s]
         self._call_seq = 0
+        # Варианты одной генерации идут в разных потоках (`max_parallel_variants`): номера вызовов
+        # и строки events.jsonl не должны повторяться и перемешиваться.
+        self._lock = threading.Lock()
         if run_dir:
             (run_dir / "calls").mkdir(parents=True, exist_ok=True)
 
@@ -103,7 +112,7 @@ class RunTrace:
             return
         record = {"timestamp": datetime.now(timezone.utc).isoformat(), "event_type": event_type, **fields}
         line, _ = self._redact(json.dumps(record, ensure_ascii=False, default=str))
-        with (self.run_dir / "events.jsonl").open("a", encoding="utf-8") as fh:
+        with self._lock, (self.run_dir / "events.jsonl").open("a", encoding="utf-8") as fh:
             fh.write(line + "\n")
 
     def append_run_log(self, record: dict[str, Any]) -> None:
@@ -118,7 +127,7 @@ class RunTrace:
             return
         line, _ = self._redact(json.dumps(record, ensure_ascii=False, default=str))
         try:
-            with (self.run_dir.parent / "runs.jsonl").open("a", encoding="utf-8") as fh:
+            with _RUN_LOG_LOCK, (self.run_dir.parent / "runs.jsonl").open("a", encoding="utf-8") as fh:
                 fh.write(line + "\n")
         except OSError:
             pass
@@ -129,11 +138,12 @@ class RunTrace:
         Возвращает:
             str.
         """
-        self._call_seq += 1
-        return f"call_{self._call_seq:04d}"
+        with self._lock:
+            self._call_seq += 1
+            return f"call_{self._call_seq:04d}"
 
     def save_call(self, call_id: str, *, manifest: dict[str, Any], messages: list[dict[str, str]] | None,
-                  prompt_md: str | None, raw: str | None, parsed: Any) -> None:
+                  prompt_md: str | None, raw: str | None, parsed: Any, reasoning: str | None = None) -> None:
         """Сохраняет манифест, сообщения, сырой ответ и разобранный результат одного LLM-вызова.
 
         Параметры:
@@ -151,6 +161,8 @@ class RunTrace:
             redacted |= self.write_text(f"{base}/prompt.md", prompt_md or "")
         if raw is not None and self.full_responses:
             redacted |= self.write_text(f"{base}/response.raw.txt", raw)
+        if reasoning and self.full_responses:
+            redacted |= self.write_text(f"{base}/response.reasoning.txt", reasoning)
         if parsed is not None:
             self.write_json(f"{base}/response.parsed.json", parsed)
         self.write_json(f"{base}/manifest.json", {**manifest, "secret_redacted": redacted})

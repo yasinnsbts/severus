@@ -15,7 +15,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from app.cli import main
+from app.contracts import llm as c03
 from app.generation.pipeline import StageFailed, _fix_enum, prepare_stage_output, resource_ids
+from app.llm.jsonx import extract_json
 from app.normalize import normalize
 from app.trace import RunTrace
 from tests.helpers import EXAMPLES, ROOT, catalog, request, settings
@@ -87,6 +89,70 @@ class EnumFixTest(unittest.TestCase):
                          ("whole_class", "creative_product", "team_task"))
         self.assertEqual([f["field"] for f in fixes], ["concepts.0.engagement_mode", "concepts.0.planned_structure.1.activity_type",
                                                        "concepts.0.key_activities.0.activity_type"])
+
+
+class MechanicFallbackTest(unittest.TestCase):
+    """Механика ценности не из списка (прогон 14.11, Рождество 7 кл, 30 мин): для «семьи» модель писала `sharing`
+    и на просьбу исправить трижды вернула тот же ответ байт в байт - сценарий падал на первом этапе."""
+
+    @staticmethod
+    def mechanics():
+        return {vid: value.get("allowed_mechanic_types", []) for vid, value in catalog().values.items()}
+
+    def test_recorded_gigachat_answer_passes_schema(self):
+        raw = (ROOT / "tests" / "fixtures" / "replay_gigachat_q03_mechanic" / "variation_plan.raw.txt").read_text(encoding="utf-8")
+        data = extract_json(raw)
+        fixes = prepare_stage_output("variation_plan", data, set(), None, self.mechanics())
+        c03.VariationPlanResponse.model_validate(data)
+        self.assertIn({"kind": "enum_fallback", "field": "concepts.0.values_to_mechanics.1.mechanic_type",
+                       "from": "sharing", "to": "family_research"}, fixes)
+        self.assertEqual(data["concepts"][0]["values_to_mechanics"][0]["mechanic_type"], "culture_comparison")
+
+    def test_fallback_by_value(self):
+        """Замена - первая разрешённая механика ценности; без каталога или для чужой ценности - `discussion`."""
+        for value_id, mechanics, expected in (("mutual_aid", self.mechanics(), "team_task"),
+                                               ("family", None, "discussion"), ("unknown_value", self.mechanics(), "discussion")):
+            with self.subTest(value_id=value_id):
+                data = {"concept": {"values_to_mechanics": [{"value_id": value_id, "mechanic_type": "storytelling"}]}}
+                prepare_stage_output("scenario_plan", data, set(), None, mechanics)
+                self.assertEqual(data["concept"]["values_to_mechanics"][0]["mechanic_type"], expected)
+
+    def test_known_values_untouched(self):
+        data = {"concepts": [{"values_to_mechanics": [{"value_id": "family", "mechanic_type": "discussion"},
+                                                      {"value_id": "family", "mechanic_type": "Joint product"}]}]}
+        fixes = prepare_stage_output("variation_plan", data, set(), None, self.mechanics())
+        self.assertEqual([r["mechanic_type"] for r in data["concepts"][0]["values_to_mechanics"]], ["discussion", "joint_product"])
+        self.assertNotIn("enum_fallback", {f["kind"] for f in fixes})
+
+
+class FactClaimsWithoutTextTest(unittest.TestCase):
+    """Прогон 14.11 (День народов Среднего Урала): факты в материалах только с `source_id` и `fragment_id`, без текста -
+    ответ уходил на повторный вызов модели."""
+
+    def quotes(self):
+        return {f["fragment_id"]: f.get("quote", "") for f in catalog().verified_fragments("middle_urals_peoples_day", "RU-SVE")}
+
+    def test_recorded_answer_passes_schema(self):
+        raw = (ROOT / "tests" / "fixtures" / "replay_gigachat_q10_fact_claims" / "materials.raw.txt").read_text(encoding="utf-8")
+        data = extract_json(raw)
+        fixes = prepare_stage_output("materials", data, set(), set(catalog().dependencies), None, self.quotes())
+        c03.STAGE_MODELS["materials"].model_validate(data)
+        self.assertEqual([c["text"] for c in data["fact_claims"]], [self.quotes()[c["fragment_id"]] for c in data["fact_claims"]])
+        self.assertEqual(sum("text_from_fragment" in f.get("fields", []) for f in fixes), 2)
+
+    def test_unknown_fragment_dropped(self):
+        data = {"materials": [], "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_unknown"},
+                                                 {"text": "Праздник отмечают в сентябре.", "fragment_id": "frag_unknown"}]}
+        fixes = prepare_stage_output("materials", data, set(), None, None, self.quotes())
+        self.assertEqual([c["text"] for c in data["fact_claims"]], ["Праздник отмечают в сентябре."])
+        self.assertIn("fact_claims_dropped", {f["kind"] for f in fixes})
+
+    def test_without_fragments_map_unchanged(self):
+        """Без цитат фрагментов (старый вызов) факт без текста не трогается: его увидит проверка схемы."""
+        data = {"materials": [], "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_x"}]}
+        prepare_stage_output("materials", data, set())
+        self.assertNotIn("text", data["fact_claims"][0])
+        self.assertEqual(len(data["fact_claims"]), 1)
 
 
 class CliStageFailedTest(unittest.TestCase):

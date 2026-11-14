@@ -122,7 +122,7 @@ class DependenciesTest(unittest.TestCase):
         normalize_dependencies(data, DEPS, changes)
         m = data["materials"][0]
         self.assertEqual(m["dependencies"], ["paper", "whatman", "tape"])
-        self.assertEqual(m["teacher_notes"], "Раздать командам. Также понадобится: balloons, Воздушные шарики.")
+        self.assertEqual(m["teacher_notes"], "Раздать командам. Также понадобится: воздушные шары, Воздушные шарики.")
         self.assertTrue(all(d in DEPS for d in m["dependencies"]))
 
     def test_materials_stage_passes_schema(self):
@@ -181,7 +181,7 @@ class PipelineWithBrokenIdsTest(unittest.TestCase):
         mats = {m["material_id"]: m for m in variant["materials"]}
         self.assertIn("card_goals", mats)
         self.assertEqual(mats["card_goals"]["dependencies"], ["printer", "paper", "whatman"])
-        self.assertIn("Также понадобится: balloons.", mats["card_goals"]["teacher_notes"])
+        self.assertIn("Также понадобится: воздушные шары.", mats["card_goals"]["teacher_notes"])
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
         self.assertFalse(codes & {"DEP-UNKNOWN", "REF-MATERIAL", "REF-BLOCK", "VOTING-MATERIAL", "VOTING-BLOCK"})
         for block in variant["timeline"]:
@@ -199,20 +199,62 @@ class ProviderRetryTest(unittest.TestCase):
             outcome = gen.run(request("ex1_knowledge_day"), job_id="job")
             retries = [e for e in events(run_dir) if e["event_type"] == "llm_call_retry"]
         self.assertEqual(outcome.project["status"], "completed")
-        self.assertEqual(gen.sleeps, [3.0, 10.0])
+        # Лимит шлюза: паузы 5 и 10 с со случайным разбросом ±30% (config/generation.json).
+        self.assertEqual(len(gen.sleeps), 2)
+        self.assertTrue(3.5 <= gen.sleeps[0] <= 6.5 and 7.0 <= gen.sleeps[1] <= 13.0, gen.sleeps)
         self.assertEqual([(e["stage"], e["retry"], e["error_code"]) for e in retries],
                          [("scenario_plan", 1, "RATE_LIMITED"), ("scenario_plan", 2, "RATE_LIMITED")])
 
+    def test_rate_limit_more_retries_and_retry_after(self):
+        """Нагрузка 30 генераций (14.11, 15.11): на 429 до 7 повторов, пауза не меньше Retry-After шлюза;
+        на прочие временные ошибки - по-прежнему 2 повтора. 15.11 одному обращению не хватило пяти повторов
+        (шестой отказ подряд), и вариант пропал вместе с готовыми этапами."""
+        error = LLMError("RATE_LIMITED", "429", retryable=True, retry_after=30)
+        gen = generator(FlakyLLM(fixture(), "scenario_plan", error, fail_times=7))
+        self.assertEqual(gen.run(request("ex1_knowledge_day")).project["status"], "completed")
+        self.assertEqual(len(gen.sleeps), 7)
+        self.assertTrue(all(s >= 30 * 0.7 for s in gen.sleeps), gen.sleeps)
+        self.assertTrue(gen.sleeps[-1] >= 60 * 0.7)
+        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("RATE_LIMITED", "429", retryable=True), fail_times=8))
+        with self.assertRaises(LLMError):
+            gen.run(request("ex1_knowledge_day"))
+        self.assertEqual(gen.calls, 8)
+
+    def test_rate_limit_message_and_retry_after_from_gateway(self):
+        """Текст шлюза (какой лимит сработал) и Retry-After попадают в ошибку и в трассу."""
+        from app.llm.client import _raise_for_status
+        with self.assertRaises(LLMError) as ctx:
+            _raise_for_status(429, {"error": {"message": "Rate limit exceeded: rpm limit 60 for key"}, "_retry_after": "12"})
+        self.assertEqual(ctx.exception.message, "Превышен лимит запросов провайдера: Rate limit exceeded: rpm limit 60 for key")
+        self.assertEqual(ctx.exception.retry_after, 12.0)
+        with self.assertRaises(LLMError) as ctx:
+            _raise_for_status(429, {"raw": "Too Many Requests"})
+        self.assertEqual((ctx.exception.message, ctx.exception.retry_after), ("Превышен лимит запросов провайдера: Too Many Requests", None))
+
     def test_retries_exhausted(self):
         """Если провайдер так и не ответил, ошибка модели доходит до задачи как есть, без «готового» результата."""
-        client = FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_UNAVAILABLE", "503", retryable=True), fail_times=5)
+        client = FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_UNAVAILABLE", "503", retryable=True), fail_times=10)
         gen = generator(client)
         with self.assertRaises(LLMError) as ctx:
             gen.run(request("ex1_knowledge_day"))
         self.assertEqual(ctx.exception.code, "MODEL_UNAVAILABLE")
-        self.assertEqual(gen.calls, 3)
+        self.assertEqual(gen.calls, 5)
         self.assertEqual(job_status.exception_error(ctx.exception),
                          {"code": "MODEL_UNAVAILABLE", "message": "503", "field": None, "retryable": True})
+
+    def test_unavailable_waits_about_a_minute(self):
+        """Сбой сети или 5xx шлюза: 4 повтора с паузами 3, 10, 20, 30 с (±30%) - короткий перерыв шлюза
+        пережидается, а не валит варианты генерации. Таймаут - по-прежнему 2 повтора: каждая попытка
+        ждёт ответа до `timeout_seconds`, пять таких попыток - это 25 минут."""
+        gen = generator(FlakyLLM(fixture(), "scenario_plan", LLMError("MODEL_UNAVAILABLE", "502", retryable=True), fail_times=4))
+        self.assertEqual(gen.run(request("ex1_knowledge_day")).project["status"], "completed")
+        self.assertEqual(len(gen.sleeps), 4)
+        for pause, base in zip(gen.sleeps, (3, 10, 20, 30)):
+            self.assertTrue(base * 0.7 <= pause <= base * 1.3, gen.sleeps)
+        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_TIMEOUT", "timeout", retryable=True), fail_times=5))
+        with self.assertRaises(LLMError):
+            gen.run(request("ex1_knowledge_day"))
+        self.assertEqual(gen.calls, 3)
 
     def test_auth_error_not_retried(self):
         """Ошибка авторизации не повторяется: повтор ничего не изменит."""
@@ -278,9 +320,31 @@ class BatchCliTest(unittest.TestCase):
             journal = (Path(tmp) / "runs" / "runs.jsonl").read_text(encoding="utf-8").splitlines()
         self.assertEqual(code, 0)
         self.assertIn("| ex1_knowledge_day.json | completed |", stdout.getvalue())
-        self.assertIn("Итого: completed 1 из 1.", stdout.getvalue())
+        self.assertIn("Итого: completed 1 из 1; всего", stdout.getvalue())
         self.assertEqual((rows[0]["status"], rows[0]["critical"]), ("completed", []))
         self.assertEqual(len(journal), 1)
+
+    def test_batch_parallel(self):
+        """`batch --parallel 3`: генерации идут одновременно, вывод каждой не смешивается, результаты - как по очереди."""
+        requests = [str(EXAMPLES / "requests" / name) for name in ("ex1_knowledge_day.json", "ex2_mothers_day.json", "ex3_labour_day.json")]
+        goldens = [str(EXAMPLES / "golden" / name) for name in ("ex1_knowledge_day.json", "ex2_mothers_day.json", "ex3_labour_day.json")]
+
+        def run(extra):
+            with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"DATA_DIR": tmp}):
+                stdout, stderr = io.StringIO(), io.StringIO()
+                with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                    main(["batch", *requests, "--fixture", *goldens, *extra])
+                rows = json.loads(next((Path(tmp) / "runs").glob("batch_*.json")).read_text(encoding="utf-8"))
+                return rows, stdout.getvalue(), stderr.getvalue()
+
+        sequential, _, _ = run([])
+        parallel, out, err = run(["--parallel", "3"])
+        self.assertIn("Параллельно: 3", err)
+        self.assertIn("(параллельно 3).", out)
+        self.assertEqual([(r["request"], r["status"], r["critical"]) for r in parallel],
+                         [(r["request"], r["status"], r["critical"]) for r in sequential])
+        self.assertEqual(len({r["job_id"] for r in parallel}), 3)
+        self.assertFalse(any(line.startswith("{") for line in out.splitlines()))  # JSON генераций не попал в таблицу
 
     def test_matrix_requests_are_valid(self):
         """Запросы матрицы E2E (возраст, длительность, родители) проходят нормализацию."""
@@ -295,6 +359,18 @@ class BatchCliTest(unittest.TestCase):
                 self.assertEqual([w.code for w in n.warnings], [])
         self.assertEqual({g for g, _ in seen}, {"1-4", "5-8", "9-11"})
         self.assertEqual({d for _, d in seen}, {30, 45, 60, 90})
+
+    def test_content_check_requests_are_valid(self):
+        """Контрольные запросы по содержанию (Рождество, День единства, День знаний, региональное событие) проходят нормализацию."""
+        from app.normalize import normalize
+        files = sorted((EXAMPLES / "requests" / "content_check").glob("*.json"))
+        events = set()
+        for path in files:
+            with self.subTest(path=path.name):
+                n = normalize(json.loads(path.read_text(encoding="utf-8")), catalog(), settings())
+                events.add((n.event_id, n.grade, n.duration_minutes))
+                self.assertEqual([w.code for w in n.warnings], [])
+        self.assertTrue({("christmas", 7, 30), ("unity_day", 10, 45), ("knowledge_day", 2, 45)} <= events)
 
 
 if __name__ == "__main__":

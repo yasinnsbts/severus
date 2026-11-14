@@ -1,0 +1,109 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Путешествие по страницам истории нашей области",
+  "concept": {
+    "summary": "Интерактивный квест помогает учащимся познакомиться с ключевыми событиями и символами Свердловской области, развить навыки сотрудничества и создать коллективный символический продукт.",
+    "goal": "Формирование исторической памяти и гражданской позиции через активное изучение региональной культуры и истории.",
+    "tasks": [
+      "Знакомство учащихся с историей и символикой Свердловской области",
+      "Развитие навыков совместной деятельности и принятия решений",
+      "Создание условий для проявления творческой инициативы"
+    ],
+    "expected_outcomes": [
+      "Коллективно разработанный плакат-символ Свердловской области",
+      "Повышение осведомленности учащихся о родном крае",
+      "Укрепление чувства принадлежности к региону"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "historical_memory",
+        "mechanic_type": "source_work",
+        "mechanic": "Работа с карточками-заданиями, содержащими информацию о значимых событиях и символах региона",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Совместное проектирование и создание плаката-символа региона",
+        "block_ids": ["block_05"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 5,
+    "block_ids": ["block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 25}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и введение",
+      "purpose": "Настроить участников на позитивный лад, познакомить с темой и структурой мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Разделение на команды",
+      "purpose": "Организовать участников в рабочие группы для эффективного прохождения квеста",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_03",
+      "title": "Квест-путешествие",
+      "purpose": "Через выполнение заданий квеста учащиеся знакомятся с историей и символами региона",
+      "proposed_minutes": 20,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["card_task"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Подведение промежуточных итогов",
+      "purpose": "Обсудить результаты квеста, выделить интересные находки и наблюдения",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_05",
+      "title": "Творческий блок: создание коллективного плаката-символа",
+      "purpose": "Совместное творчество развивает чувство общности и гражданственности",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["poster_materials"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Рефлексия и завершение",
+      "purpose": "Заключительная беседа, обратная связь, вручение памятных сувениров",
+      "proposed_minutes": 2,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "card_task",
+      "type": "activity_card",
+      "title": "Карточки заданий",
+      "purpose": "Задания для квеста, содержащие информацию о регионе"
+    },
+    {
+      "material_id": "poster_materials",
+      "type": "props_checklist",
+      "title": "Материалы для создания плаката",
+      "purpose": "Бумага формата A1, цветные карандаши, фломастеры, клей, ножницы"
+    }
+  ]
+}
+```

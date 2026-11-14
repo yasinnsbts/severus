@@ -8,9 +8,14 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
+import os
 import sys
+import threading
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -57,6 +62,98 @@ def _package_from(path: str) -> dict[str, Any]:
 def _job_id() -> str:
     """Создаёт локальный уникальный идентификатор задачи для трассировки прототипа."""
     return f"job_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
+
+
+def cmd_load_test(args: argparse.Namespace, settings: Settings) -> int:
+    """Отправляет N генераций в запущенный HTTP-сервис одновременно и печатает, как они прошли.
+
+    Нужен, чтобы проверить параллельную работу на реальной модели: сколько задач шли сразу,
+    сколько ждали, сколько времени заняла каждая и не было ли ошибок `SERVICE_BUSY` или 429.
+    """
+    import threading
+    import time
+    import urllib.error
+    import urllib.request
+
+    base = (args.url or f"http://{settings.get('SERVICE_HOST', '127.0.0.1')}:{settings.get('SERVICE_PORT', '8090')}").rstrip("/")
+    headers = {"Content-Type": "application/json"}
+    if settings.get("SERVICE_AUTH_TOKEN"):
+        headers["X-Service-Token"] = settings.get("SERVICE_AUTH_TOKEN")
+    files = _batch_files(args.requests)
+    if not files:
+        _print({"error": {"code": "NO_REQUESTS", "message": "Не найдено ни одного файла запроса", "field": None, "retryable": False}})
+        return 2
+
+    def call(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
+        data = json.dumps(body, ensure_ascii=False).encode("utf-8") if body is not None else None
+        request = urllib.request.Request(base + path, data=data, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return response.status, json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            return exc.code, json.loads(exc.read().decode("utf-8") or "{}")
+
+    rows: list[dict] = [{} for _ in range(args.count)]
+    peak = {"running": 0, "waiting": 0, "llm": 0}
+    done = threading.Event()
+
+    def watch_load() -> None:
+        while not done.is_set():
+            try:
+                _, load = call("GET", "/api/v1/load")
+                peak["running"] = max(peak["running"], load.get("running_generations", 0))
+                peak["waiting"] = max(peak["waiting"], load.get("waiting_generations", 0))
+                peak["llm"] = max(peak["llm"], load.get("llm_requests_busy", 0))
+            except OSError:
+                pass
+            done.wait(1)
+
+    def one(index: int) -> None:
+        path = files[index % len(files)]
+        row = rows[index]
+        row["request"] = path.name
+        started = time.monotonic()
+        code, accepted = call("POST", "/api/v1/generations", json.loads(path.read_text(encoding="utf-8")))
+        if code != 202:
+            row.update(status=f"HTTP {code}", error=(accepted.get("error") or {}).get("code"), seconds=round(time.monotonic() - started, 1))
+            return
+        job_id = accepted["job_id"]
+        first_running = None
+        while time.monotonic() - started < args.timeout:
+            _, job = call("GET", f"/api/v1/generations/{job_id}")
+            if job.get("status") == "running" and first_running is None:
+                first_running = time.monotonic()
+            if job.get("status") not in ("queued", "running"):
+                errors = job.get("errors") or []
+                row.update(status=job.get("status"), error=errors[0].get("code") if errors else None)
+                break
+            time.sleep(2)
+        else:
+            row.update(status="timeout", error=None)
+        row["seconds"] = round(time.monotonic() - started, 1)
+        row["waited"] = round((first_running or started) - started, 1)
+
+    watcher = threading.Thread(target=watch_load, daemon=True)
+    watcher.start()
+    sys.stderr.write(f"Отправляю {args.count} генераций одновременно в {base} ...\n")
+    threads = [threading.Thread(target=one, args=(i,)) for i in range(args.count)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    done.set()
+
+    print("| # | Запрос | Статус | Ждал в очереди, с (±2) | Всего, с | Ошибка |")
+    print("|---|---|---|---|---|---|")
+    for i, row in enumerate(rows, 1):
+        print(f"| {i} | {row.get('request')} | {row.get('status')} | {row.get('waited', '-')} | {row.get('seconds')} | {row.get('error') or '-'} |")
+    completed = sum(1 for row in rows if row.get("status") == "completed")
+    times = sorted(row["seconds"] for row in rows if row.get("status") == "completed")
+    median = times[len(times) // 2] if times else "-"
+    print(f"\nИтого: completed {completed} из {args.count}; время min/медиана/max: "
+          f"{times[0] if times else '-'} / {median} / {times[-1] if times else '-'} с.")
+    print(f"Пик: генераций одновременно {peak['running']}, в очереди {peak['waiting']}, обращений к модели {peak['llm']}.")
+    return 0 if completed == args.count else 1
 
 
 def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
@@ -261,26 +358,64 @@ def _batch_files(paths: list[str]) -> list[Path]:
     return files
 
 
+class _ThreadStdout(io.TextIOBase):
+    """stdout, который у каждого потока пишет в свой буфер: параллельные генерации `batch` не смешивают свой JSON."""
+
+    def __init__(self, original: Any):
+        self.original = original
+        self.local = threading.local()
+
+    def write(self, text: str) -> int:
+        buffer = getattr(self.local, "buffer", None)
+        return (buffer or self.original).write(text)
+
+    def flush(self) -> None:
+        if getattr(self.local, "buffer", None) is None:
+            self.original.flush()
+
+
+_STDOUT_LOCK = threading.Lock()
+
+
+@contextlib.contextmanager
+def _capture_stdout():
+    """Перехват вывода генерации текущего потока (`contextlib.redirect_stdout` общий на весь процесс)."""
+    with _STDOUT_LOCK:
+        if not isinstance(sys.stdout, _ThreadStdout):
+            sys.stdout = _ThreadStdout(sys.stdout)
+        proxy = sys.stdout
+    buffer = io.StringIO()
+    proxy.local.buffer = buffer
+    try:
+        yield buffer
+    finally:
+        proxy.local.buffer = None
+
+
 def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
     """Прогоняет набор запросов подряд и печатает сводную таблицу.
 
     Каждый запрос идёт тем же путём, что `generate` (с трассой и строкой в `runs.jsonl`).
     Сводка сохраняется в `data/runs/batch_<время>.md` и `.json`.
     Код возврата: 0 - все `completed`, 1 - есть `partial`/`failed`/ошибки.
+    `--parallel N` - до N генераций одновременно (вывод каждой перехватывается отдельно).
     """
-    import contextlib
-    import io
     import time
 
-    rows: list[dict[str, Any]] = []
+    if getattr(args, "reasoning", None):
+        os.environ["LLM_REASONING"] = args.reasoning
+        print(f"Рассуждения модели: {args.reasoning}")
     files = _batch_files(args.requests)
-    for index, path in enumerate(files, 1):
-        sys.stderr.write(f"[{index}/{len(files)}] {path.name} ...\n")
+    parallel = max(1, min(int(getattr(args, "parallel", 1) or 1), len(files) or 1))
+    progress = threading.Lock()
+
+    def run_one(index: int, path: Path) -> dict[str, Any]:
+        with progress:
+            sys.stderr.write(f"[{index}/{len(files)}] {path.name} ...\n")
         run_args = argparse.Namespace(request=str(path), out=None, model=args.model, fixture=args.fixture,
                                       broken=None, no_trace=False)
-        captured = io.StringIO()
         started = time.monotonic()
-        with contextlib.redirect_stdout(captured):
+        with _capture_stdout() as captured:
             code = _run_generation(run_args, settings, context_mode="full", cultural_context=True)
         elapsed = round(time.monotonic() - started, 1)
         try:
@@ -289,7 +424,7 @@ def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
             summary = {}
         issues = [i for v in summary.get("variants", []) for i in v.get("issues", [])]
         error = summary.get("error") or {}
-        rows.append({
+        row = {
             "request": path.name,
             "job_id": summary.get("job_id"),
             "status": summary.get("status") or "error",
@@ -303,11 +438,23 @@ def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
             "variant_errors": [f"{v.get('variant_id')}: {v.get('error')}" for v in summary.get("variants", [])
                                if v.get("status") != "completed" and v.get("error")],
             "exit_code": code,
-        })
+        }
         reason = f": {error.get('code')} - {error.get('message')}" if error else ""
-        if not reason and rows[-1]["variant_errors"]:
-            reason = ": " + "; ".join(rows[-1]["variant_errors"])
-        sys.stderr.write(f"    -> {rows[-1]['status']} ({rows[-1]['duration_s']} с){reason}\n")
+        if not reason and row["variant_errors"]:
+            reason = ": " + "; ".join(row["variant_errors"])
+        with progress:
+            sys.stderr.write(f"    {path.name} -> {row['status']} ({row['duration_s']} с){reason}\n")
+        return row
+
+    started_all = time.monotonic()
+    if parallel == 1:
+        rows = [run_one(index, path) for index, path in enumerate(files, 1)]
+    else:
+        # Генерации идут одновременно, как в сервисе; общий предел обращений к модели - config/service.json.
+        sys.stderr.write(f"Параллельно: {parallel}\n")
+        with ThreadPoolExecutor(max_workers=parallel) as pool:
+            rows = list(pool.map(lambda item: run_one(*item), enumerate(files, 1)))
+    wall = round(time.monotonic() - started_all, 1)
 
     lines = ["| Запрос | Статус | Вызовов | Время, с | Токены | Критичные | Предупреждения |", "|---|---|---|---|---|---|---|"]
     for r in rows:
@@ -315,7 +462,7 @@ def cmd_batch(args: argparse.Namespace, settings: Settings) -> int:
         lines.append(f"| {r['request']} | {r['status']} | {r['llm_calls'] or '-'} | {r['duration_s']} | {r['tokens'] or '-'} | "
                      f"{crit} | {', '.join(r['warnings']) or '-'} |")
     done = sum(r["status"] == "completed" for r in rows)
-    table = "\n".join(lines) + f"\n\nИтого: completed {done} из {len(rows)}."
+    table = "\n".join(lines) + f"\n\nИтого: completed {done} из {len(rows)}; всего {wall} с" + (f" (параллельно {parallel})." if parallel > 1 else ".")
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = settings.data_dir / "runs"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -443,6 +590,9 @@ def main(argv: list[str] | None = None) -> int:
     batch.add_argument("requests", nargs="+", help="файлы запросов или папки с ними, например examples/requests/matrix")
     batch.add_argument("--model")
     batch.add_argument("--fixture", nargs="*", help="эталоны вместо модели (для проверки самого прогона)")
+    batch.add_argument("--parallel", type=int, default=1, help="сколько генераций идёт одновременно (по умолчанию 1 - по очереди)")
+    batch.add_argument("--reasoning", help="рассуждения модели по этапам без правки конфига: scenario_plan=medium,scenario_block=low "
+                                           "(уровни low, medium, high; * - все этапы)")
 
     experiment = subparsers.add_parser("experiment", help="запустить внутренний эксперимент H2/H3")
     _add_generation_arguments(experiment)
@@ -457,6 +607,12 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument("--request", required=True)
         if name == "render":
             command.add_argument("--markdown", action="store_true", help="читаемая версия вместо JSON")
+
+    load_test = subparsers.add_parser("load-test", help="одновременно отправить N генераций в запущенный сервис (serve)")
+    load_test.add_argument("requests", nargs="+", help="файлы запросов или папки; запросы повторяются по кругу до --count")
+    load_test.add_argument("--count", type=int, default=5, help="сколько генераций отправить одновременно")
+    load_test.add_argument("--url", help="адрес сервиса, по умолчанию http://SERVICE_HOST:SERVICE_PORT")
+    load_test.add_argument("--timeout", type=float, default=1800, help="сколько секунд ждать завершения всех задач")
 
     subparsers.add_parser("export-schemas", help="обновить JSON Schema")
     subparsers.add_parser("sources-check", help="проверить кураторский корпус источников")
@@ -481,6 +637,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_validate(args, settings)
         if args.cmd == "render":
             return cmd_validate(args, settings, render_output=True)
+        if args.cmd == "load-test":
+            return cmd_load_test(args, settings)
         if args.cmd == "export-schemas":
             return cmd_export_schemas(args, settings)
         if args.cmd == "sources-check":

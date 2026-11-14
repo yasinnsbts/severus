@@ -1,0 +1,94 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v3",
+  "title": "Письмо будущему себе: мои цели и мечты",
+  "concept": {
+    "summary": "Ученики пишут письма самим себе, определяя учебные и личностные цели на предстоящий год.",
+    "goal": "Формирование мотивации к обучению через индивидуальную постановку целей и взаимоподдержку одноклассников.",
+    "tasks": [
+      "Развитие навыка постановки индивидуальных целей",
+      "Создание атмосферы взаимопомощи и поддержки среди учеников"
+    ],
+    "expected_outcomes": [
+      "Каждый ученик получит письмо самому себе на будущий год",
+      "Создана выставка лучших работ"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "pair_task",
+        "mechanic": "Партнеры обсуждают и поддерживают цели друг друга",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Определение личной ответственности за свое развитие и вклад в сообщество класса",
+        "block_ids": ["block_02", "block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "pairs",
+    "groups_count": 13,
+    "block_ids": ["block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 27},
+    {"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "title": "Помощники", "count": 12},
+    {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "title": "Зрители", "count": 12}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вступительное слово",
+      "purpose": "Настроить учеников на позитивный лад, объяснить смысл мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Индивидуальное написание письма",
+      "purpose": "Каждый ученик формулирует свои цели и мечты на предстоящий год",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["letter_template", "writing_supplies"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Работа в парах: обмен впечатлениями",
+      "purpose": "Поддержка партнеров в постановке и достижении целей",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_04",
+      "title": "Выставка писем и выбор лучшего",
+      "purpose": "Представление работ, определение лучшей работы зрителями",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["exhibition_board", "audience_ballot", "award_instruction"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Рефлексия и завершение",
+      "purpose": "Осознание значимости поставленных целей, закрытие мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {"material_id": "letter_template", "type": "worksheet", "title": "Шаблоны писем", "purpose": "Для индивидуального написания"},
+    {"material_id": "writing_supplies", "type": "props_checklist", "title": "Бумага и ручки", "purpose": "Материалы для письма"},
+    {"material_id": "exhibition_board", "type": "handout", "title": "Доска для выставки", "purpose": "Демонстрация лучших работ"},
+    {"material_id": "audience_ballot", "type": "ballot", "title": "Бюллетени для голосования", "purpose": "Выбор лучшей работы родителями-зрителями"},
+    {"material_id": "award_instruction", "type": "instruction", "title": "Инструкция по вручению приза", "purpose": "Организация церемонии награждения"}
+  ]
+}
+```

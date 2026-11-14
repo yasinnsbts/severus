@@ -11,7 +11,8 @@ from app.llm.fixture import FixtureLLM
 from app.normalize import normalize
 from app.prompting.composer import Composer
 from app.script_length import script_min_chars, script_target_chars
-from tests.helpers import catalog, golden, request, settings
+from app.validation.checks import validate_variant
+from tests.helpers import catalog, golden, minimal_request, request, settings
 from tests.test_validation_render import codes, setup
 
 
@@ -27,6 +28,44 @@ class ScriptLengthTest(unittest.TestCase):
         self.assertLess(script_min_chars(cfg, "standard", 10), script_min_chars(cfg, "detailed", 10))
         self.assertLess(script_min_chars(cfg, "brief", 10), script_min_chars(cfg, "standard", 10))
         self.assertGreater(script_target_chars(cfg, "detailed", 10), script_min_chars(cfg, "detailed", 10))
+
+    def test_younger_grades_shorter(self):
+        """Для 1-4 классов норма меньше (age_factor 0,7): с восьмилетними говорят короче (QA c3, BUG-05)."""
+        cfg = gen_cfg()
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, "1-4"), int(script_min_chars(cfg, "detailed", 10) * 0.7))
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, "5-8"), script_min_chars(cfg, "detailed", 10))
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, None), script_min_chars(cfg, "detailed", 10))
+
+    def test_younger_grades_prompt_and_warning(self):
+        """Промпт блока для 1-4 классов называет уменьшенный объём и просит короткие предложения; SCRIPT-SHORT по той же норме."""
+        n = normalize(minimal_request(grade_group="1-4", teacher_preferences={"script_detail": "detailed"}), catalog(), settings())
+        composed = Composer(settings(), catalog()).compose(
+            "scenario_block", n, stage_input="",
+            output_vars={"variant_id": "v1", "block_id": "block_02", "start_minute": "5", "block_minutes": "10"})
+        text = "\n".join(m["content"] for m in composed.messages)
+        self.assertIn(f"на 10 мин - от {script_min_chars(gen_cfg(), 'detailed', 10, '1-4')},", text)
+        self.assertIn("короткими простыми предложениями", text)
+        _, v = setup("ex1_knowledge_day")
+        block = v["timeline"][2]
+        block["teacher_script"] = "Х" * (script_min_chars(gen_cfg(), "detailed", block["duration_minutes"], "1-4") + 5)
+        self.assertNotIn("SCRIPT-SHORT", {i.code for i in validate_variant(v, n, catalog(), gen_cfg())
+                                          if i.location == f"timeline.{block['block_id']}"})
+
+    def test_small_shortfall_not_flagged(self):
+        """BUG-05 (QA 14.11): недобор до 10% - без предупреждения (r08: 323 из 350), заметный - с ним (r10: 461 из 600)."""
+        from app.script_length import script_short_limit
+        cfg = gen_cfg()
+        self.assertEqual(script_short_limit(cfg, "detailed", 10), int(script_min_chars(cfg, "detailed", 10) * 0.9))
+        n, v = setup("ex1_knowledge_day")
+        block = v["timeline"][2]
+        minimum = script_min_chars(cfg, n.teacher_preferences["script_detail"], block["duration_minutes"], n.age_group)
+        where = f"timeline.{block['block_id']}"
+        block["teacher_script"] = "Х" * int(minimum * 0.92)
+        self.assertNotIn(("SCRIPT-SHORT", where), {(i.code, i.location) for i in validate_variant(v, n, catalog(), cfg)})
+        block["teacher_script"] = "Х" * int(minimum * 0.77)
+        found = [i for i in validate_variant(v, n, catalog(), cfg) if i.code == "SCRIPT-SHORT" and i.location == where]
+        self.assertEqual(len(found), 1)
+        self.assertIn(f"{int(minimum * 0.77)} из {minimum} символов (77%)", found[0].message)
 
     def test_warning_depends_on_block_duration(self):
         """Один и тот же текст достаточен для короткого блока и мал для длинного."""
@@ -68,3 +107,72 @@ class PerBlockModeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReasoningStageTest(unittest.TestCase):
+    """Рассуждения по этапам: по умолчанию выключены; включаются в config/generation.json или LLM_REASONING."""
+
+    def generator(self):
+        return Generator(settings(), catalog(), FixtureLLM([golden("ex1_knowledge_day")]))
+
+    def test_default_off_and_override(self):
+        import os
+        from unittest.mock import patch
+        gen = self.generator()
+        n = normalize(request("ex1_knowledge_day"), catalog(), settings())
+        base = gen.max_output_tokens("scenario_plan", n)
+        self.assertIsNone(gen.reasoning_effort("scenario_plan"))
+        with patch.dict(os.environ, {"LLM_REASONING": "scenario_plan=medium, materials=extreme"}):
+            self.assertEqual(gen.reasoning_effort("scenario_plan"), "medium")
+            self.assertIsNone(gen.reasoning_effort("materials"))  # неизвестный уровень не передаётся
+            self.assertIsNone(gen.reasoning_effort("scenario_block"))
+            self.assertEqual(gen.max_output_tokens("scenario_plan", n), base + gen.cfg["reasoning_extra_output_tokens"])
+        with patch.dict(os.environ, {"LLM_REASONING": "*=low"}):
+            self.assertEqual(gen.reasoning_effort("materials"), "low")
+        gen.cfg = {**gen.cfg, "tasks": {**gen.cfg["tasks"], "scenario_block": {**gen.cfg["tasks"]["scenario_block"], "reasoning_effort": "high"}}}
+        self.assertEqual(gen.reasoning_effort("scenario_block"), "high")
+
+    def test_from_dotenv(self):
+        """`LLM_REASONING` из `.env` (настройки сервиса), а не только из окружения процесса."""
+        import os
+        from unittest.mock import patch
+        from app.settings import Settings
+        from tests.helpers import ROOT
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("LLM_REASONING", None)
+            gen = Generator(Settings(root=ROOT, env={"LLM_REASONING": "scenario_plan=high"}), catalog(),
+                            FixtureLLM([golden("ex1_knowledge_day")]))
+            self.assertEqual(gen.reasoning_effort("scenario_plan"), "high")
+            self.assertIsNone(gen.reasoning_effort("materials"))
+
+    def test_reasoning_saved_in_trace(self):
+        """Рассуждения модели - отдельным файлом в трассе вызова, уровень и объём - в manifest; JSON разбирается как обычно."""
+        import dataclasses
+        import json
+        import os
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from app.trace import RunTrace
+        from tests.test_material_ids import ReplayLLM
+
+        class Thinking(ReplayLLM):
+            def generate(self, **kwargs):
+                result = super().generate(**kwargs)
+                effort = (kwargs.get("meta") or {}).get("reasoning_effort")
+                return dataclasses.replace(result, reasoning=f"рассуждения ({effort})") if effort else result
+
+        directory = Path(__file__).parent / "fixtures" / "replay_gigachat_bug14_jury"
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"LLM_REASONING": "scenario_plan=medium"}):
+            trace = RunTrace(Path(tmp), secrets=[])
+            outcome = Generator(settings(), catalog(), Thinking(directory), trace=trace).run(
+                json.loads((directory / "request.json").read_text(encoding="utf-8")))
+            self.assertEqual(outcome.project["status"], "completed")
+            plan_calls = [p.parent for p in Path(tmp).glob("calls/*/manifest.json")
+                          if json.loads(p.read_text(encoding="utf-8"))["stage"] == "scenario_plan"]
+            manifest = json.loads((plan_calls[0] / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["reasoning_effort"], "medium")
+            self.assertEqual((plan_calls[0] / "response.reasoning.txt").read_text(encoding="utf-8"), "рассуждения (medium)")
+            block = next(p.parent for p in Path(tmp).glob("calls/*/manifest.json")
+                         if json.loads(p.read_text(encoding="utf-8"))["stage"] == "scenario_block")
+            self.assertFalse((block / "response.reasoning.txt").exists())

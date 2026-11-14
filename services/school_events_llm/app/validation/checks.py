@@ -12,11 +12,198 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from ..catalog import Catalog
+from ..generation.humanize import leftover_ids
+from ..generation.source_refs import document_confirmed, document_mentions
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
-from ..script_length import script_min_chars
+from ..script_length import script_min_chars, script_short_limit
+from .inner_timing import grouping_counts, inner_timing_problems
 
 _YEAR = re.compile(r"(?<!\d)(1[0-9]{3}|20[0-9]{2})(?!\d)")
+# Сведения о традициях конкретной страны или народа. Основы в нижнем регистре: текст перед поиском приводится
+# к нижнему регистру, поэтому «В Японии традиционно…» и «в Японии традиционно…» ловятся одинаково.
+# Ключ места: (основа страны после «в / во» и в «традиции …», названия жителей, народ после «у / для»).
+_PLACES: dict[str, tuple[str | None, str | None, str | None]] = {
+    "италия": ("итали", "итальян", None),
+    "германия": ("германи", "немц|немецк", None),
+    "франция": ("франци", "француз", None),
+    "испания": ("испани", "испанц|испанск", None),
+    "мексика": ("мексик", "мексиканц|мексиканск", None),
+    "англия": ("англи", "англичан", None),
+    "великобритания": ("великобритани", "британц", None),
+    "швеция": ("швеци", "шведск|шведы", None),
+    "норвегия": ("норвеги", "норвежц|норвежск", None),
+    "финляндия": ("финлянди", "финск|финны", None),
+    "польша": ("польш", "поляк|польск", None),
+    "чехия": ("чехи", None, None),
+    "греция": ("греци", "грек|греческ", None),
+    "япония": ("япони", "японц|японск", None),
+    "китай": ("кита", "китайц|китайск", None),
+    # «инди» без окончания поймало бы «в индивидуальном порядке».
+    "индия": (r"инди(?:я|и|ю|ей)\b", None, None),
+    "сша": ("сша|америк", "американц|американск", None),
+    "австрия": ("австри", None, None),
+    "нидерланды": ("нидерланд|голланди", None, None),
+    "бразилия": ("бразили", None, None),
+    "канада": ("канад", None, None),
+    "австралия": ("австрали", None, None),
+    "эфиопия": ("эфиопи", None, None),
+    "армения": ("армени", None, "армян"),
+    "грузия": ("грузи", None, "грузин"),
+    "беларусь": ("беларус|белорусси", None, None),
+    "украина": ("украин", None, None),
+    "казахстан": ("казахстан", None, r"казах\w*"),
+    "болгария": ("болгари", None, None),
+    "сербия": ("серби", None, None),
+    "ирландия": ("ирланди", None, None),
+    "шотландия": ("шотланди", None, None),
+    "филиппины": ("филиппин", None, None),
+    "россия": ("росси", "россиян", "русских"),
+    "татары": (None, r"татарск\w*\s+народ", "татар"),
+    "башкиры": (None, r"башкирск\w*\s+народ", "башкир"),
+    "чуваши": (None, r"чувашск\w*\s+народ", r"чуваш\w*"),
+    "марийцы": (None, r"марийск\w*\s+народ", r"марийц\w*"),
+    "удмурты": (None, r"удмуртск\w*\s+народ", r"удмурт\w*"),
+    "мордва": (None, r"мордовск\w*\s+народ", r"мордв\w*"),
+    "манси": (None, None, "манси"),
+    "ханты": (None, None, "ханты"),
+    "ненцы": (None, None, r"ненц\w*"),
+    "якуты": (None, r"якутск\w*\s+народ", r"якут\w*"),
+    "буряты": (None, r"бурятск\w*\s+народ", r"бурят\w*"),
+    "народы": (None, None, r"народ\w*"),
+    "кавказ": (None, r"народ\w*\s+кавказа", None),
+    "поволжье": (None, r"народ\w*\s+поволжья", None),
+    "сибирь": (None, r"народ\w*\s+сибири", None),
+    "север": (None, r"народ\w*\s+севера", None),
+    "урал": (None, r"народ\w*\s+урала", None),
+    "дагестан": (None, r"народ\w*\s+дагестана", None),
+    "коренные народы": (None, r"коренн\w+\s+(?:жител|народ)\w*", None),
+}
+
+
+def _place_pattern(country: str | None, demonym: str | None, people: str | None) -> re.Pattern[str]:
+    parts = []
+    if country:
+        parts.append(rf"\bво?\s+(?:{country})\w*")
+        parts.append(rf"\b(?:традици|обыча|обряд|праздник)\w*\s+(?:\w+\s+){{0,2}}?(?:{country})\w*")
+    if demonym:
+        parts.append(rf"\b(?:{demonym})\w*")
+    if people:
+        parts.append(rf"\b(?:у|для)\s+(?:{people})\b")
+    return re.compile("|".join(parts))
+
+
+_PLACE_PATTERNS = {key: _place_pattern(*spec) for key, spec in _PLACES.items()}
+# Чем подтверждается место в проверенном фрагменте: любое упоминание основы страны, жителей или народа.
+_PLACE_IN_SOURCE = {key: re.compile("|".join(rf"\b(?:{part})" for part in spec if part)) for key, spec in _PLACES.items()}
+# Общее «у народов» подтверждается только вместе с конкретным народом или краем, если он назван.
+_GENERIC_PLACES = {"народы"}
+
+_TRADITION_CLAIM = re.compile(
+    r"принято|существует\s+(?:традиц|обыча)|есть\s+(?:традиц|обыча)|по\s+традиции|традиционно|обычай|обряд|ритуал|празднуют|отмечают"
+    r"|популярн|готовят|украша|поют|устраивают|проходят|сохраняют|дарят|ставят|зажигают|любят|едят|пекут",
+)
+_SENTENCE = re.compile(r"[^.!?\n]+[.!?]?")
+# Заголовок списка со страной: «Италия:», «**Германия**», «### Испания», «1. Россия:». Пункты под ним - сведения
+# об этой стране, хотя в самом пункте она не названа («- Украшают вертеп»). Только полные названия в именительном
+# падеже: основа «инди» иначе поймала бы «Индивидуальная работа:».
+_COUNTRY_NAMES = {
+    "италия": "италия", "германия": "германия", "франция": "франция", "испания": "испания", "мексика": "мексика",
+    "англия": "англия", "великобритания": "великобритания", "швеция": "швеция", "норвегия": "норвегия",
+    "финляндия": "финляндия", "польша": "польша", "чехия": "чехия", "греция": "греция", "япония": "япония",
+    "китай": "китай", "индия": "индия", "сша": "сша", "америка": "сша", "австрия": "австрия", "нидерланды": "нидерланды",
+    "голландия": "нидерланды", "бразилия": "бразилия", "канада": "канада", "австралия": "австралия", "эфиопия": "эфиопия",
+    "армения": "армения", "грузия": "грузия", "беларусь": "беларусь", "белоруссия": "беларусь", "украина": "украина",
+    "казахстан": "казахстан", "болгария": "болгария", "сербия": "сербия", "ирландия": "ирландия", "шотландия": "шотландия",
+    "филиппины": "филиппины", "россия": "россия",
+}
+_COUNTRY_HEAD = re.compile(r"^(?:\d{1,2}[.)]\s*|[-\u2013\u2014\u2022]\s*)?(?P<country>" + "|".join(_COUNTRY_NAMES)
+                           + r")\s*(?::\s*(?P<rest>.*)|[-\u2013\u2014]?)$")
+_LIST_ITEM = re.compile(r"^(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
+
+
+# Задание для поиска и открытый вопрос - не утверждение: «Изучите, как итальянцы отмечают Рождество»,
+# «Какой ужин готовят итальянцы?». Вопрос «Почему в Италии популярны вертепы?» подаёт факт как готовый - остаётся.
+_RESEARCH_TASK = re.compile(
+    r"^(?:изучи|узна|исследу|найди|выясни|спроси|подумай|обсуди|сравни|опиши|нарисуй|расскажи|подготовь|запиши|прочитай|посмотри)\w*\b"
+)
+_OPEN_QUESTION = re.compile(r"^(?:как|какой|какая|какое|какие|каким|какую|когда|что|где|кто|чем|сколько|зачем|ли)\b[^?]*\?\s*$")
+
+
+def _is_claim(sentence: str) -> bool:
+    """Предложение утверждает, а не даёт задание и не спрашивает (текст в нижнем регистре, без маркера списка)."""
+    return not (_RESEARCH_TASK.match(sentence) or _OPEN_QUESTION.match(sentence))
+
+
+def _places(lowered: str) -> set[str]:
+    """Ключи стран и народов, о которых говорит фраза (текст уже в нижнем регистре)."""
+    return {key for key, pattern in _PLACE_PATTERNS.items() if pattern.search(lowered)}
+
+
+def _culture_claims(text: str) -> list[tuple[str, set[str]]]:
+    """Фразы со сведениями о традициях страны или народа: обычные предложения и пункты списка под страной-заголовком.
+
+    Текст перед поиском приводится к нижнему регистру; цитата для предупреждения берётся из исходного текста.
+
+    Параметры:
+        text: реплики блока или текст материала.
+
+    Возвращает:
+        Пары (фраза для цитаты в `CULTURE-UNSOURCED`, ключи стран и народов из `_PLACES`). К пункту списка
+        спереди дописана страна заголовка.
+    """
+    found: list[tuple[str, set[str]]] = []
+    head, head_title = "", ""
+    for line in text.splitlines():
+        plain = re.sub(r"\*\*|__|^#+", "", line.strip()).strip()
+        lowered = plain.lower()
+        if not plain:
+            continue
+        heading = _COUNTRY_HEAD.match(lowered)
+        if heading:
+            head = _COUNTRY_NAMES[heading.group("country")]
+            head_title = plain[heading.start("country"):heading.end("country")]
+            rest = plain[heading.start("rest"):].strip() if heading.group("rest") else ""
+            if rest and _TRADITION_CLAIM.search(rest.lower()):
+                found.append((f"{head_title}: {rest}", {head} | _places(rest.lower())))
+            continue
+        if not _LIST_ITEM.match(plain):
+            head = ""
+        for sentence in _SENTENCE.findall(plain):
+            low = sentence.lower()
+            if not _TRADITION_CLAIM.search(low) or not _is_claim(_LIST_ITEM.sub("", low.strip())):
+                continue
+            places = _places(low)
+            if places:
+                found.append((_LIST_ITEM.sub("", sentence.strip()), places))
+            elif head:
+                found.append((f"{head_title}: {_LIST_ITEM.sub('', sentence.strip())}", {head}))
+    return found
+
+
+def _confirmed(places: set[str], sources_text: str) -> bool:
+    """Все страны и народы фразы упомянуты в проверенных фрагментах события (текст фрагментов в нижнем регистре).
+
+    Фрагмент о дате Рождества не подтверждает традиции Японии: нужна именно эта страна в проверенном тексте.
+    """
+    specific = places - _GENERIC_PLACES or places
+    return bool(sources_text) and all(_PLACE_IN_SOURCE[key].search(sources_text) for key in specific)
+
+# Задание, которому нужен интернет: «найдите в интернете», «воспользуйтесь интернетом», «отсканируйте QR-код»,
+# «онлайн-опрос». Упоминание без задания - «кто-то видел примеры в интернете», «как общаться онлайн» (тема урока) -
+# не онлайн-активность (прогон qa_check_1114c, выпускной).
+_ONLINE_TASK = re.compile(
+    r"(?:найд|поищ|ищ|посмотр|откро|откры|зайд|перейд|загляни|провер|загруз|скача|отправ|опубликуй|выложи)\w*\s+(?:\w+\s+){0,4}?"
+    r"(?:в\s+интернет|в\s+сети\b|на\s+сайт|онлайн|в\s+приложени|по\s+ссылк|в\s+поисков)"
+    r"|(?:воспольз|использ|примен)\w*\s+(?:\w+\s+){0,2}?(?:интернет|сайт|приложени|онлайн)"
+    r"|\bинтернет[- ]?ресурс|\bQR[- ]?код|\bонлайн[- ]?(?:опрос|тест|викторин|голосован|доск|карт|игр|сервис|платформ|трансляц)"
+    r"|\b(?:через|с\s+помощью)\s+(?:интернет|приложени|сайт|онлайн)"
+    r"|\b(?:зайдите|перейдите|откройте)\s+(?:на\s+)?(?:сайт|страниц|приложени)",
+    re.I,
+)
+
+# Век: «в XVII веке», «XIX века», «в 17 веке», «18-го века».
+_CENTURY = re.compile(r"\b(?:[IVX]{1,5}|\d{1,2}(?:-?(?:м|ом|го|ого))?)\s+век(?:а|е|ом|ах|ов|и)?\b")
 _DATE = re.compile(r"\b\d{1,2}\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\b", re.I)
 
 
@@ -29,7 +216,9 @@ FAMILY_ALTERNATIVE = re.compile(
     r"|если\s+(?:\w+\s+){0,3}(?:сложно|трудно|неудобно|некогда)"
     r"|можешь\s+(?:\w+\s+){0,2}(?:написать|придумать|представить|нарисовать|рассказать|выбрать|вспомнить)"
     r"|или\s+(?:просто\s+)?(?:расскажи|придумай|напиши|нарисуй|представь|выбери)"
-    r"|геро\w*\s+(?:\w+\s+){0,2}(?:книг|книж|фильм|мультфильм|мультик|сказк|рассказ|истори)",
+    r"|геро\w*\s+(?:\w+\s+){0,2}(?:книг|книж|фильм|мультфильм|мультик|сказк|рассказ|истори)"
+    r"|не\s+с\s+кем|ничего\s+страшного"
+    r"|(?:прочитай|посмотри|послушай)\s+(?:\w+\s+){0,2}(?:книг|фильм|мультфильм|мультик|сказк|рассказ)",
     re.I,
 )
 
@@ -231,18 +420,38 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
                 add("VAL-005", "critical", loc, "Задание семье без равноценной альтернативы", "materials")
     if res.get("internet") is False:
         for b in timeline:
-            if re.search(r"\b(онлайн|интернет|сайт|QR|приложени)", b["teacher_script"], re.I) and not re.search(r"без интернета", b["teacher_script"], re.I):
+            if _ONLINE_TASK.search(b["teacher_script"]) and not re.search(r"без интернета", b["teacher_script"], re.I):
                 add("RESOURCE-INTERNET", "warning", f"timeline.{b['block_id']}", "Похоже на онлайн-активность при отсутствии интернета", "blocks")
 
     # Проверка содержимого сценарных блоков.
     detail = n.teacher_preferences["script_detail"]
     for b in timeline:
-        min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"])
-        if len(b["teacher_script"]) < min_chars:
+        min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"], n.age_group)
+        length = len(b["teacher_script"])
+        if length < script_short_limit(gen_cfg, detail, b["duration_minutes"], n.age_group):
             add("SCRIPT-SHORT", "warning", f"timeline.{b['block_id']}",
-                f"Реплики педагога короче {min_chars} символов для блока на {b['duration_minutes']} мин ({len(b['teacher_script'])})", "blocks")
+                f"Реплики педагога короче нормы: {length} из {min_chars} символов ({round(100 * length / min_chars)}%) "
+                f"для блока на {b['duration_minutes']} мин", "blocks")
         if len(b["pupil_actions"]) < 2:
             add("PUPIL-ACTIONS-FEW", "warning", f"timeline.{b['block_id']}", f"Действий учеников меньше двух ({len(b['pupil_actions'])})", "blocks")
+
+    # Время внутри этапа: только явные противоречия, остальное - эксперту (предупреждение, без исправления).
+    groups_count, pairs_count = grouping_counts(v)
+    for index, b in enumerate(timeline):
+        following = timeline[index + 1] if index + 1 < len(timeline) else {}
+        for problem in inner_timing_problems(b, groups_count=groups_count, pairs_count=pairs_count,
+                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", ""),
+                                             next_text=" ".join([following.get("teacher_script", ""), *(following.get("pupil_actions") or [])])):
+            add("INNER-TIMING", "warning", f"timeline.{b['block_id']}", f"Время внутри этапа не сходится: {problem}", "blocks", repairable=False)
+
+    # Технические обозначения в тексте для педагога (после замены известных ID на названия).
+    human_texts = [(f"timeline.{b['block_id']}", [b["title"], b["purpose"], b["teacher_script"], *b["pupil_actions"]]) for b in timeline]
+    human_texts += [(f"materials.{m['material_id']}", [m["title"], m["content"], m["teacher_notes"]]) for m in materials]
+    human_texts.append(("teacher_instructions", list(v.get("teacher_instructions") or [])))
+    for loc, parts in human_texts:
+        found = sorted({token for part in parts for token in leftover_ids(part)})
+        if found:
+            add("TECH-ID-IN-TEXT", "warning", loc, f"В тексте для педагога технические обозначения: {', '.join(found[:5])}", "blocks", repairable=False)
 
     # Проверка связи ценностей с механиками по правилам VAL-001..VAL-004.
     vtm = v["concept"].get("values_to_mechanics", [])
@@ -277,12 +486,64 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     texts = [(f"timeline.{b['block_id']}", b["teacher_script"] + " " + " ".join(b["pupil_actions"])) for b in timeline]
     texts += [(f"materials.{m['material_id']}", m["content"]) for m in materials]
     claimed = " ".join(c["text"] for c in claims)
+    # Дата самого события из карточки каталога («7 января» для Рождества) - не новый факт.
+    rule = (catalog.events.get(n.event_id) or {}).get("date_rule") or {}
+    card_dates = {m.group(0).lower() for m in _DATE.finditer(str(rule.get("note") or ""))}
     for loc, text in texts:
-        for match in list(_YEAR.finditer(text)) + list(_DATE.finditer(text)):
+        for match in list(_YEAR.finditer(text)) + list(_DATE.finditer(text)) + list(_CENTURY.finditer(text)):
             token = match.group(0)
-            if token not in claimed:
-                add("FACT-UNREGISTERED", "warning", loc, f"Дата/год «{token}» не зарегистрирован в fact_claims", "blocks")
+            if token not in claimed and token.lower() not in card_dates:
+                add("FACT-UNREGISTERED", "warning", loc, f"Дата, год или век «{token}» не зарегистрирован в fact_claims", "blocks")
                 break
+
+    # Традиции стран и народов, которых нет в проверенных фрагментах события: предупреждение эксперту.
+    # Проверяется каждое утверждение: фрагмент о дате праздника не подтверждает традиции другой страны.
+    fragments = catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)
+    sources_text = " ".join(str(f.get("quote") or f.get("text") or f.get("text_excerpt") or "") for f in fragments).lower()
+    for loc, text in texts:
+        for quote, places in _culture_claims(text):
+            if _confirmed(places, sources_text):
+                continue
+            quote = quote if len(quote) <= 110 else quote[:107] + "..."
+            add("CULTURE-UNSOURCED", "warning", loc,
+                f"Сведения о традициях страны или народа без проверенного источника: «{quote}»", "blocks", repairable=False)
+            break
+
+    # Ссылки на указы, законы и постановления, которых нет в проверенных фрагментах: модель придумывает
+    # «указ губернатора №1022-УГ», а для учеников это выглядит как официальный факт.
+    # Документ подтверждает и название источника фрагмента: цитата «День образования Свердловской области -
+    # 17 января» взята из «Указа Губернатора Свердловской области № 1022-УГ», хотя слова «указ» в ней нет
+    # (ложное предупреждение в прогоне 15.11).
+    catalog_sources = getattr(catalog, "sources", None) or {}
+    source_titles = " ".join(str((catalog_sources.get(f.get("source_id")) or {}).get("title") or "") for f in fragments)
+    documents_text = (sources_text + " " + source_titles.lower()).strip()
+    for loc, text in texts:
+        for sentence, stem in document_mentions(text):
+            if document_confirmed(stem, documents_text, sentence):
+                continue
+            quote = sentence if len(sentence) <= 110 else sentence[:107] + "..."
+            add("DOC-UNSOURCED", "warning", loc, f"Ссылка на документ без проверенного источника: «{quote}»", "blocks", repairable=False)
+            break
+
+    # Воспитательная задача из карточки с годом или веком («Знакомство с событиями 1612 года»): если этот год
+    # не встречается ни в одном этапе и материале, задача заявлена в шапке сценария, но не раскрыта.
+    all_text = " ".join(text for _, text in texts)
+    for goal in n.educational_goals:
+        marks = [m.group(0) for m in list(_YEAR.finditer(goal)) + list(_CENTURY.finditer(goal))]
+        if marks and not any(mark.lower() in all_text.lower() for mark in marks):
+            add("GOAL-UNCOVERED", "warning", "concept",
+                f"Воспитательная задача «{goal}» заявлена, но в сценарии не раскрыта: «{marks[0]}» не упоминается "
+                "ни в одном этапе и материале", "plan", repairable=False)
+
+    # Признаки близкого, но другого праздника (Дед Мороз в рождественском сценарии и т. п.).
+    boundary = ((catalog.boundaries or {}).get("events") or {}).get(n.event_id) or {}
+    markers = [re.compile(m, re.I) for m in boundary.get("markers", [])]
+    if markers:
+        for loc, text in texts + [("teacher_instructions", " ".join(v.get("teacher_instructions") or []))]:
+            found = sorted({m.group(0).lower() for rx in markers for m in rx.finditer(text)})
+            if found:
+                add("EVENT-MIXUP", "warning", loc,
+                    f"Похоже на атрибуты праздника «{boundary.get('confused_with', '?')}»: {', '.join(found[:4])}", "blocks", repairable=False)
     src_ids = {c.get("source_id") for c in claims if c.get("source_id")}
     for s in v.get("sources", []):
         if s["source_id"] not in src_ids:

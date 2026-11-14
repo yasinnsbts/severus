@@ -1,0 +1,44 @@
+{
+  "event_id": "graduation",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 11,
+  "pupils_count": 26,
+  "duration_minutes": 60,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 6,
+    "parent_roles": [
+      "evaluator",
+      "audience"
+    ],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": true,
+    "room": "classroom",
+    "available_materials": [
+      "paper",
+      "markers"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "medium",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

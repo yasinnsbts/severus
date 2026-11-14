@@ -1,0 +1,41 @@
+{
+  "event_id": "labour_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "grade": 7,
+  "pupils_count": 25,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": true,
+    "room": "classroom",
+    "available_materials": [
+      "paper",
+      "markers"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "standard",
+    "difficulty": "standard",
+    "interaction_level": "medium",
+    "group_work": false,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

@@ -1,0 +1,134 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Весенний трудовой марафон",
+  "concept": {
+    "summary": "Интерактивное занятие, направленное на развитие уважения к труду через практическую деятельность и командную работу.",
+    "goal": "Развитие уважения к труду и формирование понимания ценности профессионального мастерства через коллективную практику.",
+    "tasks": [
+      "Организация практической деятельности по благоустройству школьной территории.",
+      "Обсуждение значимости труда и взаимовыручки."
+    ],
+    "expected_outcomes": [
+      "Созданный учениками проект благоустройства школьной территории.",
+      "Опыт сотрудничества и распределения ответственности в команде."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "labour_creation",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное создание проекта благоустройства школьной территории.",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "team_task",
+        "mechanic": "Работа в командах с распределением ролей и совместных задач.",
+        "block_ids": ["block_02", "block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 5,
+    "block_ids": ["block_02", "block_03"]
+  },
+  "roles": [
+    {
+      "role_id": "teacher_1",
+      "participant_type": "teacher",
+      "title": "Ведущий педагог",
+      "count": 1
+    },
+    {
+      "role_id": "pupils_all",
+      "participant_type": "pupils_group",
+      "title": "Учащиеся",
+      "count": 25
+    },
+    {
+      "role_id": "parent_evaluators",
+      "participant_type": "parent",
+      "role_mode": "evaluator",
+      "title": "Жюри",
+      "count": 4
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вступительная беседа",
+      "purpose": "Настроить учащихся на тему занятия, обсудить важность труда и взаимопомощи.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Формирование команд и распределение ролей",
+      "purpose": "Организовать учащихся в рабочие группы, назначить капитанов и секретаря в каждой группе.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["team_roles_card"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Практическая часть: выполнение трудовых задач",
+      "purpose": "Выполнение учащимися реальных работ по благоустройству школьной территории.",
+      "proposed_minutes": 30,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["gardening_tools", "cleaning_supplies"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Представление проектов и оценка жюри",
+      "purpose": "Демонстрация выполненного труда, получение обратной связи от жюри.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": ["jury_scorecard"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Рефлексия и награждение",
+      "purpose": "Осознание участниками опыта совместной работы, поощрение команд.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": ["certificate_template"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "team_roles_card",
+      "type": "handout",
+      "title": "Карточки ролей в команде",
+      "purpose": "Помощь в организации командной структуры."
+    },
+    {
+      "material_id": "gardening_tools",
+      "type": "props_checklist",
+      "title": "Инструменты для садоводства",
+      "purpose": "Необходимость для выполнения практических задач."
+    },
+    {
+      "material_id": "cleaning_supplies",
+      "type": "props_checklist",
+      "title": "Средства для уборки",
+      "purpose": "Необходимость для выполнения практических задач."
+    },
+    {
+      "material_id": "jury_scorecard",
+      "type": "quiz",
+      "title": "Лист оценки жюри",
+      "purpose": "Оценивание выполненных проектов родителями-жюри."
+    },
+    {
+      "material_id": "certificate_template",
+      "type": "handout",
+      "title": "Шаблоны сертификатов участникам",
+      "purpose": "Награждение команд-участниц."
+    }
+  ]
+}
+```

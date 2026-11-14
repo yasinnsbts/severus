@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Новогодний конструктор желаний",
+  "concept": {
+    "summary": "Ученики изучают историю Нового года, делятся семейными традициями, создают коллективный календарь-плакат с добрыми пожеланиями друг другу.",
+    "goal": "Создать атмосферу праздника, развить творческие способности и сплочённость коллектива через совместное творчество и обмен опытом.",
+    "tasks": [
+      "Изучить исторические аспекты празднования Нового года",
+      "Познакомиться с разнообразием семейных традиций",
+      "Создать коллективный творческий продукт"
+    ],
+    "expected_outcomes": [
+      "Готовая декорация-календарь для класса",
+      "Повышение интереса к изучению традиций",
+      "Укрепление дружеских отношений между учениками"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "family",
+        "mechanic_type": "family_research",
+        "mechanic": "Рассказы учеников о семейных новогодних традициях",
+        "block_ids": ["block_02"]
+      },
+      {
+        "value_id": "labour_creation",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное изготовление календаря-плаката",
+        "block_ids": ["block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 7,
+    "block_ids": ["block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 35}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вступительное слово",
+      "purpose": "Настроить аудиторию на позитивный лад, представить структуру занятия",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "История Нового года",
+      "purpose": "Ознакомить с историческими аспектами праздника",
+      "proposed_minutes": 7,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["history_slides"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Семейные традиции",
+      "purpose": "Познакомиться с разнообразием семейных практик",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_04",
+      "title": "Творческий блок: создание календаря",
+      "purpose": "Создать коллективный продукт - календарь-плакат",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["calendar_template", "art_supplies"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Обмен пожеланиями",
+      "purpose": "Организовать личное взаимодействие и поддержку среди учеников",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["wishes_cards"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Подведение итогов",
+      "purpose": "Заключительная беседа, демонстрация готового продукта",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "history_slides",
+      "type": "slide_outline",
+      "title": "Исторический обзор празднования Нового года",
+      "purpose": "Наглядная презентация исторических фактов"
+    },
+    {
+      "material_id": "calendar_template",
+      "type": "worksheet",
+      "title": "Шаблоны страниц календаря",
+      "purpose": "Основа для творческого оформления"
+    },
+    {
+      "material_id": "art_supplies",
+      "type": "props_checklist",
+      "title": "Материалы для творчества",
+      "purpose": "Необходимые принадлежности для создания календаря"
+    },
+    {
+      "material_id": "wishes_cards",
+      "type": "activity_card",
+      "title": "Карты для обмена пожеланиями",
+      "purpose": "Средство для личного взаимодействия"
+    }
+  ]
+}

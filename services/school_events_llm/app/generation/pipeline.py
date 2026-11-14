@@ -8,9 +8,13 @@ scenario_blocks (или scenario_block по одному) → materials → сб
 from __future__ import annotations
 
 import json
+import os
+import random
 import re
+import threading
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, get_args
@@ -28,8 +32,11 @@ from ..render import render_project, render_variant
 from ..settings import Settings, sha256_file
 from ..trace import RunTrace
 from ..usage import TokenTally
-from ..validation.checks import Issue, diversity_issues, report_status, validate_variant
+from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
+from .humanize import blank_template_dates, drop_meta_notes, humanize_variant
+from .plan_fixes import fallback_material, fix_parent_role_counts, fix_plan_for_request, fix_type_by_id, fix_vote_quiz
+from .source_refs import move_source_refs, register_fragment_facts
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
@@ -63,6 +70,15 @@ class VariantOutcome:
     frontend: dict[str, Any] | None
     status: str
     error: str | None = None
+
+
+class VariantsStopped(LLMError):
+    """Вариант остановлен, потому что соседний вариант той же генерации получил неустранимую ошибку модели
+    (модель недоступна, ключ не подходит): дальше обращаться к ней бессмысленно."""
+
+
+# Ошибки модели, после которых остальные варианты генерации не запускаются и останавливаются.
+FATAL_MODEL_ERRORS = ("MODEL_UNAVAILABLE", "MODEL_AUTH_ERROR")
 
 
 @dataclass
@@ -184,8 +200,52 @@ def _fix_enum(value: Any, kind: str) -> Any:
     return _FALLBACK.get(kind, value)
 
 
-def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
-    """Проходит по полям-перечислениям ответа этапа и исправляет значения через `_fix_enum`."""
+# Близкие механики: если выбранная модельно не разрешена для ценности, берётся ближайшая разрешённая.
+_MECHANIC_NEAR = {
+    "joint_product": ("class_collective_task", "team_task", "real_problem_solving", "discussion"),
+    "team_task": ("class_collective_task", "pair_task", "joint_product", "real_problem_solving"),
+    "pair_task": ("team_task", "class_collective_task", "discussion"),
+    "class_collective_task": ("team_task", "joint_product", "real_problem_solving"),
+    "real_problem_solving": ("class_collective_task", "team_task", "discussion"),
+    "culture_comparison": ("discussion", "source_work"),
+    "source_work": ("culture_comparison", "discussion"),
+    "family_research": ("discussion", "joint_product"),
+    "discussion": ("source_work", "culture_comparison", "class_collective_task"),
+}
+
+
+def _fix_mechanic(rec: Any, where: str, changes: list[dict[str, Any]],
+                  mechanics_by_value: dict[str, list[str]] | None) -> None:
+    """Механика ценности не из списка или не разрешённая каталогом для этой ценности - разрешённая.
+
+    - Не из списка (`sharing`, `storytelling`): первая разрешённая для ценности (`family` → `family_research`),
+      иначе `discussion`. GigaChat на просьбу исправить такое значение возвращал тот же ответ байт в байт
+      (прогон 14.11, Рождество 7 кл): повторные вызовы не помогали, и весь сценарий падал из-за одного поля.
+    - Из списка, но не разрешённая для ценности (`citizenship` с `joint_product`, предупреждение `VAL-004`):
+      ближайшая разрешённая по `_MECHANIC_NEAR` (`class_collective_task`), иначе первая разрешённая.
+    """
+    if not isinstance(rec, dict):
+        return
+    current = rec.get("mechanic_type")
+    allowed = [m for m in (mechanics_by_value or {}).get(str(rec.get("value_id")), []) if m in _ENUMS["mechanic_type"]]
+    if current not in _ENUMS["mechanic_type"]:
+        new = allowed[0] if allowed else "discussion"
+        changes.append({"kind": "enum_fallback", "field": where, "from": current, "to": new})
+        rec["mechanic_type"] = new
+        return
+    if allowed and current not in allowed:
+        new = next((m for m in _MECHANIC_NEAR.get(current, ()) if m in allowed), allowed[0])
+        changes.append({"kind": "mechanic_not_allowed", "field": where, "value_id": rec.get("value_id"), "from": current, "to": new})
+        rec["mechanic_type"] = new
+
+
+def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]],
+               mechanics_by_value: dict[str, list[str]] | None = None) -> None:
+    """Проходит по полям-перечислениям ответа этапа и исправляет значения через `_fix_enum`.
+
+    `mechanics_by_value` - разрешённые механики ценностей из каталога (`allowed_mechanic_types`):
+    по ним выбирается замена механики, которую не удалось распознать.
+    """
     def fix(obj: Any, key: str, kind: str, where: str) -> None:
         if isinstance(obj, dict) and key in obj:
             new = _fix_enum(obj[key], kind)
@@ -207,10 +267,12 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
                 fix(a, "activity_type", "activity_type", f"concepts.{i}.key_activities.{j}.activity_type")
             for j, v in enumerate(items(c, "values_to_mechanics")):
                 fix(v, "mechanic_type", "mechanic_type", f"concepts.{i}.values_to_mechanics.{j}.mechanic_type")
+                _fix_mechanic(v, f"concepts.{i}.values_to_mechanics.{j}.mechanic_type", changes, mechanics_by_value)
     if stage == "scenario_plan":
         fix(data.get("grouping_request"), "mode", "engagement_mode", "grouping_request.mode")
         for j, v in enumerate(items(data.get("concept"), "values_to_mechanics")):
             fix(v, "mechanic_type", "mechanic_type", f"concept.values_to_mechanics.{j}.mechanic_type")
+            _fix_mechanic(v, f"concept.values_to_mechanics.{j}.mechanic_type", changes, mechanics_by_value)
         for j, r in enumerate(items(data, "roles")):
             if isinstance(r, dict) and r.get("role_mode") is not None:
                 fix(r, "role_mode", "role_mode", f"roles.{j}.role_mode")
@@ -221,19 +283,117 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
             fix(m, "type", "material_type", f"materials.{j}.type")
 
 
+_CLAIM_TEXT_KEYS = ("claim", "statement", "fact", "claim_text", "text_claim")
+
+
+def _fix_fact_claims(data: Any, changes: list[dict[str, Any]], fragment_texts: dict[str, str] | None = None) -> None:
+    """Факт без обязательных полей: `{"claim": "...", "source_id", "fragment_id"}` вместо `{"claim_id", "text", "location"}`.
+
+    Текст берётся из `claim` и подобных ключей, `claim_id` и `location` ставятся по умолчанию
+    (программа всё равно перенумеровывает факты при сборке варианта). Источник не придумывается.
+
+    Факт совсем без текста, только `{"source_id", "fragment_id"}` (прогон 14.11, День народов Среднего Урала):
+    если фрагмент проверенный (`fragment_texts`), текстом становится его цитата; иначе факт выбрасывается -
+    без текста и без источника он ничего не утверждает. Раньше такой ответ уходил на повторный вызов модели.
+    """
+    if not isinstance(data, dict) or not isinstance(data.get("fact_claims"), list):
+        return
+    block = data.get("block") if isinstance(data.get("block"), dict) else {}
+    dropped: list[int] = []
+    for index, claim in enumerate(data["fact_claims"], 1):
+        if not isinstance(claim, dict):
+            continue
+        fixed = []
+        if not claim.get("text"):
+            key = next((k for k in _CLAIM_TEXT_KEYS if isinstance(claim.get(k), str) and claim[k].strip()), None)
+            if key:
+                claim["text"] = claim.pop(key).strip()
+                fixed.append("text")
+            elif fragment_texts is not None and fragment_texts.get(str(claim.get("fragment_id"))):
+                claim["text"] = fragment_texts[str(claim["fragment_id"])]
+                fixed.append("text_from_fragment")
+            elif fragment_texts is not None:
+                dropped.append(index - 1)
+                continue
+        if not claim.get("claim_id"):
+            claim["claim_id"] = f"fc_{index:02d}"
+            fixed.append("claim_id")
+        if not claim.get("location"):
+            claim["location"] = block.get("block_id") or "text"
+            fixed.append("location")
+        if fixed:
+            changes.append({"kind": "fact_claim_fields", "index": index - 1, "fields": fixed})
+    if dropped:
+        data["fact_claims"] = [c for i, c in enumerate(data["fact_claims"]) if i not in dropped]
+        changes.append({"kind": "fact_claims_dropped", "indexes": dropped, "reason": "нет текста и проверенного фрагмента"})
+
+
+FAMILY_TASK_MARK = "(по желанию, до мероприятия)"
+FAMILY_ALTERNATIVE_TO_PUPIL = ("Если дома обсудить не с кем или некогда, ничего страшного: выполни задание сам - "
+                               "вспомни, придумай или нарисуй свой вариант. Это так же ценно.")
+FAMILY_ALTERNATIVE_TO_PARENTS = ("Если дома выполнить задание не получается, ребёнок может сделать его сам: "
+                                 "вспомнить, придумать или нарисовать свой вариант. Это так же ценно.")
+
+
+def fix_family_tasks(materials: list[dict[str, Any]], values: list[str]) -> list[dict[str, Any]]:
+    """Задание семье (`family_task`) приводится к правилам VAL-005 программой, без повторного вызова модели.
+
+    Раньше любое нарушение отправляло все материалы на переделку (30-55 с на вызов, до двух повторов),
+    хотя чинить нужно одно поле одного материала:
+    - ценности «Семья» в запросе нет - `family_task` снимается, материал остаётся обычным раздаточным;
+    - тип не `handout` - ставится `handout`;
+    - в названии нет «по желанию» - дописывается «(по желанию, до мероприятия)»;
+    - в тексте не найдена альтернатива для ребёнка, которому дома помочь некому, - дописывается
+      стандартная фраза (обращение к ребёнку или к родителям - по тексту задания).
+    Возвращает список исправлений для трассы (`family_task_fixed`).
+    """
+    fixes: list[dict[str, Any]] = []
+    for m in materials:
+        if not m.get("family_task"):
+            continue
+        done: list[str] = []
+        if "family" not in values:
+            m["family_task"] = False
+            fixes.append({"material_id": m.get("material_id"), "fixed": ["family_task_cleared"]})
+            continue
+        if m.get("type") != "handout":
+            m["type"] = "handout"
+            done.append("type")
+        if "по желанию" not in str(m.get("title") or "").lower():
+            m["title"] = f"{str(m.get('title') or 'Задание семье').strip()} {FAMILY_TASK_MARK}"
+            done.append("title")
+        content = str(m.get("content") or "")
+        if not FAMILY_ALTERNATIVE.search(content):
+            to_parents = bool(re.search(r"уважаем\w*\s+родител|дорогие\s+родител", content, re.I))
+            sentence = FAMILY_ALTERNATIVE_TO_PARENTS if to_parents else FAMILY_ALTERNATIVE_TO_PUPIL
+            m["content"] = f"{content.rstrip()}\n\n{sentence}"
+            done.append("alternative")
+        if done:
+            fixes.append({"material_id": m.get("material_id"), "fixed": done})
+    return fixes
+
+
 def prepare_stage_output(stage: str, data: Any, resources: set[str],
-                         dependency_ids: set[str] | None = None) -> list[dict[str, Any]]:
+                         dependency_ids: set[str] | None = None,
+                         mechanics_by_value: dict[str, list[str]] | None = None,
+                         fragment_texts: dict[str, str] | None = None) -> list[dict[str, Any]]:
     """Исправляет до проверки схемы ошибки ответа, которые однозначно понятны программе.
 
     - План: материалы с ID ресурса (`paper`, `markers`) убираются из `planned_materials` и из блоков.
     - Материалы: такие же материалы убираются; адресат вида `parent_audience` приводится к `parent`.
+    - Концепции и план: механика ценности не из списка - разрешённая каталогом для этой ценности (`_fix_mechanic`).
+    - План и материалы: тип по `material_id` для листа жюри, бюллетеня, памяток (`plan_fixes.fix_type_by_id`);
+      число в роли родителей не меньше 1.
     - Все этапы: `material_id`, `role_id` и ссылки на них - к виду `^[a-z][a-z0-9_]*$`, ID блоков - к `block_NN`
       (`ids.normalize_ids`); зависимости материалов - только из словаря (`ids.normalize_dependencies`).
     Всё остальное проверяет схема, и при ошибке модель исправляет ответ сама.
 
     Параметры:
         stage: этап; data: разобранный JSON ответа (меняется на месте); resources: см. `resource_ids`;
-        dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать).
+        dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать);
+        mechanics_by_value: разрешённые механики ценностей из каталога (None - замена `discussion`);
+        fragment_texts: цитаты проверенных фрагментов события по `fragment_id` для фактов без текста
+        (None - такие факты не трогать).
 
     Возвращает:
         Список исправлений для трассы.
@@ -241,12 +401,21 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
     changes: list[dict[str, Any]] = []
     if not isinstance(data, dict):
         return changes
-    _fix_enums(data, stage, changes)
+    _fix_enums(data, stage, changes, mechanics_by_value)
     normalize_ids(stage, data, changes)
+    # Тип материала по material_id («jury_scorecard» с типом «quiz»), число в роли родителей не меньше 1.
+    if stage == "scenario_plan":
+        fix_type_by_id(data.get("planned_materials"), "planned_materials", "type", changes)
+        fix_vote_quiz(data.get("planned_materials"), "planned_materials", changes)
+        fix_parent_role_counts(data.get("roles"), changes)
+    if stage == "materials":
+        fix_type_by_id(data.get("materials"), "materials", "type", changes)
+        fix_vote_quiz(data.get("materials"), "materials", changes)
     if stage == "materials":
         normalize_material_fields(data, changes)
         if dependency_ids is not None:
             normalize_dependencies(data, dependency_ids, changes)
+    _fix_fact_claims(data, changes, fragment_texts)
     grouping = data.get("grouping_request") if stage == "scenario_plan" else None
     if isinstance(grouping, dict) and grouping.get("groups_count") in (None, "", 0):
         grouping["groups_count"] = 1  # программа сама считает группы (`compute_grouping`)
@@ -427,12 +596,19 @@ def _issue_lines(issues: list[Issue]) -> list[dict[str, str]]:
     return [{"code": i.code, "location": i.location, "message": i.message} for i in issues]
 
 
+# Уровни рассуждений GigaChat API (`reasoning_effort`): чем выше, тем дольше модель думает перед ответом.
+REASONING_LEVELS = ("low", "medium", "high")
+
+
 class Generator:
-    def __init__(self, settings: Settings, catalog: Catalog, client: LLMClient, *, trace: RunTrace | None = None):
+    def __init__(self, settings: Settings, catalog: Catalog, client: LLMClient, *, trace: RunTrace | None = None,
+                 parallel_variants: int | None = None):
         """Инициализирует генератор и связывает настройки, каталог, LLM-клиент, Composer и трассировку.
 
         Параметры:
-            `settings`, `catalog`, `client`, `trace`.
+            `settings`, `catalog`, `client`, `trace`;
+            `parallel_variants`: сколько вариантов создавать одновременно; по умолчанию `max_parallel_variants`
+            из `config/service.json`.
         """
         self.settings = settings
         self.catalog = catalog
@@ -444,8 +620,24 @@ class Generator:
         self.calls = 0
         self.tokens = TokenTally()
         self._sleep = time.sleep  # подменяется в тестах, чтобы не ждать паузы между повторами
+        self.parallel_variants = int(parallel_variants if parallel_variants is not None
+                                     else settings.service().get("max_parallel_variants", 1))
+        self._lock = threading.Lock()
+        self._fatal: LLMError | None = None  # неустранимая ошибка модели в одном из вариантов
 
     # Лимит ответа модели для этапа.
+    def reasoning_effort(self, stage: str) -> str | None:
+        """Уровень рассуждений модели для этапа.
+
+        Порядок: `LLM_REASONING` («scenario_plan=medium,scenario_block=low», `*=low` - все этапы) из окружения процесса
+        (так его ставит `batch --reasoning`) или из `.env`; затем `tasks.<этап>.reasoning_effort` в config/generation.json.
+        None - рассуждения не запрашиваются (по умолчанию для всех этапов).
+        """
+        value = os.environ.get("LLM_REASONING") or self.settings.get("LLM_REASONING") or ""
+        override = dict(item.split("=", 1) for item in value.replace(" ", "").split(",") if "=" in item)
+        effort = override.get(stage) or override.get("*") or self.cfg["tasks"][stage].get("reasoning_effort")
+        return effort if effort in REASONING_LEVELS else None
+
     def max_output_tokens(self, stage: str, n: NormalizedRequest) -> int:
         """Возвращает лимит ответа модели для этапа.
 
@@ -457,9 +649,11 @@ class Generator:
         task_cfg = self.cfg["tasks"][stage]
         cap = int(task_cfg["max_output_tokens"])
         per_variant = task_cfg.get("max_output_tokens_per_variant")
-        if per_variant is None:
-            return cap
-        return min(cap, int(per_variant) * n.variants_count)
+        limit = cap if per_variant is None else min(cap, int(per_variant) * n.variants_count)
+        # Рассуждения входят в тот же лимит ответа, что и JSON: без запаса ответ обрезается.
+        if self.reasoning_effort(stage):
+            limit += int(self.cfg.get("reasoning_extra_output_tokens", 2000))
+        return limit
 
     # Выполнение этапа с ограниченным числом попыток исправления.
     def call_stage(self, stage: str, n: NormalizedRequest, *, stage_input: str = "", output_vars: dict | None = None,
@@ -496,10 +690,13 @@ class Generator:
                     stage, call_id, variant_id,
                     messages=composed.messages, task_name=stage, output_schema=model_cls.model_json_schema(),
                     max_tokens=self.max_output_tokens(stage, n), temperature=float(task_cfg["temperature_hint"]),
-                    meta=meta or {})
+                    meta={**(meta or {}), "call_id": call_id, "reasoning_effort": self.reasoning_effort(stage)})
                 raw = result.text
                 data = extract_json(raw)
-                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies))
+                mechanics = {vid: list(value.get("allowed_mechanic_types") or []) for vid, value in self.catalog.values.items()}
+                quotes = {f["fragment_id"]: str(f.get("quote") or f.get("text") or f.get("text_excerpt") or "").strip()
+                          for f in self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)}
+                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies), mechanics, quotes)
                 if fixes:
                     self.trace.event("stage_output_fixed", call_id=call_id, stage=stage, variant_id=variant_id, fixes=fixes)
                 parsed_obj = model_cls.model_validate(data)
@@ -525,13 +722,16 @@ class Generator:
                     "latency_ms": getattr(result, "latency_ms", None), "mutex_wait_ms": getattr(result, "mutex_wait_ms", None),
                     "usage": getattr(result, "usage", None), "usage_source": "provider" if getattr(result, "usage", None) else "unavailable",
                     "reasoning_stripped": getattr(result, "reasoning_stripped", None),
+                    "reasoning_effort": self.reasoning_effort(stage),
+                    "reasoning_chars": len(getattr(result, "reasoning", None) or ""),
                     "request_params": getattr(result, "request_params", None),
                     "status": status, "error_code": error_code, "error": last_error if status == "failed" else None,
                 }
                 if result is not None:
                     self.tokens.add(stage, getattr(result, "usage", None))
                 self.trace.save_call(call_id, manifest=manifest, messages=composed.messages, prompt_md=composed.as_markdown(),
-                                     raw=raw, parsed=parsed_obj.model_dump() if parsed_obj is not None else None)
+                                     raw=raw, parsed=parsed_obj.model_dump() if parsed_obj is not None else None,
+                                     reasoning=getattr(result, "reasoning", None))
                 self.trace.event("llm_call_completed" if status == "completed" else "llm_call_invalid", call_id=call_id,
                                  stage=stage, variant_id=variant_id, attempt=attempt, error_code=error_code)
                 parent_call_id = call_id
@@ -542,23 +742,48 @@ class Generator:
 
         Повторяются только ошибки с `retryable=True`: 429, 5xx, таймаут, недоступность сети.
         Ошибки авторизации и конфигурации (`MODEL_AUTH_ERROR`, неизвестная модель) не повторяются.
-        Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`.
+        Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`;
+        для лимита шлюза (`RATE_LIMITED`, 429) - свои, больше: `defaults.rate_limit_retry_attempts`
+        и `defaults.rate_limit_backoff_seconds`. Если шлюз прислал `Retry-After`, пауза не меньше неё.
+        Для сбоя сети или 5xx шлюза (`MODEL_UNAVAILABLE`) - тоже свои: `defaults.unavailable_retry_attempts`
+        и `defaults.unavailable_backoff_seconds` (4 повтора, около минуты): после такой ошибки варианта
+        останавливаются и соседние варианты генерации, поэтому короткий перерыв шлюза лучше переждать.
+        Таймаут (`MODEL_TIMEOUT`) повторяется по-прежнему 2 раза: каждая попытка ждёт ответа до `timeout_seconds`.
+        К паузе добавляется случайный разброс `defaults.retry_jitter` (±30%): иначе генерации, получившие отказ
+        одновременно, возвращаются в шлюз тоже одновременно и снова получают отказ (нагрузка 30 генераций, 14.11).
         Каждый повтор - отдельный вызов модели: учитывается в `calls` и пишется в трассу (`llm_call_retry`).
         """
         retries = int(self.defaults.get("provider_retry_attempts", 2))
         backoff = list(self.defaults.get("provider_retry_backoff_seconds", [3, 10])) or [0]
-        for retry in range(retries + 1):
-            self.calls += 1
+        limit_retries = int(self.defaults.get("rate_limit_retry_attempts", retries))
+        limit_backoff = list(self.defaults.get("rate_limit_backoff_seconds", backoff)) or backoff
+        down_retries = int(self.defaults.get("unavailable_retry_attempts", retries))
+        down_backoff = list(self.defaults.get("unavailable_backoff_seconds", backoff)) or backoff
+        jitter = float(self.defaults.get("retry_jitter", 0.0))
+        retry = 0
+        while True:
+            if self._fatal is not None:
+                raise VariantsStopped(self._fatal.code, self._fatal.message)
+            with self._lock:
+                self.calls += 1
             try:
                 return self.client.generate(**kwargs)
             except LLMError as exc:
-                if not exc.retryable or retry >= retries:
+                limited = exc.code == "RATE_LIMITED"
+                allowed, pauses = ((limit_retries, limit_backoff) if limited
+                                   else (down_retries, down_backoff) if exc.code == "MODEL_UNAVAILABLE" else (retries, backoff))
+                if not exc.retryable or retry >= allowed:
                     raise
-                wait = float(backoff[min(retry, len(backoff) - 1)])
+                wait = float(pauses[min(retry, len(pauses) - 1)])
+                if limited and exc.retry_after:
+                    wait = max(wait, float(exc.retry_after))
+                if jitter:
+                    wait = round(wait * random.uniform(1 - jitter, 1 + jitter), 1)
+                retry += 1
                 self.trace.event("llm_call_retry", call_id=call_id, stage=stage, variant_id=variant_id,
-                                 retry=retry + 1, error_code=exc.code, message=exc.message, wait_seconds=wait)
+                                 retry=retry, error_code=exc.code, message=exc.message, wait_seconds=wait,
+                                 retry_after=getattr(exc, "retry_after", None))
                 self._sleep(wait)
-        raise AssertionError("недостижимо")  # pragma: no cover
 
     @staticmethod
     def _format_error(exc: Exception) -> str:
@@ -626,9 +851,10 @@ class Generator:
         for vm in plan["concept"]["values_to_mechanics"]:
             lines.append(f"- {vm['value_id']} ({vm['mechanic_type']}): {vm['mechanic']} - блоки {', '.join(vm.get('block_ids', []))}")
         if plan.get("planned_materials"):
-            lines.append("\nМатериалы (тексты создаются на следующем этапе):")
+            lines.append("\nМатериалы (тексты создаются на следующем этапе; в репликах и действиях называй их по названию, не по ID):")
             for m in plan["planned_materials"]:
-                lines.append(f"- `{m['material_id']}` - {m['type']} - {m['purpose']}")
+                title = f" «{m['title'].strip('«»')}»" if m.get("title") else ""
+                lines.append(f"- `{m['material_id']}`{title} - {m['type']} - {m['purpose']}")
         if previous_excerpt:
             lines.append(f"\nКонец предыдущего блока (для связности): «{previous_excerpt}»")
         return "\n".join(lines)
@@ -639,7 +865,8 @@ class Generator:
         items = plan.get("planned_materials") or []
         if not items:
             return "в плане материалов нет; создавай материал, только если без него блок невыполним"
-        return ", ".join(f"`{m['material_id']}` ({m['type']})" for m in items)
+        return ", ".join(f"`{m['material_id']}` ({m['type']}" + (f", название «{m['title'].strip('«»')}»" if m.get("title") else "") + ")"
+                         for m in items)
 
     @staticmethod
     def blocks_text(blocks: list[dict]) -> str:
@@ -747,7 +974,7 @@ class Generator:
         repair_for: dict[str, dict] = {}
         min_block = int(self.defaults.get("min_block_minutes", 2))
         detail = n.teacher_preferences["script_detail"]
-        script_chars = lambda minutes: script_size_text(self.cfg, detail, minutes)  # noqa: E731
+        script_chars = lambda minutes: script_size_text(self.cfg, detail, minutes, n.age_group)  # noqa: E731
         per_block_mode = self.defaults.get("block_detail_mode", "auto")
         per_block = per_block_mode == "per_block" or (per_block_mode == "auto" and n.duration_minutes >= int(self.defaults.get("per_block_from_minutes", 60)))
         vmeta = {**meta, "variant_id": vid}
@@ -771,6 +998,10 @@ class Generator:
             roles_added = complete_block_roles(plan)
             if roles_added:
                 self.trace.event("block_roles_completed", variant_id=vid, added=roles_added)
+            # Число родителей по ролям и обязательные материалы для их ролей - программой, без повторного вызова.
+            plan_fixes = fix_plan_for_request(plan, n.parents_enabled, n.parents_count, n.parent_audience_engagement)
+            if plan_fixes and blocks_res is None:
+                self.trace.event("plan_fixed", variant_id=vid, fixes=plan_fixes)
             minutes = normalize_minutes([b["proposed_minutes"] for b in plan["blocks"]], n.duration_minutes, min_block)
             grid = build_grid(minutes)
             g_mode, sizes, g_notes = compute_grouping(plan["grouping_request"]["mode"], n.pupils_count,
@@ -842,6 +1073,13 @@ class Generator:
             ref_fixes = fix_material_refs(mat, timeline)
             if ref_fixes:
                 self.trace.event("material_refs_fixed", variant_id=vid, fixes=ref_fixes)
+            # Обязательный материал, который добавила в план программа, а этап материалов не написал: простая версия.
+            have = {m.material_id for m in mat.materials}
+            for fix in plan_fixes:
+                if fix["kind"] == "required_material_added" and fix["material_id"] not in have:
+                    title = next(m["title"] for m in plan["planned_materials"] if m["material_id"] == fix["material_id"])
+                    mat.materials.append(c03.Material.model_validate(fallback_material(fix["type"], fix["material_id"], title, plan, timeline)))
+                    self.trace.event("required_material_fallback", variant_id=vid, material_id=fix["material_id"], type=fix["type"])
             # Блок ссылается на материал, если материал указан для этого блока.
             created = {m.material_id for m in mat.materials}
             for b in timeline:
@@ -872,6 +1110,31 @@ class Generator:
             except ValidationError as exc:
                 issues.append(Issue("SCHEMA", "critical", "variant", self._format_error(exc), "blocks"))
             else:
+                # Задание семье чинится программой: повторный вызов модели ради одного поля не нужен.
+                family_fixes = fix_family_tasks(body["materials"], n.values)
+                if family_fixes:
+                    self.trace.event("family_task_fixed", variant_id=vid, fixes=family_fixes)
+                # Ссылки на источники в тексте («(fact_claims: src_x/frag_y)») убираются, подтверждённые факты регистрируются.
+                fragments = self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)
+                refs = move_source_refs(body, fragments)
+                if refs:
+                    self.trace.event("source_refs_moved", variant_id=vid, fields=refs[:30])
+                # Год или дата из проверенного фрагмента, не записанные моделью в fact_claims, записываются программой.
+                registered = register_fragment_facts(body, fragments)
+                if registered:
+                    self.trace.event("fragment_facts_registered", variant_id=vid, facts=registered[:30])
+                # Дата подписи в шаблоне письма - пустое место для даты, а не факт.
+                dates = blank_template_dates(body)
+                if dates:
+                    self.trace.event("template_dates_blanked", variant_id=vid, fields=dates)
+                # Фразы о самом сценарии («объём текста… около 780 символов») из реплик убираются.
+                meta = drop_meta_notes(body)
+                if meta:
+                    self.trace.event("meta_text_removed", variant_id=vid, fields=meta[:30])
+                # Технические ID в тексте для педагога заменяются названиями материалов и этапов.
+                tech = humanize_variant(body, self.catalog.dependencies, plan.get("planned_materials"))
+                if tech:
+                    self.trace.event("tech_ids_replaced", variant_id=vid, count=len(tech), fields=tech[:30])
                 issues += validate_variant(body, n, self.catalog, self.cfg)
                 if self.defaults.get("llm_quality_review", False):
                     review_input = "## Вход этапа: готовый вариант для проверки\n```json\n" + json.dumps(body, ensure_ascii=False, indent=2) + "\n```"
@@ -928,6 +1191,59 @@ class Generator:
             return VariantOutcome(vid, package, issues, frontend, status, None if status == "completed" else "Критические проблемы после исправлений")
 
     # Генерация всей задачи с требуемым числом вариантов.
+    def _variant_workers(self, count: int) -> int:
+        """Сколько вариантов создавать одновременно: `parallel_variants`, но не больше числа вариантов;
+        1, если клиент отвечает записанными ответами по порядку (`parallel_variants_safe = False`)."""
+        if count < 2 or not getattr(self.client, "parallel_variants_safe", True):
+            return 1
+        return max(1, min(count, self.parallel_variants))
+
+    def _one_variant(self, n: NormalizedRequest, concept: dict, concepts: list[dict], meta: dict) -> VariantOutcome | None:
+        """Один вариант со своей записью в трассу. `None` - вариант остановлен из-за ошибки модели в соседнем."""
+        vid = concept["variant_id"]
+        others = [c for c in concepts if c["variant_id"] != vid]
+        try:
+            outcome = self.generate_variant(n, concept, others, meta)
+        except VariantsStopped:
+            self.trace.event("variant_stopped", variant_id=vid, error=str(self._fatal))
+            return None
+        except (StageFailed, LLMError) as exc:
+            outcome = VariantOutcome(vid, None, [], None, "failed", str(exc))
+            if isinstance(exc, LLMError) and exc.code in FATAL_MODEL_ERRORS:
+                with self._lock:
+                    self._fatal = self._fatal or exc
+                self.trace.event("variant_failed", variant_id=vid, error=str(exc))
+                return outcome
+        if outcome.package:
+            self.trace.write_json(f"variants/{outcome.variant_id}/variant_package.json", outcome.package)
+        self.trace.write_json(f"variants/{outcome.variant_id}/validation.json",
+                              {"status": outcome.status, "error": outcome.error, "issues": [i.to_dict() for i in outcome.issues]})
+        self.trace.event("variant_completed" if outcome.status == "completed" else "variant_failed",
+                         variant_id=outcome.variant_id, issues=len(outcome.issues))
+        return outcome
+
+    def _generate_variants(self, n: NormalizedRequest, selected: list[dict], concepts: list[dict], meta: dict) -> list[VariantOutcome]:
+        """Варианты после общего первого этапа (BUG-22, QA 14.11: три варианта по очереди шли 17 минут).
+
+        Варианты независимы: каждый строится по своей концепции и знает только концепции соседей, а не их
+        результат. Поэтому до `max_parallel_variants` вариантов создаются одновременно; к модели они идут
+        через общий предел `max_parallel_llm_requests`. Если модель недоступна или ключ не подходит
+        (`FATAL_MODEL_ERRORS`), остальные варианты не начинаются и останавливаются на следующем обращении
+        к модели - как раньше, когда после такой ошибки цикл по вариантам прерывался. Результат - в порядке
+        вариантов (v1, v2, v3), а не в порядке готовности.
+        """
+        workers = self._variant_workers(len(selected))
+        if workers == 1:
+            results = []
+            for concept in selected:
+                if self._fatal is not None:
+                    break
+                results.append(self._one_variant(n, concept, concepts, meta))
+        else:
+            with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="variant") as executor:
+                results = list(executor.map(lambda concept: self._one_variant(n, concept, concepts, meta), selected))
+        return [outcome for outcome in results if outcome is not None]
+
     def run(self, raw_request: dict[str, Any], *, job_id: str | None = None, project_id: str | None = None,
             context_mode: str = "full", cultural_context: bool = True, experiment_tag: str | None = None,
             experiment_pair_id: str | None = None) -> GenerationOutcome:
@@ -1023,24 +1339,7 @@ class Generator:
         else:
             concepts = concepts[: n.variants_count]
 
-        outcomes: list[VariantOutcome] = []
-        for concept in concepts[: n.variants_count]:
-            others = [c for c in concepts if c["variant_id"] != concept["variant_id"]]
-            try:
-                outcome = self.generate_variant(n, concept, others, meta)
-            except (StageFailed, LLMError) as exc:
-                outcome = VariantOutcome(concept["variant_id"], None, [], None, "failed", str(exc))
-                if isinstance(exc, LLMError) and exc.code in ("MODEL_UNAVAILABLE", "MODEL_AUTH_ERROR"):
-                    outcomes.append(outcome)
-                    self.trace.event("variant_failed", variant_id=concept["variant_id"], error=str(exc))
-                    break
-            outcomes.append(outcome)
-            if outcome.package:
-                self.trace.write_json(f"variants/{outcome.variant_id}/variant_package.json", outcome.package)
-            self.trace.write_json(f"variants/{outcome.variant_id}/validation.json",
-                                  {"status": outcome.status, "error": outcome.error, "issues": [i.to_dict() for i in outcome.issues]})
-            self.trace.event("variant_completed" if outcome.status == "completed" else "variant_failed",
-                             variant_id=outcome.variant_id, issues=len(outcome.issues))
+        outcomes = self._generate_variants(n, concepts[: n.variants_count], concepts, meta)
 
         model_key = getattr(self.client, "model_key", "unknown")
         project = render_project(job_id=job_id, project_id=project_id, n=n,

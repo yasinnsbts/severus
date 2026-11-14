@@ -13,7 +13,12 @@
     "llm_quality_review": false,
     "max_repair_attempts_per_stage": 2,
     "provider_retry_attempts": 2,
-    "provider_retry_backoff_seconds": [3, 10]
+    "provider_retry_backoff_seconds": [3, 10],
+    "rate_limit_retry_attempts": 7,
+    "rate_limit_backoff_seconds": [5, 10, 20, 40, 60, 60, 60],
+    "unavailable_retry_attempts": 4,
+    "unavailable_backoff_seconds": [3, 10, 20, 30],
+    "retry_jitter": 0.3
   },
   "script_length": {
     "base_chars": {
@@ -25,34 +30,45 @@
       "brief": 5,
       "standard": 12,
       "detailed": 20
-    }
+    },
+    "age_factor": {
+      "1-4": 0.7
+    },
+    "short_warning_ratio": 0.9
   },
   "audience_award_min_voters_warning": 6,
+  "reasoning_extra_output_tokens": 2000,
   "tasks": {
     "variation_plan": {
       "max_output_tokens": 3900,
       "max_output_tokens_per_variant": 1300,
-      "temperature_hint": 0.65
+      "temperature_hint": 0.65,
+      "reasoning_effort": null
     },
     "scenario_plan": {
       "max_output_tokens": 3500,
-      "temperature_hint": 0.4
+      "temperature_hint": 0.4,
+      "reasoning_effort": null
     },
     "scenario_blocks": {
       "max_output_tokens": 6000,
-      "temperature_hint": 0.45
+      "temperature_hint": 0.45,
+      "reasoning_effort": null
     },
     "scenario_block": {
       "max_output_tokens": 4500,
-      "temperature_hint": 0.45
+      "temperature_hint": 0.45,
+      "reasoning_effort": null
     },
     "materials": {
       "max_output_tokens": 4000,
-      "temperature_hint": 0.4
+      "temperature_hint": 0.4,
+      "reasoning_effort": null
     },
     "quality_review": {
       "max_output_tokens": 1800,
-      "temperature_hint": 0.1
+      "temperature_hint": 0.1,
+      "reasoning_effort": null
     }
   }
 }

@@ -1,0 +1,304 @@
+"""Ссылки на источники в тексте для педагога и учеников: убрать из текста, факт зарегистрировать.
+
+Модель иногда пишет ссылку на источник прямо в тексте материала, а `fact_claims` оставляет пустым
+(прогон 14.11, День Свердловской области, карточка для учеников):
+
+    2. 17 января 1934 года Уральская область была разделена на три области...
+    (fact_claims: src_sverdlovsk_oblast_day_regional_02/frag_sverdlov_002)
+
+Ученик такую строку видеть не должен, а факт при этом настоящий и проверенный. `move_source_refs`
+вырезает ссылку из текста. Если она ведёт на проверенный фрагмент события, фраза перед ссылкой
+записывается в `fact_claims` с этим источником: тогда источник попадает в список источников сценария,
+а проверка `FACT-UNREGISTERED` не срабатывает зря. Номер фрагмента сверяется точно; если модель
+ошиблась в номере (`frag_sverdlov_002` вместо `frag_sverdlovsk_002`), берётся единственный фрагмент
+этого источника. Фраза регистрируется, только если не добавляет к фрагменту своих дат, годов
+и документов. Ссылка на неизвестный источник или неподтверждённая фраза просто убирается из текста:
+факт остаётся незарегистрированным, и его увидят обычные проверки.
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+# «(fact_claims: src_x/frag_y)», «(источник: src_x)», «[src_x, frag_y]», «(src_x)», «(frag_y)».
+_REF = re.compile(
+    r"[ \t]*[(\[]\s*(?:(?:fact_claims?|fact_claim_id|источник\w*|source(?:_id)?|см\.?)\s*[:=\-]?\s*)?"
+    r"(?:(?P<src>src_[a-z0-9_]+)(?:\s*[/,;:]\s*(?:fragment_id\s*[:=]\s*)?(?P<frag>frag_[a-z0-9_]+))?"
+    r"|(?P<frag_only>frag_[a-z0-9_]+))\s*[)\]]",
+    re.I,
+)
+# Та же ссылка без скобок: «fact_claims: src_x/frag_y», «источник: src_x».
+_BARE_REF = re.compile(
+    r"[ \t]*(?:fact_claims?|источник\w*|source(?:_id)?)\s*[:=\-]\s*(?P<src>src_[a-z0-9_]+)"
+    r"(?:\s*[/,;:]\s*(?P<frag>frag_[a-z0-9_]+))?(?P<frag_only>)",
+    re.I,
+)
+_YEAR = re.compile(r"(?<![\d№])(1[0-9]{3}|20[0-9]{2})(?!\d)")
+_DATE = re.compile(r"\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\b", re.I)
+# Ссылка на нормативный документ: слово «указ / постановление / закон / приказ / распоряжение / декрет» вместе
+# с номером, датой, годом или тем, кто его издал. Просто «законы дружбы» или «по приказу капитана» - не документ.
+_DOC_WORD = re.compile(r"\b(указ|постановлени|закон(?!одат)|приказ|распоряжени|декрет)\w*")
+_DOC_SPECIFIC = re.compile(
+    # Номер документа - рядом со словом документа: «указ … № 1022-УГ». «Исторический факт №2: До указа…» - не номер указа.
+    r"\b(?:указ|постановлени|закон|приказ|распоряжени|декрет)\w*[^.!?\n]{0,80}?(?:№\s*\d|\bномер\w*\s+\d)|\bот\s+\d{1,2}\s+(?:январ|феврал|март|апрел|ма[яй]|июн|июл|август|сентябр|октябр|ноябр|декабр)"
+    r"|\b\d{4}\s*(?:г\b|г\.|год)"
+    r"|\b(?:губернатор|президент|правительств|министр|министерств|госдум|дум[аыуое]\b|законодательн|мэр|император|цар[ьяюе]\b)"
+    r"|\bглав\w*\s+(?:област|город|администрац)"
+    r"|\b(?:федеральн|областн|региональн)\w*\s+закон|\bзакон\w*\s+(?:свердловской|российской|рф\b)"
+)
+
+
+def document_mentions(text: str) -> list[tuple[str, str]]:
+    """Ссылки на нормативные документы в тексте: пары (фраза, основа слова «указ», «закон» и т. п.).
+
+    Текст приводится к нижнему регистру; фраза возвращается в исходном виде.
+    """
+    found = []
+    for sentence in re.findall(r"[^.!?\n]+[.!?]?", text):
+        low = sentence.lower()
+        word = _DOC_WORD.search(low)
+        if word and _DOC_SPECIFIC.search(low):
+            found.append((sentence.strip(), word.group(1)))
+    return found
+
+
+# Фрагмент подтверждает указ, если в нём сказано, что правитель постановил или повелел: «…постановил начать год
+# с 1 января 1700 года» подтверждает «Пётр I издал указ… с 1 января 1700 года».
+_DECREE_VERB = re.compile(r"постановил|повелел|велел|указал|издал|подписал|утвердил|учредил|установил")
+
+
+# Кто издал документ: если фраза его называет, он должен быть и в источнике. Тогда «указ губернатора»
+# подтверждается источником «Указ Губернатора Свердловской области № 1022-УГ», а «указ Президента» - нет.
+# Император и царь не проверяются: «Пётр I издал указ» подтверждает «Пётр I постановил…» без слова «царь».
+_ISSUER = re.compile(r"\b(губернатор|президент|правительств|министерств|министр|госдум|дум[аыуое]\b|законодательн|мэр"
+                     r"|администрац)")
+_DOC_NUMBER = re.compile(r"№\s*(\d+)")
+
+
+def document_confirmed(stem: str, source_text: str, sentence: str = "") -> bool:
+    """Документ (основа «указ», «закон»…) есть в тексте проверенных фрагментов и названиях их источников (нижний регистр).
+
+    Если передана фраза: названный в ней издатель («губернатор», «правительство») и номер («№ 1022-УГ») тоже должны
+    быть в этом тексте.
+    """
+    found = stem in source_text or (stem in ("указ", "постановлени", "распоряжени", "декрет") and bool(_DECREE_VERB.search(source_text)))
+    if not found or not sentence:
+        return found
+    low = sentence.lower()
+    if any(issuer.group(1)[:3 if issuer.group(1).startswith("дум") else None] not in source_text for issuer in _ISSUER.finditer(low)):
+        return False
+    # Номер - только после слова документа: «Исторический факт №1: Пётр I издал указ…» - номер пункта.
+    word = _DOC_WORD.search(low)
+    numbers = _DOC_NUMBER.findall(source_text)
+    return all(number in numbers for number in _DOC_NUMBER.findall(low[word.start():] if word else ""))
+
+
+def _supported(claim: str, fragment: dict[str, Any]) -> bool:
+    """Фраза не добавляет к фрагменту своих дат, годов и документов: только тогда её можно записать с этим источником.
+
+    «День образования области установлен указом губернатора…» со ссылкой на фрагмент «День образования
+    Свердловской области - 17 января» не регистрируется: указа во фрагменте нет.
+    """
+    source = str(fragment.get("quote") or fragment.get("text") or fragment.get("text_excerpt") or "").lower()
+    tokens = [m.group(0).lower() for m in list(_YEAR.finditer(claim)) + list(_DATE.finditer(claim))]
+    if any(token not in source for token in tokens):
+        return False
+    return all(document_confirmed(stem, source, sentence) for sentence, stem in document_mentions(claim))
+
+
+# Любая группа в скобках, где есть ID фрагмента или источника: «(frag_new_year_001, frag_new_year_005)»,
+# «(fragment_id: frag_new_year_001)», «[источники: frag_…; frag_…]» (замечание QA 14.11: ID в реплике блока).
+_ANY_ID = re.compile(r"\b(?:frag|src)_[a-z0-9_]+", re.I)
+_GROUP_WITH_ID = re.compile(r"[ \t]*[(\[](?P<inner>[^()\[\]\n]*?\b(?:frag|src)_[a-z0-9_]+[^()\[\]\n]*?)[)\]]", re.I)
+# Слова-подписи вокруг ID, которые без ID ничего не значат.
+_ID_LABELS = re.compile(r"fact_claims?|fragment_id|source_id|claim_id|источник\w*|фрагмент\w*|см\.?|согласно|по|и|and", re.I)
+# ID без скобок: «Согласно frag_new_year_001, …», «… (источник frag_x)» уже убраны группой.
+_BARE_ID = re.compile(r"(?:\b(?:согласно|по\s+данным|см\.?|источник\w*:?|фрагмент\w*:?)[ \t]+)?\b(?:frag|src)_[a-z0-9_]+(?:[ \t]*[,;][ \t]*\b(?:frag|src)_[a-z0-9_]+)*[,;:]?", re.I)
+_LIST_MARK = re.compile(r"^\s*(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
+_SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
+
+
+def _claim_before(text: str, start: int) -> str:
+    """Фраза перед ссылкой: предыдущее предложение в той же строке или предыдущая непустая строка."""
+    before = text[:start].rstrip()
+    line = before.rsplit("\n", 1)[-1].strip()
+    if not line:
+        lines = [x for x in before.split("\n") if x.strip()]
+        line = lines[-1].strip() if lines else ""
+    ends = [m.end() for m in _SENTENCE_END.finditer(line[:-1])]
+    sentence = line[ends[-1]:] if ends else line
+    return _LIST_MARK.sub("", sentence).strip()
+
+
+def _drop_refs(text: str, rx: re.Pattern[str], matches: list[re.Match[str]]) -> str:
+    """Вырезает найденные ссылки. Скобки, где есть смысл кроме ссылки, остаются без ID; после ссылки в начале
+    предложения («Согласно frag_x, Пётр…») первая буква становится заглавной."""
+    out, pos = [], 0
+    for match in matches:
+        out.append(text[pos:match.start()])
+        replacement = ""
+        if rx is _GROUP_WITH_ID:
+            rest = _ID_LABELS.sub("", _ANY_ID.sub("", match.group("inner")))
+            if len(re.sub(r"[\W\d_]+", "", rest)) >= 3:
+                inner = _BARE_ID.sub("", match.group("inner"))
+                inner = re.sub(r"[ \t]*[,;:][ \t]*$", "", re.sub(r"^[ \t]*[,;:][ \t]*", "", inner.strip()))
+                opening = match.group(0).lstrip()[0]
+                replacement = " " + opening + inner + (")" if opening == "(" else "]")
+        pos = match.end()
+        before = "".join(out).rstrip(" \t")
+        if not replacement and (not before or before[-1] in ".!?\n"):
+            following = text[pos:].lstrip(" \t,;:")
+            skipped = len(text) - pos - len(following)
+            if following[:1].islower():
+                out.append(replacement + " " * (1 if before else 0))
+                out.append(following[:1].upper())
+                pos += skipped + 1
+                continue
+        out.append(replacement)
+    out.append(text[pos:])
+    return "".join(out)
+
+
+def _claim_around(text: str, match: re.Match[str]) -> str:
+    """Фраза, внутри которой стоит ссылка без скобок: «Согласно frag_x, Пётр I постановил…» - предложение целиком без ссылки."""
+    start = max(text.rfind(ch, 0, match.start()) for ch in ".!?\n") + 1
+    ends = [i for i in (text.find(ch, match.end()) for ch in ".!?\n") if i != -1]
+    end = min(ends) + 1 if ends else len(text)
+    sentence = (text[start:match.start()] + text[match.end():end]).strip(" ,;:")
+    sentence = _LIST_MARK.sub("", sentence).strip()
+    return sentence[:1].upper() + sentence[1:]
+
+
+def _resolve(src: str | None, frag: str | None, fragments: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Проверенный фрагмент, на который ведёт ссылка, или None."""
+    by_id = {f["fragment_id"]: f for f in fragments}
+    if frag and frag in by_id and (not src or by_id[frag].get("source_id") == src):
+        return by_id[frag]
+    if src:
+        same_source = [f for f in fragments if f.get("source_id") == src]
+        if len(same_source) == 1:
+            return same_source[0]
+    return None
+
+
+def _tidy(text: str) -> str:
+    text = re.sub(r"[ \t]+([.,;:!?])", r"\1", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def move_source_refs(variant: dict[str, Any], fragments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Убирает ссылки на источники из текстов варианта и регистрирует подтверждённые факты (меняет вариант на месте).
+
+    Параметры:
+        variant: собранный вариант контракта 03;
+        fragments: проверенные фрагменты события (`Catalog.verified_fragments`).
+
+    Возвращает:
+        Список изменений для трассы: поле, найденные ссылки, номера зарегистрированных фактов.
+    """
+    changes: list[dict[str, Any]] = []
+    claims = variant.setdefault("fact_claims", [])
+    known = {(c.get("text") or "").strip().lower() for c in claims}
+
+    def fix(text: str, where: str, location: str) -> str:
+        refs: list[str] = []
+        registered: list[str] = []
+        # Сначала ссылки в скобках, потом без скобок: одна ссылка не считается дважды.
+        for rx in (_REF, _BARE_REF):
+            matches = list(rx.finditer(text))
+            for match in matches:
+                src, frag = match.group("src"), match.group("frag") or match.group("frag_only") or None
+                refs.append("/".join(x for x in (src, frag) if x))
+                fragment = _resolve(src, frag, fragments)
+                claim = _claim_before(text, match.start())
+                if fragment and claim and claim.lower() not in known and _supported(claim, fragment):
+                    claim_id = f"fc_{len(claims) + 1:02d}"
+                    claims.append({"claim_id": claim_id, "text": claim, "location": location,
+                                   "source_id": fragment["source_id"], "fragment_id": fragment["fragment_id"],
+                                   "needs_teacher_check": False})
+                    known.add(claim.lower())
+                    registered.append(claim_id)
+            if matches:
+                text = rx.sub("", text)
+        # Остальные формы: несколько ID в скобках, подпись «fragment_id:», ID без скобок.
+        for rx in (_GROUP_WITH_ID, _BARE_ID):
+            matches = list(rx.finditer(text))
+            if not matches:
+                continue
+            for match in matches:
+                ids = [m.group(0) for m in _ANY_ID.finditer(match.group(0))]
+                refs.append("/".join(ids))
+                claim = _claim_before(text, match.start()) if rx is _GROUP_WITH_ID else _claim_around(text, match)
+                for ref in ids:
+                    low = ref.lower()
+                    fragment = _resolve(low if low.startswith("src_") else None, low if low.startswith("frag_") else None, fragments)
+                    # Записывается только фраза с годом или датой: «Раздайте карточки (см. frag_x)» - не факт.
+                    has_date = bool(_YEAR.search(claim) or _DATE.search(claim))
+                    if fragment and claim and has_date and claim.lower() not in known and _supported(claim, fragment):
+                        claim_id = f"fc_{len(claims) + 1:02d}"
+                        claims.append({"claim_id": claim_id, "text": claim, "location": location,
+                                       "source_id": fragment["source_id"], "fragment_id": fragment["fragment_id"],
+                                       "needs_teacher_check": False})
+                        known.add(claim.lower())
+                        registered.append(claim_id)
+                        break
+            text = _drop_refs(text, rx, matches)
+        if not refs:
+            return text
+        changes.append({"field": where, "refs": refs, "registered": registered})
+        return _tidy(text)
+
+    for block in variant.get("timeline") or []:
+        bid = block.get("block_id", "")
+        if isinstance(block.get("teacher_script"), str):
+            block["teacher_script"] = fix(block["teacher_script"], f"timeline.{bid}.teacher_script", bid)
+        block["pupil_actions"] = [fix(a, f"timeline.{bid}.pupil_actions.{i}", bid) if isinstance(a, str) else a
+                                  for i, a in enumerate(block.get("pupil_actions") or [])]
+    for material in variant.get("materials") or []:
+        mid = material.get("material_id", "")
+        for key in ("content", "teacher_notes"):
+            if isinstance(material.get(key), str):
+                material[key] = fix(material[key], f"materials.{mid}.{key}", mid)
+    variant["teacher_instructions"] = [fix(x, f"teacher_instructions.{i}", "teacher_instructions") if isinstance(x, str) else x
+                                       for i, x in enumerate(variant.get("teacher_instructions") or [])]
+    return changes
+
+
+def register_fragment_facts(variant: dict[str, Any], fragments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Записывает в `fact_claims` фразы с годом или датой, которые подтверждает проверенный фрагмент события.
+
+    Модель берёт факт из справочного фрагмента («начать год с 1 января 1700 года»), но не записывает его
+    в `fact_claims`, и проверка `FACT-UNREGISTERED` срабатывает на проверенный факт (замечание QA 14.11).
+    Фраза записывается, только если все её годы и даты есть в одном фрагменте и она не добавляет к нему
+    документов (`_supported`). Дату самого события из карточки каталога проверка и так не считает фактом.
+
+    Возвращает:
+        Список изменений для трассы: место, фраза, фрагмент.
+    """
+    changes: list[dict[str, Any]] = []
+    if not fragments:
+        return changes
+    claims = variant.setdefault("fact_claims", [])
+    claimed = " ".join(str(c.get("text") or "") for c in claims).lower()
+    sources = [(f, str(f.get("quote") or f.get("text") or f.get("text_excerpt") or "").lower()) for f in fragments]
+    texts = [(b.get("block_id", ""), b.get("teacher_script") or "") for b in variant.get("timeline") or []]
+    texts += [(m.get("material_id", ""), m.get("content") or "") for m in variant.get("materials") or []]
+    for location, text in texts:
+        for sentence in re.findall(r"[^.!?\n]+[.!?]?", text):
+            tokens = [m.group(0).lower() for m in list(_YEAR.finditer(sentence)) + list(_DATE.finditer(sentence))]
+            if not tokens or all(token in claimed for token in tokens):
+                continue
+            claim = _LIST_MARK.sub("", sentence).strip()
+            fragment = next((f for f, source in sources if all(t in source for t in tokens) and _supported(claim, f)), None)
+            if not fragment:
+                continue
+            claim_id = f"fc_{len(claims) + 1:02d}"
+            claims.append({"claim_id": claim_id, "text": claim, "location": location, "source_id": fragment["source_id"],
+                           "fragment_id": fragment["fragment_id"], "needs_teacher_check": False})
+            claimed += " " + claim.lower()
+            changes.append({"location": location, "claim_id": claim_id, "fragment_id": fragment["fragment_id"], "text": claim[:120]})
+    return changes

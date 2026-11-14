@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v2",
+  "title": "Договор класса: наши права и обязанности",
+  "concept": {
+    "summary": "Дети разрабатывают собственный кодекс поведения, обсуждают взаимопомощь и гражданскую ответственность, принимают документ общим голосованием.",
+    "goal": "Формирование активной позиции учеников относительно своего поведения и взаимодействия в классе.",
+    "tasks": [
+      "Развитие навыков сотрудничества и принятия решений.",
+      "Осознание личной ответственности за атмосферу в классе."
+    ],
+    "expected_outcomes": [
+      "Принятый и подписанный всеми учащимися договор класса."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "class_collective_task",
+        "mechanic": "Каждый ученик участвует в создании общих правил, учитываются мнения всех.",
+        "block_ids": ["block_02"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "discussion",
+        "mechanic": "Обсуждаются гражданские права и обязанности, формируется понимание важности соблюдения правил сообщества.",
+        "block_ids": ["block_03"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 5,
+    "block_ids": ["block_02"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 27},
+    {"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "title": "Помощники педагога", "count": 4},
+    {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "title": "Зрители-голосующие", "count": 8}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и введение в тему",
+      "purpose": "Создать позитивный настрой, представить структуру занятия.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Групповая работа: создание пунктов кодекса",
+      "purpose": "Выработка предложений по правилам поведения в классе.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["worksheet", "paper", "markers"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Общие дебаты: обсуждение предложенных пунктов",
+      "purpose": "Выбор наиболее важных пунктов путём обсуждения.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["discussion_questions"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Голосование за лучший пункт",
+      "purpose": "Определение самого важного пункта кодекса с помощью родителей-зрителей.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["audience_ballot", "award_instruction"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Подписание договора и рефлексия",
+      "purpose": "Оформление и закрепление принятых решений, обратная связь.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["signed_agreement"]
+    }
+  ],
+  "planned_materials": [
+    {"material_id": "worksheet", "type": "worksheet", "title": "Листы для записей групп", "purpose": "Запись идей и предложений"},
+    {"material_id": "paper", "type": "props_checklist", "title": "Бумага для оформления договора", "purpose": "Для подписания итогового документа"},
+    {"material_id": "markers", "type": "props_checklist", "title": "Цветные маркеры", "purpose": "Для оформления листов и договора"},
+    {"material_id": "discussion_questions", "type": "discussion_questions", "title": "Вопросы для обсуждения", "purpose": "Структурированное обсуждение пунктов кодекса"},
+    {"material_id": "audience_ballot", "type": "audience_ballot", "title": "Бюллетени для голосования", "purpose": "Родители выбирают важный пункт"},
+    {"material_id": "award_instruction", "type": "award_instruction", "title": "Инструкция по вручению приза", "purpose": "Организованное награждение"},
+    {"material_id": "signed_agreement", "type": "handout", "title": "Копия подписанного договора", "purpose": "Итоговый документ для каждого участника"}
+  ]
+}

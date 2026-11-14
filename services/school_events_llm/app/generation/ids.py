@@ -151,6 +151,44 @@ def normalize_ids(stage: str, data: dict, changes: list[dict[str, Any]]) -> None
             _fix_key(voting, "block_id", block_id, "voting.block_id", changes)
 
 
+# Частые расходники и реквизит, которых нет в словаре зависимостей: в заметке педагогу - по-русски, а не ID
+# (замечание QA 14.11: «Также понадобится: colored_papers»).
+_THING_RU = {
+    "cardboard": "картон", "colored_cardboard": "цветной картон", "envelope": "конверты", "plasticine": "пластилин",
+    "clay": "глина", "paint": "краски", "paints": "краски", "watercolor": "акварель", "gouache": "гуашь", "brush": "кисти",
+    "ribbon": "ленты", "balloon": "воздушные шары", "thread": "нитки", "string": "верёвка", "rope": "верёвка",
+    "magnet": "магниты", "button": "пуговицы", "bead": "бусины", "fabric": "ткань", "cup": "стаканчики",
+    "plate": "тарелки", "napkin": "салфетки", "bag": "пакеты", "glove": "перчатки", "rake": "грабли",
+    "shovel": "лопаты", "seed": "семена", "pot": "горшки", "flower_pot": "цветочные горшки", "water": "вода",
+    "bucket": "вёдра", "sponge": "губки", "rag": "тряпки", "broom": "веники", "trash_bag": "мешки для мусора",
+    "garbage_bag": "мешки для мусора", "ball": "мяч", "basket": "корзина", "candle": "свечи", "badge": "значки",
+    "name_tag": "бейджи", "name_badge": "бейджи", "photo": "фотографии", "picture": "картинки", "image": "картинки",
+    "map": "карта", "globe": "глобус", "book": "книги", "dice": "кубики", "card": "карточки", "token": "жетоны",
+    "chip": "фишки", "medal": "медали", "certificate": "грамоты", "diploma": "грамоты", "prize": "призы",
+    "gift": "подарки", "speaker": "колонка", "laptop": "ноутбук", "microphone": "микрофон", "camera": "фотоаппарат",
+    "stapler": "степлер", "paper_clip": "скрепки", "pushpin": "кнопки", "pin": "булавки", "ruler": "линейки",
+    "eraser": "ластики", "sharpener": "точилки", "folder": "папки", "notebook": "тетради", "clipboard": "планшеты для записей",
+    "decoration": "украшения", "garland": "гирлянда", "costume": "костюмы", "hat": "шапки", "mask": "маски",
+}
+
+
+def _singular(key: str) -> str:
+    """«colored_papers» - «colored_paper», «boxes» - «box», «envelopes» - «envelope»."""
+    for suffix, repl in (("ies", "y"), ("ches", "ch"), ("shes", "sh"), ("xes", "x"), ("s", "")):
+        if key.endswith(suffix) and len(key) > len(suffix) + 2:
+            return key[: -len(suffix)] + repl
+    return key
+
+
+def _readable(raw: str) -> str:
+    """Название расходника для педагога: по-русски из `_THING_RU`, иначе без подчёркиваний и не как ID."""
+    key = slug_id(raw, "dep")
+    for candidate in (key, _singular(key)):
+        if candidate in _THING_RU:
+            return _THING_RU[candidate]
+    return raw.strip() if not re.fullmatch(r"[a-z0-9_]+", raw.strip()) else raw.strip().replace("_", " ")
+
+
 def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[dict[str, Any]]) -> None:
     """Оставляет в `materials[].dependencies` только ID из словаря зависимостей.
 
@@ -167,7 +205,10 @@ def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[d
             if not isinstance(raw, str) or not raw.strip():
                 continue
             key = slug_id(raw, "dep")
-            key = key if key in dependency_ids else DEPENDENCY_SYNONYMS.get(key, key)
+            for candidate in (key, _singular(key)):
+                if candidate in dependency_ids or candidate in DEPENDENCY_SYNONYMS:
+                    key = candidate if candidate in dependency_ids else DEPENDENCY_SYNONYMS[candidate]
+                    break
             if key in dependency_ids:
                 if key != raw:
                     changes.append({"kind": "dependency_fixed", "material_id": m.get("material_id"), "from": raw, "to": key})
@@ -178,7 +219,8 @@ def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[d
         m["dependencies"] = kept
         if unknown:
             changes.append({"kind": "dependency_moved_to_notes", "material_id": m.get("material_id"), "values": unknown})
-            note = "Также понадобится: " + ", ".join(unknown) + "."
+            names = list(dict.fromkeys(_readable(x) for x in unknown))
+            note = "Также понадобится: " + ", ".join(names) + "."
             notes = m.get("teacher_notes")
             m["teacher_notes"] = f"{notes.rstrip()} {note}" if isinstance(notes, str) and notes.strip() else note
 
@@ -189,22 +231,95 @@ NOT_FAMILY_TASK_TYPES = {"parent_instruction", "audience_ballot", "jury_scorecar
 
 
 # Английские ключи, которые модели пишут внутри содержания материала, - по-русски для педагога.
-_KEY_RU = {"question": "Вопрос", "answer": "Ответ", "answers": "Ответы", "correct_answer": "Правильный ответ",
-           "options": "Варианты", "title": "Название", "name": "Название", "description": "Описание",
-           "task": "Задание", "hint": "Подсказка", "example": "Пример", "text": "Текст", "role": "Роль"}
+# Пустая подпись - ключ ничего не говорит педагогу («side_a»), остаётся только значение.
+# Этим же словарём `humanize` переводит подписи «ключ:», которые модель пишет прямо в тексте.
+KEY_RU = {"question": "Вопрос", "answer": "Ответ", "answers": "Ответы", "correct_answer": "Правильный ответ",
+          "options": "Варианты", "title": "Название", "name": "Название", "description": "Описание",
+          "task": "Задание", "assignment": "Задание", "hint": "Подсказка", "example": "Пример", "text": "Текст",
+          "role": "Роль", "story": "История", "quality": "Качество", "qualities": "Качества", "theme": "Тема",
+          "topic": "Тема", "fact": "Факт", "facts": "Факты", "tradition": "Традиция", "traditions": "Традиции",
+          "country": "Страна", "date": "Дата", "place": "Место", "station": "Станция", "station_name": "Станция",
+          "criterion": "Критерий", "criteria": "Критерии", "points": "Баллы", "max_points": "Максимум баллов",
+          "score": "Баллы", "step": "Шаг", "goal": "Цель", "time": "Время", "duration": "Время",
+          "materials": "Материалы", "instruction": "Инструкция", "instructions": "Инструкция", "note": "Примечание",
+          "notes": "Примечание", "group": "Группа", "team": "Команда", "situation": "Ситуация", "problem": "Проблема",
+          "solution": "Решение", "side_a": "", "side_b": "", "side_1": "", "side_2": "", "front": "", "back": ""}
+# Ключ с именем героя или станции первым в пункте («hero_name: Анна Сергеевна») - заголовок пункта без подписи.
+_HEADING_KEY = re.compile(r"[a-z]+_name|hero|person|character")
+_LATIN_KEY = re.compile(r"[A-Za-z][A-Za-z0-9_]*")
+
+
+# Служебные ключи, которые модель кладёт внутрь содержания материала: в текст для педагога они не попадают
+# (замечание QA 14.11: «…1700 года.; fact_claims:; fragment_id: frag_new_year_001» в слайдах).
+_TECH_CONTENT_KEYS = {"fact_claims", "fact_claim", "fragment_id", "source_id", "claim_id", "material_id", "block_id",
+                      "needs_teacher_check"}
+_CLAIM_TEXT_KEYS_IN_CONTENT = ("text", "fact", "claim", "content", "description", "answer", "info")
+
+
+def pull_content_claims(value: Any) -> list[dict[str, Any]]:
+    """Достаёт факты, которые модель вложила в пункты содержания материала (меняет `value` на месте).
+
+    Пункт `{"title": "Указ Петра I", "text": "Пётр I издал указ… 1700 года.", "fact_claims": [{"source_id", "fragment_id"}]}`
+    даёт факт с текстом пункта и этим источником; служебные ключи из пункта убираются.
+
+    Возвращает:
+        Список фактов `{"text", "source_id", "fragment_id"}` (без `claim_id` и `location`).
+    """
+    claims: list[dict[str, Any]] = []
+    items = value if isinstance(value, list) else [value] if isinstance(value, dict) else []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        refs = item.pop("fact_claims", None) or item.pop("fact_claim", None)
+        own = {k: item.pop(k) for k in ("fragment_id", "source_id") if k in item}
+        refs = refs if isinstance(refs, list) else [refs] if isinstance(refs, dict) else []
+        if own:
+            refs.append(own)
+        text = next((str(item[k]).strip() for k in _CLAIM_TEXT_KEYS_IN_CONTENT if isinstance(item.get(k), str) and item[k].strip()), "")
+        for ref in refs:
+            if isinstance(ref, dict) and text and (ref.get("fragment_id") or ref.get("source_id")):
+                claims.append({"text": text, "source_id": ref.get("source_id"), "fragment_id": ref.get("fragment_id")})
+    return claims
 
 
 def content_to_text(value: Any) -> Any:
     """Текст материала, если модель вернула его списком или словарём, а не строкой.
 
     - Список строк -> нумерованный список (вопросы, пункты чек-листа).
-    - Список словарей -> нумерованные пункты «ключ: значение; …» (карточки станций, вопросы с ответами).
-    - Словарь -> строки «ключ: значение».
-    Строка возвращается без изменений.
+    - Список словарей -> нумерованные пункты «Подпись: значение; …» (карточки станций, вопросы с ответами).
+    - Словарь -> строки «Подпись: значение».
+    Подписи по-русски (`KEY_RU`); незнакомый английский ключ («qualities») не показывается, остаётся значение;
+    имя героя или станции первым в пункте («hero_name») - заголовок пункта без подписи (замечание к прогону 15.11:
+    «1. Анна Сергеевна; story: …; qualities: …» в карточках героев). Строка возвращается без изменений.
     """
+    def label(key: Any) -> str | None:
+        """Подпись ключа: русская, пустая (только значение) или сам ключ, если он написан по-русски."""
+        name = str(key).strip()
+        lower = name.lower()
+        if lower in KEY_RU:
+            return KEY_RU[lower]
+        return "" if _LATIN_KEY.fullmatch(name) else name
+
+    def join(parts: list[str]) -> str:
+        text = ""
+        for part in parts:
+            if text:
+                text += " " if text.rstrip().endswith((".", "!", "?", "\u2026")) else "; "
+            text += part
+        return text
+
     def item(v: Any) -> str:
         if isinstance(v, dict):
-            return "; ".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(x)}" for k, x in v.items() if x not in (None, "", []))
+            parts = []
+            for i, (k, x) in enumerate((k, x) for k, x in v.items()
+                                       if x not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS):
+                body = item(x)
+                if i == 0 and str(k).lower() not in KEY_RU and _HEADING_KEY.fullmatch(str(k).lower()):
+                    parts.append(body if body.endswith((".", "!", "?")) else body + ".")
+                    continue
+                title = label(k)
+                parts.append(f"{title}: {body}" if title else body)
+            return join(parts)
         if isinstance(v, list):
             return ", ".join(item(x) for x in v)
         return str(v).strip()
@@ -213,7 +328,13 @@ def content_to_text(value: Any) -> Any:
         lines = [item(v) for v in value if v not in (None, "", [], {})]
         return "\n".join(f"{i}. {line}" for i, line in enumerate(lines, 1))
     if isinstance(value, dict):
-        return "\n".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(v)}" for k, v in value.items() if v not in (None, "", []))
+        lines = []
+        for k, v in value.items():
+            if v in (None, "", []) or str(k).lower() in _TECH_CONTENT_KEYS:
+                continue
+            title = label(k)
+            lines.append(f"{title}: {item(v)}" if title else item(v))
+        return "\n".join(lines)
     return value
 
 
@@ -234,6 +355,10 @@ def normalize_material_fields(data: dict, changes: list[dict[str, Any]]) -> None
             m["family_task"] = False
             changes.append({"kind": "family_task_cleared", "material_id": m.get("material_id"), "type": m.get("type")})
         if isinstance(m.get("content"), (list, dict)):
+            pulled = pull_content_claims(m["content"])
+            if pulled:
+                data.setdefault("fact_claims", []).extend(dict(c, location=m.get("material_id") or "text") for c in pulled)
+                changes.append({"kind": "content_claims_pulled", "material_id": m.get("material_id"), "count": len(pulled)})
             m["content"] = content_to_text(m["content"])
             changes.append({"kind": "content_to_text", "material_id": m.get("material_id")})
         content = m.get("content")

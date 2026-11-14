@@ -25,6 +25,8 @@ class ReplayLLM(LLMClient):
 
     model_key = "replay_gigachat_2_max"
     provider = "replay"
+    # Ответы этапа выдаются по порядку вызовов, как при записи (варианты по очереди).
+    parallel_variants_safe = False
 
     def __init__(self, directory: Path):
         self.responses: dict[str, list[str]] = {}

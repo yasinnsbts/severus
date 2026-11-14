@@ -37,6 +37,15 @@ def compute_grouping(mode: str, total: int, groups_count: int, group_work: bool)
     return mode, split_even(total, groups_count), notes
 
 
+def plural(n: int, one: str, few: str, many: str) -> str:
+    """Форма слова после числа: 1 группа, 2 группы, 5 групп, 21 группа, 11 групп."""
+    if n % 10 == 1 and n % 100 != 11:
+        return one
+    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return few
+    return many
+
+
 def describe(sizes: list[int]) -> str:
     """Преобразует рассчитанные размеры групп в понятное текстовое описание.
 
@@ -50,5 +59,6 @@ def describe(sizes: list[int]) -> str:
         return f"весь класс ({sizes[0]})"
     if all(s == 2 for s in sizes[:-1]) and sizes[-1] in (2, 3) and len(sizes) > 2:
         tail = " и одна тройка" if sizes[-1] == 3 else ""
-        return f"{len(sizes) - (1 if sizes[-1] == 3 else 0)} пар{tail}"
-    return f"{len(sizes)} групп: " + ", ".join(str(s) for s in sizes)
+        pairs = len(sizes) - (1 if sizes[-1] == 3 else 0)
+        return f"{pairs} {plural(pairs, 'пара', 'пары', 'пар')}{tail}"
+    return f"{len(sizes)} {plural(len(sizes), 'группа', 'группы', 'групп')}: " + ", ".join(str(s) for s in sizes)

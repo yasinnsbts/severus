@@ -27,6 +27,8 @@ class FixtureLLM(LLMClient):
             raise ValueError("Нужен хотя бы один эталон")
         self.goldens = goldens
         self.broken = dict(broken or {})
+        # Битые ответы выдаются первым вызовам этапа: при параллельных вариантах неизвестно, какому варианту.
+        self.parallel_variants_safe = not self.broken
         self.model_key = model_key
         self.calls: list[dict[str, Any]] = []
 
