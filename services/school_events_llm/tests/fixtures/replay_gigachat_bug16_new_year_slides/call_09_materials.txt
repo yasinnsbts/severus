@@ -1,0 +1,85 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "materials",
+  "variant_id": "v1",
+  "materials": [
+    {
+      "material_id": "history_slides",
+      "type": "slide_outline",
+      "title": "Исторический обзор празднования Нового года",
+      "used_in_blocks": ["block_02"],
+      "audience": "teacher",
+      "content": [
+        {"title": "Начало реформы", "text": "До указа Петра I новый год начинался 1 сентября."},
+        {"title": "Указ Петра I", "text": "Пётр I издал указ отмечать начало нового года с 1 января 1700 года.", "fact_claims": [{"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_001"}]},
+        {"title": "Первые празднования", "text": "1 января духовенство, послы и бояре приходили на праздничный обед к царю.", "fact_claims": [{"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_002"}]},
+        {"title": "Народные поздравления", "text": "Вечером царь объезжал главные улицы города и лично поздравлял народ с Новым годом.", "fact_claims": [{"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_003"}]},
+        {"title": "Переход на европейское исчисление", "text": "Новый год стал отмечаться с 1 января, как во многих европейских странах.", "fact_claims": [{"source_id": "src_new_year_v19_02", "fragment_id": "frag_new_year_004"}]}
+      ],
+      "teacher_notes": "Используйте проектор для показа презентации. Комментируйте каждую страницу, задавайте детям вопросы для обсуждения.",
+      "print_required": false,
+      "dependencies": ["projector"],
+      "estimated_preparation_minutes": 10,
+      "family_task": false
+    },
+    {
+      "material_id": "calendar_template",
+      "type": "worksheet",
+      "title": "Шаблоны страниц календаря",
+      "used_in_blocks": ["block_04"],
+      "audience": "pupil",
+      "content": "Каждый лист формата A4 с напечатанной рамкой и заголовком \"Январь\", \"Февраль\" и т.д. Внутри рамки оставлено свободное место для рисунков и надписей. Листы нумеруются и имеют поля для скрепления в единый плакат.",
+      "teacher_notes": "Распечатайте необходимое количество листов (по количеству месяцев, желательно по 2 листа на группу). Подготовьте степлер или клей для последующего соединения листов в единый плакат.",
+      "print_required": true,
+      "dependencies": ["printer", "whatman"],
+      "estimated_preparation_minutes": 15,
+      "family_task": false
+    },
+    {
+      "material_id": "art_supplies",
+      "type": "props_checklist",
+      "title": "Материалы для творчества",
+      "used_in_blocks": ["block_04"],
+      "audience": "teacher",
+      "content": "Наборы маркеров, цветных карандашей, фломастеров, ножниц, клея, цветной бумаги и скотча для каждой группы.",
+      "teacher_notes": "Убедитесь, что у каждой группы есть одинаковый набор материалов. Расположите материалы на столе для удобного доступа.",
+      "print_required": false,
+      "dependencies": ["markers", "colored_pencils", "scissors", "glue", "tape"],
+      "estimated_preparation_minutes": 5,
+      "family_task": false
+    },
+    {
+      "material_id": "wishes_cards",
+      "type": "activity_card",
+      "title": "Карты для обмена пожеланиями",
+      "used_in_blocks": ["block_05"],
+      "audience": "pupil",
+      "content": "Карточки размером 10x15 см с надписью сверху: \"Я желаю ____________, чтобы в новом году _____________________.\"",
+      "teacher_notes": "Распечатайте достаточное количество карточек (по числу учеников + запасные). Подготовьте коробку или мешочек для сбора карточек.",
+      "print_required": true,
+      "dependencies": ["printer", "paper"],
+      "estimated_preparation_minutes": 10,
+      "family_task": false
+    }
+  ],
+  "teacher_instructions": [
+    "Перед началом распечатайте шаблоны страниц календаря и подготовьте материалы для творчества.",
+    "Организуйте пространство кабинета для удобной работы в семи группах по пять человек.",
+    "Проверьте работоспособность проектора и загрузите презентацию об истории Нового года.",
+    "Во время творческой части следите за равномерностью распределения времени между группами.",
+    "Если ученик не захочет делиться информацией о семье, предложите ему рассказать о школьной традиции или любимой книге.",
+    "После завершения творческой части соберите готовые страницы и соедините их в единый плакат.",
+    "По завершении мероприятия организуйте аккуратное хранение созданного календаря-плаката.",
+    "Оставшиеся материалы аккуратно уберите для повторного использования."
+  ],
+  "voting": null,
+  "teacher_fallback": null,
+  "fact_claims": [
+    {"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_001"},
+    {"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_002"},
+    {"source_id": "src_new_year_v19_01", "fragment_id": "frag_new_year_003"},
+    {"source_id": "src_new_year_v19_02", "fragment_id": "frag_new_year_004"}
+  ]
+}
+```

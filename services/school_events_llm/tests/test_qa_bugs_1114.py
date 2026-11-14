@@ -7,6 +7,7 @@
 - BUG-11: «1 сентября 2023 г.» в шаблоне письма; проверенный факт с годом без записи в `fact_claims`.
 """
 
+import json
 import unittest
 
 from app.generation.humanize import DATE_BLANK, blank_template_dates
@@ -14,7 +15,8 @@ from app.generation.ids import normalize_dependencies
 from app.generation.pipeline import prepare_stage_output
 from app.generation.plan_fixes import fix_plan_for_request
 from app.generation.source_refs import register_fragment_facts
-from tests.helpers import catalog
+from app.validation.inner_timing import inner_timing_problems
+from tests.helpers import ROOT, catalog
 from tests.test_gigachat_matrix_replays import replay
 
 
@@ -144,6 +146,56 @@ class FieldLabelsTest(unittest.TestCase):
         self.assertEqual(variant["materials"][0]["material_id"], "station_tasks")
 
 
+class Bug16ContentClaimsTest(unittest.TestCase):
+    """Второй баг-лист 14.11: «…1700 года.; fact_claims:; fragment_id: frag_new_year_001» в слайдах и карточках станций -
+    модель вложила fact_claims в пункты содержания материала, а программа склеила их в текст."""
+
+    def test_recorded_runs_clean(self):
+        for name, event_source in (("replay_gigachat_bug16_new_year_slides", "src_new_year_v19_01"),
+                                   ("replay_gigachat_bug16_sverdlovsk_cards", "src_sverdlovsk_oblast_day_regional_02")):
+            with self.subTest(name=name):
+                outcome, _ = replay(name)
+                variant = outcome.project["variants"][0]
+                self.assertNotIn("TECH-ID-IN-TEXT", {code for code, _ in issues(variant)})
+                text = " ".join(m["content"] + m["teacher_notes"] for m in variant["materials"])
+                for leftover in ("fact_claims", "fragment_id", "frag_", "src_"):
+                    self.assertNotIn(leftover, text)
+                self.assertIn(event_source, {s["source_id"] for s in variant["sources"]})
+
+    def test_claims_pulled_from_content_items(self):
+        from app.generation.ids import pull_content_claims, content_to_text
+        content = [{"title": "Указ Петра I", "text": "Пётр I издал указ… с 1 января 1700 года.",
+                    "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_x"}]}, {"title": "Без источника", "text": "Текст."}]
+        claims = pull_content_claims(content)
+        self.assertEqual(claims, [{"text": "Пётр I издал указ… с 1 января 1700 года.", "source_id": "src_x", "fragment_id": "frag_x"}])
+        self.assertEqual(content_to_text(content), "1. Название: Указ Петра I; Текст: Пётр I издал указ… с 1 января 1700 года.\n"
+                                                   "2. Название: Без источника; Текст: Текст.")
+
+
+class Bug18StationsTest(unittest.TestCase):
+    """BUG-18: станции по кругу. Команды работают одновременно, но каждая проходит все станции подряд."""
+
+    def check(self, case):
+        data = json.loads((ROOT / "tests" / "fixtures" / "qa_stations_blocks.json").read_text(encoding="utf-8"))[case]
+        following = data["next"]
+        return inner_timing_problems(data["block"], groups_count=data["groups"], pairs_count=0,
+                                     next_duration=following["duration_minutes"], next_title=following["title"],
+                                     next_text=" ".join([following["teacher_script"], *following["pupil_actions"]]))
+
+    def test_rotation_message(self):
+        """5 станций по 5 минут в 20-минутном этапе: круг 25 минут - сообщение о станциях, а не о выступлениях групп."""
+        self.assertEqual(self.check("bug18_five_stations_20min"),
+                         ["станции по кругу: каждая команда проходит 5 станций × 5 мин = 25 мин, а на блок 20 мин"])
+
+    def test_rotation_fits(self):
+        """«Квест из пяти станций», по 4 минуты, этап 20 минут - сходится."""
+        self.assertEqual(self.check("five_stations_4min_fits"), [])
+
+    def test_route_announced_for_next_blocks(self):
+        """Вводный этап объявляет маршрут («примерно десять минут на каждой станции»), а станции - следующие этапы."""
+        self.assertEqual(self.check("route_announced_next_blocks"), [])
+
+
 class MechanicNotAllowedTest(unittest.TestCase):
     def test_val004_fixed_by_program(self):
         """Прогон qa_check_1114b (r02 v2): «citizenship: механика joint_product не из допустимых» - ближайшая разрешённая."""
@@ -165,6 +217,12 @@ class Bug11DatesTest(unittest.TestCase):
         self.assertNotIn("2023", letter["content"])
         self.assertIn(DATE_BLANK, letter["content"])
         self.assertNotIn("FACT-UNREGISTERED", {code for code, _ in issues(v3)})
+
+    def test_certificate_year_blanked(self):
+        """Второй баг-лист 14.11: «___________ 2023 г.»» в сертификате для 2 класса."""
+        variant = {"materials": [{"material_id": "certificate", "content": 'Класс _______\n___________ 2023 г."\nМесто для подписи'}]}
+        blank_template_dates(variant)
+        self.assertEqual(variant["materials"][0]["content"], f'Класс _______\n{DATE_BLANK}"\nМесто для подписи')
 
     def test_only_date_lines_blanked(self):
         variant = {"materials": [{"material_id": "m", "content": "С уважением, Маша\n1 сентября 2023 г.\nДата: 01.09.2023\n"

@@ -306,12 +306,13 @@ def drop_meta_notes(variant: dict[str, Any]) -> list[dict[str, Any]]:
     return changes
 
 
-# Дата подписи в шаблоне письма или бланка отдельной строкой: «1 сентября 2023 г.», «Дата: 01.09.2023».
+# Дата подписи в шаблоне письма или бланка отдельной строкой: «1 сентября 2023 г.», «Дата: 01.09.2023»,
+# «___________ 2023 г.» в сертификате (прогон QA 14.11).
 # Это не факт, а место для даты, и год модель ставит неверный (прогон QA 14.11: 2023 вместо текущего года).
 _MONTHS = r"(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)"
 _DATE_LINE = re.compile(
-    r"^(?P<label>[ \t]*(?:дата|число)?[ \t]*:?[ \t]*)(?:«?\d{1,2}»?[ \t]+" + _MONTHS + r"|\d{1,2}\.\d{1,2}\.)[ \t]*(?:19|20)\d{2}"
-    r"[ \t]*(?:г\.?|года?)?[ \t]*$",
+    r"^(?P<label>[ \t]*(?:дата|число)?[ \t]*:?[ \t]*)(?:«?\d{1,2}»?[ \t]+" + _MONTHS + r"|\d{1,2}\.\d{1,2}\.|(?:«_+»[ \t]*)?_{3,})"
+    r"[ \t]*(?:19|20)\d{2}[ \t]*(?:г\.?|года?)?[ \t]*(?P<close>[\"»”]?)[ \t]*$",
     re.I | re.M,
 )
 DATE_BLANK = "«___» __________ 20__ г."
@@ -330,6 +331,6 @@ def blank_template_dates(variant: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         found = [m.group(0).strip() for m in _DATE_LINE.finditer(content)]
         if found:
-            material["content"] = _DATE_LINE.sub(lambda m: m.group("label") + DATE_BLANK, content)
+            material["content"] = _DATE_LINE.sub(lambda m: m.group("label") + DATE_BLANK + m.group("close"), content)
             changes.append({"field": f"materials.{material.get('material_id')}.content", "dates": found})
     return changes
