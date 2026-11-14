@@ -1,0 +1,128 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Новогодний калейдоскоп традиций",
+  "concept": {
+    "summary": "На занятии учащиеся познакомятся с историей празднования Нового года, создадут личные листы желаний, составят коллективный календарь и оформят класс к празднику.",
+    "goal": "Формирование представлений о праздновании Нового года как культурной традиции, развитие творческих способностей и сплочённости класса.",
+    "tasks": [
+      "Познакомить учащихся с историческим аспектом праздника",
+      "Организовать индивидуальную и коллективную творческую деятельность",
+      "Сплотить класс через совместное создание праздничной атмосферы"
+    ],
+    "expected_outcomes": [
+      "Создан коллективный календарь желаний",
+      "Оформлен класс к Новому году",
+      "Расширены знания учащихся о культурных традициях"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "family",
+        "mechanic_type": "family_research",
+        "mechanic": "Обсуждение семейных традиций встречи Нового года",
+        "block_ids": ["block_01"]
+      },
+      {
+        "value_id": "labour_creation",
+        "mechanic_type": "joint_product",
+        "mechanic": "Создание коллективного календаря желаний и украшение класса",
+        "block_ids": ["block_04", "block_05"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "whole_class",
+    "groups_count": 1,
+    "block_ids": ["block_01", "block_02", "block_03", "block_04", "block_05", "block_06"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 35}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Встречаем Новый год!",
+      "purpose": "Приветствие, знакомство с темой занятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Историческая страничка",
+      "purpose": "Знакомство с историческими фактами празднования Нового года",
+      "proposed_minutes": 7,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["historical_facts_sheet"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Семейные традиции",
+      "purpose": "Обсуждение семейных способов встречи Нового года",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["family_traditions_handout"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Личный лист желаний",
+      "purpose": "Индивидуальное заполнение листов желаний",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["wish_list_template"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Коллективный календарь",
+      "purpose": "Создание общего календаря желаний",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["calendar_base"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Украшаем наш класс",
+      "purpose": "Совместное оформление класса к празднику",
+      "proposed_minutes": 8,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["decoration_kit"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "historical_facts_sheet",
+      "type": "worksheet",
+      "title": "Лист исторических фактов",
+      "purpose": "Для ознакомления с историей празднования Нового года"
+    },
+    {
+      "material_id": "family_traditions_handout",
+      "type": "handout",
+      "title": "Бланк исследования семейных традиций (по желанию)",
+      "purpose": "Для домашнего изучения семейных традиций",
+      "family_task": true
+    },
+    {
+      "material_id": "wish_list_template",
+      "type": "activity_card",
+      "title": "Шаблоны листов желаний",
+      "purpose": "Для индивидуального заполнения каждым учеником"
+    },
+    {
+      "material_id": "calendar_base",
+      "type": "props_checklist",
+      "title": "Основа для создания календаря",
+      "purpose": "Для объединения индивидуальных листов в общий календарь"
+    },
+    {
+      "material_id": "decoration_kit",
+      "type": "props_checklist",
+      "title": "Набор для украшения класса",
+      "purpose": "Для совместного оформления помещения"
+    }
+  ]
+}
+```

@@ -1,0 +1,102 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v2",
+  "title": "Моя дорога к успеху",
+  "concept": {
+    "summary": "Каждый ученик создаёт личную карту целей на новый учебный год, обсуждая и поддерживая идеи друг друга в парах, затем вместе формируют коллективное дерево целей класса.",
+    "goal": "Формирование индивидуальных и общих целей на учебный год через индивидуальную работу, взаимоподдержку и создание совместного продукта.",
+    "tasks": [
+      "Развитие навыков постановки целей и планирования",
+      "Организация взаимопомощи и сотрудничества среди одноклассников",
+      "Формирование чувства ответственности за достижение поставленных целей"
+    ],
+    "expected_outcomes": [
+      "Личные карты целей учащихся",
+      "Коллективное дерево целей класса, отражающее общие стремления",
+      "Установление атмосферы доверия и поддержки в классе"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "pair_task",
+        "mechanic": "Дети помогают друг другу в парах уточнить и развить личные образовательные цели",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "joint_product",
+        "mechanic": "Совместное создание визуального дерева целей класса, символизирующего общеклассную ответственность и поддержку",
+        "block_ids": ["block_04"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "pairs",
+    "groups_count": 14,
+    "block_ids": ["block_03"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 27},
+    {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "title": "Родители-зрители", "count": 12}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Доброе утро, ребята!",
+      "purpose": "Приветствие, введение в тему дня знаний, объяснение структуры мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Карта моей мечты",
+      "purpose": "Индивидуальное составление карт личных образовательных целей",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["worksheet"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Помоги мне достичь вершины!",
+      "purpose": "Парная работа: обсуждение и уточнение целей, взаимная поддержка",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_04",
+      "title": "Наше дерево успеха",
+      "purpose": "Создание общего визуального дерева целей класса",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["tree_template"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Подводим итоги пути",
+      "purpose": "Рефлексия опыта, демонстрация готового дерева целей классу и зрителям",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["tree_template"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "worksheet",
+      "type": "worksheet",
+      "title": "Бланк для создания карты целей",
+      "purpose": "Для индивидуального составления учениками своих целей"
+    },
+    {
+      "material_id": "tree_template",
+      "type": "props_checklist",
+      "title": "Большой лист бумаги или ватман для создания дерева целей",
+      "purpose": "Для коллективного оформления общей цели класса"
+    }
+  ]
+}
+```

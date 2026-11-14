@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Новогодний калейдоскоп традиций",
+      "summary": "Участники знакомятся с традициями встречи Нового года, создают коллективный календарь желаний и планируют новогоднее украшение класса.",
+      "narrative_approach": "Мероприятие начинается с обсуждения понятия «Новый год» и знакомства с историческими фактами. Затем ребята работают индивидуально и парами над созданием личного листа желаний, объединяя их в общий календарь. Завершается занятие совместной творческой деятельностью по украшению класса.",
+      "primary_mechanic": "creative_workshop",
+      "engagement_mode": "mixed",
+      "planed_structure": [
+        {
+          "order": 1,
+          "title": "Встречаем Новый год!",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Историческая страничка",
+          "activity_type": "source_work",
+          "approx_minutes": 7
+        },
+        {
+          "order": 3,
+          "title": "Личный лист желаний",
+          "activity_type": "individual_task",
+          "approx_minutes": 10
+        },
+        {
+          "order": 4,
+          "title": "Коллективный календарь",
+          "activity_type": "joint_product",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "Украшаем наш класс",
+          "activity_type": "team_task",
+          "approx_minutes": 10
+        },
+        {
+          "order": 6,
+          "title": "Подводим итоги",
+          "activity_type": "reflection",
+          "approx_minutes": 3
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "individual_task",
+          "description": "Каждый участник заполняет свой лист желаний"
+        },
+        {
+          "activity_type": "joint_product",
+          "description": "Создание общего календаря желаний"
+        },
+        {
+          "activity_type": "team_task",
+          "description": "Совместное оформление класса"
+        }
+      ],
+      "distinctive_result": "Создан коллективный календарь желаний и украшенный класс",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "family",
+          "mechanic_type": "family_research",
+          "mechanic": "Участникам предлагается вспомнить семейные новогодние традиции и поделиться ими в общей беседе."
+        },
+        {
+          "value_id": "labour_creation",
+          "mechanic_type": "joint_product",
+          "mechanic": "Ребята совместно создают календарь желаний и украшают класс."
+        }
+      ]
+    }
+  ]
+}

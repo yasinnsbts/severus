@@ -1,0 +1,39 @@
+{
+  "event_id": "new_year",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "grade": null,
+  "pupils_count": 35,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none",
+    "parent_notes": null
+  },
+  "resources": {
+    "projector": null,
+    "printer": null,
+    "internet": null,
+    "audio": null,
+    "room": null,
+    "available_materials": [],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "classic",
+    "script_detail": "standard",
+    "difficulty": "standard",
+    "interaction_level": "low",
+    "group_work": false,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

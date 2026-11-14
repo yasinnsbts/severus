@@ -30,7 +30,9 @@ from ..trace import RunTrace
 from ..usage import TokenTally
 from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
-from .humanize import humanize_variant
+from .humanize import blank_template_dates, drop_meta_notes, humanize_variant
+from .plan_fixes import fallback_material, fix_parent_role_counts, fix_plan_for_request, fix_type_by_id
+from .source_refs import move_source_refs, register_fragment_facts
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
@@ -248,15 +250,20 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]],
 _CLAIM_TEXT_KEYS = ("claim", "statement", "fact", "claim_text", "text_claim")
 
 
-def _fix_fact_claims(data: Any, changes: list[dict[str, Any]]) -> None:
+def _fix_fact_claims(data: Any, changes: list[dict[str, Any]], fragment_texts: dict[str, str] | None = None) -> None:
     """Факт без обязательных полей: `{"claim": "...", "source_id", "fragment_id"}` вместо `{"claim_id", "text", "location"}`.
 
     Текст берётся из `claim` и подобных ключей, `claim_id` и `location` ставятся по умолчанию
     (программа всё равно перенумеровывает факты при сборке варианта). Источник не придумывается.
+
+    Факт совсем без текста, только `{"source_id", "fragment_id"}` (прогон 14.11, День народов Среднего Урала):
+    если фрагмент проверенный (`fragment_texts`), текстом становится его цитата; иначе факт выбрасывается -
+    без текста и без источника он ничего не утверждает. Раньше такой ответ уходил на повторный вызов модели.
     """
     if not isinstance(data, dict) or not isinstance(data.get("fact_claims"), list):
         return
     block = data.get("block") if isinstance(data.get("block"), dict) else {}
+    dropped: list[int] = []
     for index, claim in enumerate(data["fact_claims"], 1):
         if not isinstance(claim, dict):
             continue
@@ -266,6 +273,12 @@ def _fix_fact_claims(data: Any, changes: list[dict[str, Any]]) -> None:
             if key:
                 claim["text"] = claim.pop(key).strip()
                 fixed.append("text")
+            elif fragment_texts is not None and fragment_texts.get(str(claim.get("fragment_id"))):
+                claim["text"] = fragment_texts[str(claim["fragment_id"])]
+                fixed.append("text_from_fragment")
+            elif fragment_texts is not None:
+                dropped.append(index - 1)
+                continue
         if not claim.get("claim_id"):
             claim["claim_id"] = f"fc_{index:02d}"
             fixed.append("claim_id")
@@ -274,6 +287,9 @@ def _fix_fact_claims(data: Any, changes: list[dict[str, Any]]) -> None:
             fixed.append("location")
         if fixed:
             changes.append({"kind": "fact_claim_fields", "index": index - 1, "fields": fixed})
+    if dropped:
+        data["fact_claims"] = [c for i, c in enumerate(data["fact_claims"]) if i not in dropped]
+        changes.append({"kind": "fact_claims_dropped", "indexes": dropped, "reason": "нет текста и проверенного фрагмента"})
 
 
 FAMILY_TASK_MARK = "(по желанию, до мероприятия)"
@@ -323,12 +339,15 @@ def fix_family_tasks(materials: list[dict[str, Any]], values: list[str]) -> list
 
 def prepare_stage_output(stage: str, data: Any, resources: set[str],
                          dependency_ids: set[str] | None = None,
-                         mechanics_by_value: dict[str, list[str]] | None = None) -> list[dict[str, Any]]:
+                         mechanics_by_value: dict[str, list[str]] | None = None,
+                         fragment_texts: dict[str, str] | None = None) -> list[dict[str, Any]]:
     """Исправляет до проверки схемы ошибки ответа, которые однозначно понятны программе.
 
     - План: материалы с ID ресурса (`paper`, `markers`) убираются из `planned_materials` и из блоков.
     - Материалы: такие же материалы убираются; адресат вида `parent_audience` приводится к `parent`.
     - Концепции и план: механика ценности не из списка - разрешённая каталогом для этой ценности (`_fix_mechanic`).
+    - План и материалы: тип по `material_id` для листа жюри, бюллетеня, памяток (`plan_fixes.fix_type_by_id`);
+      число в роли родителей не меньше 1.
     - Все этапы: `material_id`, `role_id` и ссылки на них - к виду `^[a-z][a-z0-9_]*$`, ID блоков - к `block_NN`
       (`ids.normalize_ids`); зависимости материалов - только из словаря (`ids.normalize_dependencies`).
     Всё остальное проверяет схема, и при ошибке модель исправляет ответ сама.
@@ -336,7 +355,9 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
     Параметры:
         stage: этап; data: разобранный JSON ответа (меняется на месте); resources: см. `resource_ids`;
         dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать);
-        mechanics_by_value: разрешённые механики ценностей из каталога (None - замена `discussion`).
+        mechanics_by_value: разрешённые механики ценностей из каталога (None - замена `discussion`);
+        fragment_texts: цитаты проверенных фрагментов события по `fragment_id` для фактов без текста
+        (None - такие факты не трогать).
 
     Возвращает:
         Список исправлений для трассы.
@@ -346,11 +367,17 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
         return changes
     _fix_enums(data, stage, changes, mechanics_by_value)
     normalize_ids(stage, data, changes)
+    # Тип материала по material_id («jury_scorecard» с типом «quiz»), число в роли родителей не меньше 1.
+    if stage == "scenario_plan":
+        fix_type_by_id(data.get("planned_materials"), "planned_materials", "type", changes)
+        fix_parent_role_counts(data.get("roles"), changes)
+    if stage == "materials":
+        fix_type_by_id(data.get("materials"), "materials", "type", changes)
     if stage == "materials":
         normalize_material_fields(data, changes)
         if dependency_ids is not None:
             normalize_dependencies(data, dependency_ids, changes)
-    _fix_fact_claims(data, changes)
+    _fix_fact_claims(data, changes, fragment_texts)
     grouping = data.get("grouping_request") if stage == "scenario_plan" else None
     if isinstance(grouping, dict) and grouping.get("groups_count") in (None, "", 0):
         grouping["groups_count"] = 1  # программа сама считает группы (`compute_grouping`)
@@ -604,7 +631,9 @@ class Generator:
                 raw = result.text
                 data = extract_json(raw)
                 mechanics = {vid: list(value.get("allowed_mechanic_types") or []) for vid, value in self.catalog.values.items()}
-                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies), mechanics)
+                quotes = {f["fragment_id"]: str(f.get("quote") or f.get("text") or f.get("text_excerpt") or "").strip()
+                          for f in self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)}
+                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies), mechanics, quotes)
                 if fixes:
                     self.trace.event("stage_output_fixed", call_id=call_id, stage=stage, variant_id=variant_id, fixes=fixes)
                 parsed_obj = model_cls.model_validate(data)
@@ -878,6 +907,10 @@ class Generator:
             roles_added = complete_block_roles(plan)
             if roles_added:
                 self.trace.event("block_roles_completed", variant_id=vid, added=roles_added)
+            # Число родителей по ролям и обязательные материалы для их ролей - программой, без повторного вызова.
+            plan_fixes = fix_plan_for_request(plan, n.parents_enabled, n.parents_count, n.parent_audience_engagement)
+            if plan_fixes and blocks_res is None:
+                self.trace.event("plan_fixed", variant_id=vid, fixes=plan_fixes)
             minutes = normalize_minutes([b["proposed_minutes"] for b in plan["blocks"]], n.duration_minutes, min_block)
             grid = build_grid(minutes)
             g_mode, sizes, g_notes = compute_grouping(plan["grouping_request"]["mode"], n.pupils_count,
@@ -949,6 +982,13 @@ class Generator:
             ref_fixes = fix_material_refs(mat, timeline)
             if ref_fixes:
                 self.trace.event("material_refs_fixed", variant_id=vid, fixes=ref_fixes)
+            # Обязательный материал, который добавила в план программа, а этап материалов не написал: простая версия.
+            have = {m.material_id for m in mat.materials}
+            for fix in plan_fixes:
+                if fix["kind"] == "required_material_added" and fix["material_id"] not in have:
+                    title = next(m["title"] for m in plan["planned_materials"] if m["material_id"] == fix["material_id"])
+                    mat.materials.append(c03.Material.model_validate(fallback_material(fix["type"], fix["material_id"], title, plan, timeline)))
+                    self.trace.event("required_material_fallback", variant_id=vid, material_id=fix["material_id"], type=fix["type"])
             # Блок ссылается на материал, если материал указан для этого блока.
             created = {m.material_id for m in mat.materials}
             for b in timeline:
@@ -983,6 +1023,23 @@ class Generator:
                 family_fixes = fix_family_tasks(body["materials"], n.values)
                 if family_fixes:
                     self.trace.event("family_task_fixed", variant_id=vid, fixes=family_fixes)
+                # Ссылки на источники в тексте («(fact_claims: src_x/frag_y)») убираются, подтверждённые факты регистрируются.
+                fragments = self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)
+                refs = move_source_refs(body, fragments)
+                if refs:
+                    self.trace.event("source_refs_moved", variant_id=vid, fields=refs[:30])
+                # Год или дата из проверенного фрагмента, не записанные моделью в fact_claims, записываются программой.
+                registered = register_fragment_facts(body, fragments)
+                if registered:
+                    self.trace.event("fragment_facts_registered", variant_id=vid, facts=registered[:30])
+                # Дата подписи в шаблоне письма - пустое место для даты, а не факт.
+                dates = blank_template_dates(body)
+                if dates:
+                    self.trace.event("template_dates_blanked", variant_id=vid, fields=dates)
+                # Фразы о самом сценарии («объём текста… около 780 символов») из реплик убираются.
+                meta = drop_meta_notes(body)
+                if meta:
+                    self.trace.event("meta_text_removed", variant_id=vid, fields=meta[:30])
                 # Технические ID в тексте для педагога заменяются названиями материалов и этапов.
                 tech = humanize_variant(body, self.catalog.dependencies, plan.get("planned_materials"))
                 if tech:

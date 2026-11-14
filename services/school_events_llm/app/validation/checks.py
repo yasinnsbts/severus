@@ -13,6 +13,7 @@ from typing import Any
 
 from ..catalog import Catalog
 from ..generation.humanize import leftover_ids
+from ..generation.source_refs import document_confirmed, document_mentions
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
 from ..script_length import script_min_chars
@@ -121,6 +122,19 @@ _COUNTRY_HEAD = re.compile(r"^(?:\d{1,2}[.)]\s*|[-\u2013\u2014\u2022]\s*)?(?P<co
 _LIST_ITEM = re.compile(r"^(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
 
 
+# Задание для поиска и открытый вопрос - не утверждение: «Изучите, как итальянцы отмечают Рождество»,
+# «Какой ужин готовят итальянцы?». Вопрос «Почему в Италии популярны вертепы?» подаёт факт как готовый - остаётся.
+_RESEARCH_TASK = re.compile(
+    r"^(?:изучи|узна|исследу|найди|выясни|спроси|подумай|обсуди|сравни|опиши|нарисуй|расскажи|подготовь|запиши|прочитай|посмотри)\w*\b"
+)
+_OPEN_QUESTION = re.compile(r"^(?:как|какой|какая|какое|какие|каким|какую|когда|что|где|кто|чем|сколько|зачем|ли)\b[^?]*\?\s*$")
+
+
+def _is_claim(sentence: str) -> bool:
+    """Предложение утверждает, а не даёт задание и не спрашивает (текст в нижнем регистре, без маркера списка)."""
+    return not (_RESEARCH_TASK.match(sentence) or _OPEN_QUESTION.match(sentence))
+
+
 def _places(lowered: str) -> set[str]:
     """Ключи стран и народов, о которых говорит фраза (текст уже в нижнем регистре)."""
     return {key for key, pattern in _PLACE_PATTERNS.items() if pattern.search(lowered)}
@@ -157,11 +171,11 @@ def _culture_claims(text: str) -> list[tuple[str, set[str]]]:
             head = ""
         for sentence in _SENTENCE.findall(plain):
             low = sentence.lower()
-            if not _TRADITION_CLAIM.search(low):
+            if not _TRADITION_CLAIM.search(low) or not _is_claim(_LIST_ITEM.sub("", low.strip())):
                 continue
             places = _places(low)
             if places:
-                found.append((sentence.strip(), places))
+                found.append((_LIST_ITEM.sub("", sentence.strip()), places))
             elif head:
                 found.append((f"{head_title}: {_LIST_ITEM.sub('', sentence.strip())}", {head}))
     return found
@@ -411,7 +425,8 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     for index, b in enumerate(timeline):
         following = timeline[index + 1] if index + 1 < len(timeline) else {}
         for problem in inner_timing_problems(b, groups_count=groups_count, pairs_count=pairs_count,
-                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", "")):
+                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", ""),
+                                             next_text=" ".join([following.get("teacher_script", ""), *(following.get("pupil_actions") or [])])):
             add("INNER-TIMING", "warning", f"timeline.{b['block_id']}", f"Время внутри этапа не сходится: {problem}", "blocks", repairable=False)
 
     # Технические обозначения в тексте для педагога (после замены известных ID на названия).
@@ -477,6 +492,16 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
             quote = quote if len(quote) <= 110 else quote[:107] + "..."
             add("CULTURE-UNSOURCED", "warning", loc,
                 f"Сведения о традициях страны или народа без проверенного источника: «{quote}»", "blocks", repairable=False)
+            break
+
+    # Ссылки на указы, законы и постановления, которых нет в проверенных фрагментах: модель придумывает
+    # «указ губернатора №1022-УГ», а для учеников это выглядит как официальный факт.
+    for loc, text in texts:
+        for sentence, stem in document_mentions(text):
+            if document_confirmed(stem, sources_text):
+                continue
+            quote = sentence if len(sentence) <= 110 else sentence[:107] + "..."
+            add("DOC-UNSOURCED", "warning", loc, f"Ссылка на документ без проверенного источника: «{quote}»", "blocks", repairable=False)
             break
 
     # Воспитательная задача из карточки с годом или веком («Знакомство с событиями 1612 года»): если этот год

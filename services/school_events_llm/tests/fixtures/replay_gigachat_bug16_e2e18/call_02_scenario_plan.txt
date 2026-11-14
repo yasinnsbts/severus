@@ -1,0 +1,98 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Символы моей малой родины",
+  "concept": {
+    "summary": "Ученики знакомятся с историей и символикой родного региона через создание коллективного плаката.",
+    "goal": "Формирование интереса к истории и символике своей малой родины",
+    "tasks": [
+      "Знакомство с историей и символами Свердловской области",
+      "Развитие навыков совместной творческой деятельности"
+    ],
+    "expected_outcomes": [
+      "Созданный учащимися коллективный плакат с символами Свердловской области"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "historical_memory",
+        "mechanic_type": "source_work",
+        "mechanic": "Изучение официальных документов о дне рождения области",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "class_collective_task",
+        "mechanic": "Совместное создание плаката с символами области",
+        "block_ids": ["block_04"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "whole_class",
+    "groups_count": 1,
+    "block_ids": ["block_04"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 18}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вводное слово",
+      "purpose": "Настроить детей на позитивный лад и ввести в тему занятия",
+      "proposed_minutes": 3,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Что такое малая родина?",
+      "purpose": "Обсудить понятие малой родины и почему важно знать историю своего региона",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_03",
+      "title": "История нашего региона",
+      "purpose": "Познакомиться с официальной информацией о Дне образования Свердловской области",
+      "proposed_minutes": 7,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["official_documents"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Создание коллективного плаката",
+      "purpose": "Совместно создать плакат с символами Свердловской области",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["poster_materials"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Подведение итогов",
+      "purpose": "Оценить результаты работы и обсудить впечатления",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "official_documents",
+      "type": "handout",
+      "title": "Официальные документы о Дне образования Свердловской области",
+      "purpose": "Используются для изучения исторической информации"
+    },
+    {
+      "material_id": "poster_materials",
+      "type": "props_checklist",
+      "title": "Материалы для создания плаката",
+      "purpose": "Необходимы для реализации творческого проекта"
+    }
+  ]
+}
+```

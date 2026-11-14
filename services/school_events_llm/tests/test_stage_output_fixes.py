@@ -125,6 +125,36 @@ class MechanicFallbackTest(unittest.TestCase):
         self.assertNotIn("enum_fallback", {f["kind"] for f in fixes})
 
 
+class FactClaimsWithoutTextTest(unittest.TestCase):
+    """Прогон 14.11 (День народов Среднего Урала): факты в материалах только с `source_id` и `fragment_id`, без текста -
+    ответ уходил на повторный вызов модели."""
+
+    def quotes(self):
+        return {f["fragment_id"]: f.get("quote", "") for f in catalog().verified_fragments("middle_urals_peoples_day", "RU-SVE")}
+
+    def test_recorded_answer_passes_schema(self):
+        raw = (ROOT / "tests" / "fixtures" / "replay_gigachat_q10_fact_claims" / "materials.raw.txt").read_text(encoding="utf-8")
+        data = extract_json(raw)
+        fixes = prepare_stage_output("materials", data, set(), set(catalog().dependencies), None, self.quotes())
+        c03.STAGE_MODELS["materials"].model_validate(data)
+        self.assertEqual([c["text"] for c in data["fact_claims"]], [self.quotes()[c["fragment_id"]] for c in data["fact_claims"]])
+        self.assertEqual(sum("text_from_fragment" in f.get("fields", []) for f in fixes), 2)
+
+    def test_unknown_fragment_dropped(self):
+        data = {"materials": [], "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_unknown"},
+                                                 {"text": "Праздник отмечают в сентябре.", "fragment_id": "frag_unknown"}]}
+        fixes = prepare_stage_output("materials", data, set(), None, None, self.quotes())
+        self.assertEqual([c["text"] for c in data["fact_claims"]], ["Праздник отмечают в сентябре."])
+        self.assertIn("fact_claims_dropped", {f["kind"] for f in fixes})
+
+    def test_without_fragments_map_unchanged(self):
+        """Без цитат фрагментов (старый вызов) факт без текста не трогается: его увидит проверка схемы."""
+        data = {"materials": [], "fact_claims": [{"source_id": "src_x", "fragment_id": "frag_x"}]}
+        prepare_stage_output("materials", data, set())
+        self.assertNotIn("text", data["fact_claims"][0])
+        self.assertEqual(len(data["fact_claims"]), 1)
+
+
 class CliStageFailedTest(unittest.TestCase):
     def test_stage_failure_is_reported_as_json(self):
         """Если общий этап не прошёл схему, CLI печатает понятный JSON со статусом failed, а не трассировку Python."""

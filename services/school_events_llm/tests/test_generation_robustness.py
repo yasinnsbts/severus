@@ -122,7 +122,7 @@ class DependenciesTest(unittest.TestCase):
         normalize_dependencies(data, DEPS, changes)
         m = data["materials"][0]
         self.assertEqual(m["dependencies"], ["paper", "whatman", "tape"])
-        self.assertEqual(m["teacher_notes"], "Раздать командам. Также понадобится: balloons, Воздушные шарики.")
+        self.assertEqual(m["teacher_notes"], "Раздать командам. Также понадобится: воздушные шары, Воздушные шарики.")
         self.assertTrue(all(d in DEPS for d in m["dependencies"]))
 
     def test_materials_stage_passes_schema(self):
@@ -181,7 +181,7 @@ class PipelineWithBrokenIdsTest(unittest.TestCase):
         mats = {m["material_id"]: m for m in variant["materials"]}
         self.assertIn("card_goals", mats)
         self.assertEqual(mats["card_goals"]["dependencies"], ["printer", "paper", "whatman"])
-        self.assertIn("Также понадобится: balloons.", mats["card_goals"]["teacher_notes"])
+        self.assertIn("Также понадобится: воздушные шары.", mats["card_goals"]["teacher_notes"])
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
         self.assertFalse(codes & {"DEP-UNKNOWN", "REF-MATERIAL", "REF-BLOCK", "VOTING-MATERIAL", "VOTING-BLOCK"})
         for block in variant["timeline"]:
