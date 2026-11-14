@@ -827,7 +827,7 @@ class Generator:
         repair_for: dict[str, dict] = {}
         min_block = int(self.defaults.get("min_block_minutes", 2))
         detail = n.teacher_preferences["script_detail"]
-        script_chars = lambda minutes: script_size_text(self.cfg, detail, minutes)  # noqa: E731
+        script_chars = lambda minutes: script_size_text(self.cfg, detail, minutes, n.age_group)  # noqa: E731
         per_block_mode = self.defaults.get("block_detail_mode", "auto")
         per_block = per_block_mode == "per_block" or (per_block_mode == "auto" and n.duration_minutes >= int(self.defaults.get("per_block_from_minutes", 60)))
         vmeta = {**meta, "variant_id": vid}

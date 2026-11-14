@@ -257,6 +257,31 @@ class EventAccuracyTest(unittest.TestCase):
         n.event_id = "new_year"
         self.assertNotIn("EVENT-MIXUP", {code for code, _, _ in _issues(v, n)})
 
+    def test_country_list_in_material(self):
+        """Факты списком под страной-заголовком (прогон QA E2E-13, BUG-11): «Италия:» и ниже «- Украшают вертеп»."""
+        n, v = setup("ex1_knowledge_day")
+        n = copy.copy(n)
+        n.event_id = "christmas"
+        self.assertFalse(catalog().verified_fragments(n.event_id, n.region_id, n.cultural_context))
+        material = v["materials"][0]
+        material["content"] = ("На каждой карточке - традиции одной страны. Например:\n\nИталия:\n"
+                               "- Украшают вертеп\n- Дарят подарки утром\n\n**Германия:**\n- Пекут штоллен")
+        self.assertIn(("CULTURE-UNSOURCED", "warning", f"materials.{material['material_id']}"), _issues(v, n))
+        # Заголовок не страна и обычный текст без страны - не сведения о традициях страны.
+        material["content"] = "Индивидуальная работа:\n- Готовят ответы\n\nРоссия - наша общая страна.\n- Ставят задачи"
+        self.assertNotIn("CULTURE-UNSOURCED", {code for code, _, _ in _issues(v, n)})
+
+    def test_goal_with_year_must_be_covered(self):
+        """Задача «Знакомство с событиями 1612 года» из карточки, а о 1612 годе в сценарии ни слова (QA c2, повтор)."""
+        n, v = setup("ex1_knowledge_day")
+        n = copy.copy(n)
+        n.educational_goals = ["Воспитание гражданской идентичности", "Знакомство с событиями 1612 года"]
+        issues = _issues(v, n)
+        self.assertIn(("GOAL-UNCOVERED", "warning", "concept"), issues)
+        self.assertEqual(1, sum(code == "GOAL-UNCOVERED" for code, _, _ in issues))
+        v["timeline"][1]["teacher_script"] += " Вспомним, что произошло в 1612 году."
+        self.assertNotIn("GOAL-UNCOVERED", {code for code, _, _ in _issues(v, n)})
+
     def test_century_needs_source(self):
         n, v = setup("ex1_knowledge_day")
         v["timeline"][1]["teacher_script"] += " Этот обычай появился в XVII веке."
@@ -282,7 +307,8 @@ class ContentCheckRunTest(unittest.TestCase):
         outcome, _ = replay("replay_gigachat_content_unity_day")
         variant = outcome.project["variants"][0]
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
-        self.assertEqual(codes, {"CULTURE-UNSOURCED"})
+        # О 1612 годе в прогоне ни слова, а задача из карточки его обещает (замечание QA 14.11).
+        self.assertEqual(codes, {"CULTURE-UNSOURCED", "GOAL-UNCOVERED"})
         joined = "\n".join(_variant_texts(variant))
         self.assertNotIn("culture_cards", joined)
         self.assertNotIn("project_template", joined)

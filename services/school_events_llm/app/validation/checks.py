@@ -37,6 +37,52 @@ _TRADITION_CLAIM = re.compile(
     re.I,
 )
 _SENTENCE = re.compile(r"[^.!?\n]+[.!?]?")
+# Заголовок списка со страной: «Италия:», «**Германия**», «### Испания», «1. Россия:». Пункты под ним - сведения
+# об этой стране, хотя в самом пункте она не названа («- Украшают вертеп»). Только полные названия в именительном
+# падеже: основа «Инди» иначе поймала бы «Индивидуальная работа:».
+_COUNTRY_NAMES = (
+    "Италия|Германия|Франция|Испания|Мексика|Англия|Великобритания|Швеция|Норвегия|Финляндия|Польша|Чехия|Греция"
+    "|Япония|Китай|Индия|США|Америка|Австрия|Нидерланды|Голландия|Бразилия|Канада|Австралия|Эфиопия|Армения|Грузия"
+    "|Беларусь|Белоруссия|Украина|Казахстан|Болгария|Сербия|Ирландия|Шотландия|Филиппины|Россия"
+)
+_COUNTRY_HEAD = re.compile(r"^(?:\d{1,2}[.)]\s*|[-\u2013\u2014\u2022]\s*)?(?P<country>" + _COUNTRY_NAMES
+                           + r")\s*(?::\s*(?P<rest>.*)|[-\u2013\u2014]?)$")
+_LIST_ITEM = re.compile(r"^(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
+
+
+def _culture_claims(text: str) -> list[str]:
+    """Фразы со сведениями о традициях страны или народа: обычные предложения и пункты списка под страной-заголовком.
+
+    Параметры:
+        text: реплики блока или текст материала.
+
+    Возвращает:
+        Фразы для цитаты в предупреждении `CULTURE-UNSOURCED`; к пункту списка спереди дописана страна заголовка.
+    """
+    found: list[str] = []
+    head = ""
+    for line in text.splitlines():
+        plain = re.sub(r"\*\*|__|^#+", "", line.strip()).strip()
+        if not plain:
+            continue
+        heading = _COUNTRY_HEAD.match(plain)
+        if heading:
+            head = heading.group("country")
+            rest = (heading.group("rest") or "").strip()
+            if rest and _TRADITION_CLAIM.search(rest):
+                found.append(f"{head}: {rest}")
+            continue
+        item = _LIST_ITEM.match(plain)
+        if not item:
+            head = ""
+        for sentence in _SENTENCE.findall(plain):
+            if not _TRADITION_CLAIM.search(sentence):
+                continue
+            if _PLACE_OR_PEOPLE.search(sentence):
+                found.append(sentence.strip())
+            elif head:
+                found.append(f"{head}: {_LIST_ITEM.sub('', sentence.strip())}")
+    return found
 
 # Век: «в XVII веке», «XIX века», «в 17 веке», «18-го века».
 _CENTURY = re.compile(r"\b(?:[IVX]{1,5}|\d{1,2}(?:-?(?:м|ом|го|ого))?)\s+век(?:а|е|ом|ах|ов|и)?\b")
@@ -262,7 +308,7 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     # Проверка содержимого сценарных блоков.
     detail = n.teacher_preferences["script_detail"]
     for b in timeline:
-        min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"])
+        min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"], n.age_group)
         if len(b["teacher_script"]) < min_chars:
             add("SCRIPT-SHORT", "warning", f"timeline.{b['block_id']}",
                 f"Реплики педагога короче {min_chars} символов для блока на {b['duration_minutes']} мин ({len(b['teacher_script'])})", "blocks")
@@ -332,13 +378,22 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     # Традиции стран и народов без проверенных фрагментов события: предупреждение эксперту.
     if not catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context):
         for loc, text in texts:
-            for sentence in _SENTENCE.findall(text):
-                if _PLACE_OR_PEOPLE.search(sentence) and _TRADITION_CLAIM.search(sentence):
-                    quote = sentence.strip()
-                    quote = quote if len(quote) <= 110 else quote[:107] + "..."
-                    add("CULTURE-UNSOURCED", "warning", loc,
-                        f"Сведения о традициях страны или народа без проверенного источника: «{quote}»", "blocks", repairable=False)
-                    break
+            claims_found = _culture_claims(text)
+            if claims_found:
+                quote = claims_found[0]
+                quote = quote if len(quote) <= 110 else quote[:107] + "..."
+                add("CULTURE-UNSOURCED", "warning", loc,
+                    f"Сведения о традициях страны или народа без проверенного источника: «{quote}»", "blocks", repairable=False)
+
+    # Воспитательная задача из карточки с годом или веком («Знакомство с событиями 1612 года»): если этот год
+    # не встречается ни в одном этапе и материале, задача заявлена в шапке сценария, но не раскрыта.
+    all_text = " ".join(text for _, text in texts)
+    for goal in n.educational_goals:
+        marks = [m.group(0) for m in list(_YEAR.finditer(goal)) + list(_CENTURY.finditer(goal))]
+        if marks and not any(mark.lower() in all_text.lower() for mark in marks):
+            add("GOAL-UNCOVERED", "warning", "concept",
+                f"Воспитательная задача «{goal}» заявлена, но в сценарии не раскрыта: «{marks[0]}» не упоминается "
+                "ни в одном этапе и материале", "plan", repairable=False)
 
     # Признаки близкого, но другого праздника (Дед Мороз в рождественском сценарии и т. п.).
     boundary = ((catalog.boundaries or {}).get("events") or {}).get(n.event_id) or {}
