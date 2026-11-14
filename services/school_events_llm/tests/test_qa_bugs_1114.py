@@ -56,10 +56,22 @@ class Bug17ParentsTest(unittest.TestCase):
                           {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "count": 0}]}
         prepare_stage_output("scenario_plan", data, set())
         self.assertEqual(data["roles"][1]["count"], 1)
-        plan = {"roles": data["roles"], "blocks": [], "planned_materials": [{"material_id": "parent_instruction", "type": "parent_instruction"}]}
+        plan = {"roles": data["roles"], "planned_materials": [{"material_id": "parent_instruction", "type": "parent_instruction"}],
+                "blocks": [{"block_id": "block_01", "role_ids": ["parent_helpers", "parent_audience"]},
+                           {"block_id": "block_02", "role_ids": ["parent_helpers"]}]}
         fixes = fix_plan_for_request(plan, True, 12, "none")
         self.assertEqual([r["count"] for r in plan["roles"]], [11, 1])
         self.assertEqual(fixes[0]["kind"], "parent_counts_balanced")
+
+    def test_roles_in_different_blocks_untouched(self):
+        """Прогон 14.11 (r03): 12 помощников в этапах 2-4 и 12 зрителей в этапе 6 - те же родители в разное время.
+        Первая версия правки делила их на 6 + 6; одновременно больше 12 нигде не занято, менять нечего."""
+        plan = {"roles": [{"role_id": "parent_helpers", "participant_type": "parent", "role_mode": "helper", "count": 12},
+                          {"role_id": "parent_audience", "participant_type": "parent", "role_mode": "audience", "count": 12}],
+                "blocks": [{"block_id": "block_02", "role_ids": ["parent_helpers"]}, {"block_id": "block_06", "role_ids": ["parent_audience"]}],
+                "planned_materials": [{"material_id": "parent_instruction", "type": "parent_instruction"}]}
+        self.assertEqual(fix_plan_for_request(plan, True, 12, "none"), [])
+        self.assertEqual([r["count"] for r in plan["roles"]], [12, 12])
 
     def test_counts_within_limit_untouched(self):
         plan = {"roles": [{"role_id": "a", "participant_type": "parent", "role_mode": "audience", "count": 5}], "blocks": [],
