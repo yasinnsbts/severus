@@ -14,7 +14,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .ids import KEY_RU
+from .ids import KEY_RU, _singular
 
 # Названия типов материалов для текста, если материала с таким ID в варианте нет.
 MATERIAL_TYPE_TITLES = {
@@ -118,21 +118,42 @@ def _stem(text: str) -> str:
     return word[:5] if len(word) >= 5 else word
 
 
+def _shape(key: str) -> str:
+    """ID без различий в числе частей: «commitments_book_pages» и «commitment_book_page» дают одно и то же."""
+    return "_".join(_singular(part) for part in key.split("_"))
+
+
+def _by_shape(names: dict[str, str]) -> dict[str, str]:
+    """`_shape(ID) -> ID` для составных ID; если под одну форму подходят два ID, форма не используется."""
+    found: dict[str, str | None] = {}
+    for key in names:
+        if "_" in key:
+            shape = _shape(key)
+            found[shape] = key if shape not in found else None
+    return {shape: key for shape, key in found.items() if key}
+
+
 def humanize_text(text: str, names: dict[str, str]) -> tuple[str, list[str]]:
-    """Заменяет известные ID в одном тексте. Возвращает новый текст и список заменённых ID."""
+    """Заменяет известные ID в одном тексте. Возвращает новый текст и список заменённых ID.
+
+    ID, который отличается от известного только числом частей («commitments_book_pages» при материале
+    «commitment_book_pages», замечание QA 14.11, BUG-16), заменяется названием этого материала.
+    """
     if not text or not names:
         return text, []
     pattern = _token_pattern(names)
+    shapes = _by_shape(names)
     urls = [m.span() for m in _URL.finditer(text)]
     replaced: list[str] = []
     out: list[str] = []
     pos = 0
     for m in pattern.finditer(text):
         token = m.group(0)
-        if token not in names or any(a <= m.start() < b for a, b in urls):
+        key = token if token in names else shapes.get(_shape(token)) if "_" in token else None
+        if not key or any(a <= m.start() < b for a, b in urls):
             continue
         start, end = m.start(), m.end()
-        title = names[token]
+        title = names[key]
         # Кавычки и обратные апострофы вокруг ID: `card_task`, "card_task", «card_task».
         if start > 0 and end < len(text) and text[start - 1] in _QUOTES and text[end] in _QUOTES:
             start, end = start - 1, end + 1
@@ -156,9 +177,12 @@ def humanize_text(text: str, names: dict[str, str]) -> tuple[str, list[str]]:
                 pos = end + close_paren.end()
                 replaced.append(token)
                 continue
-            if stem and stem in open_paren.group(1).lower():
+            words = open_paren.group(1).split()
+            same = next((i for i, word in enumerate(words) if stem and stem in word.lower()), None)
+            if same is not None:
                 # «(карточки card_task)» -> «(«Карточки заданий»)»: слово из скобки повторяет название.
-                before = before[:open_paren.start()] + "("
+                # Слова перед ним остаются: «(раздаёт странички commitment_book_pages)» -> «(раздаёт «Странички…»)».
+                before = before[:open_paren.start()] + "(" + "".join(word + " " for word in words[:same])
         out.append(before)
         out.append(title)
         pos = end

@@ -217,7 +217,13 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
             and not _presented_next(next_text)):
         work = _first_number(first_interval) or 0
         after = text[first_interval.end():]
-        presents = re.search(r"кажд\w*\s+(?:\w+\s+){0,2}?(?:команд|групп)\w*\s+(?:\w+\s+){0,3}?(?:представ|выступ|расскаж|покаж|защит)", after, re.I)
+        # Работа не короче самого блока - блок только объявляет следующий этап: «У вас будет 15 минут на всю
+        # работу, после чего каждая команда представит проект» в 5-минутном блоке перед 15-минутной работой
+        # (замечание QA 14.11, BUG-20). Работа и выступления идут в следующих этапах, а не в этом.
+        if work >= duration:
+            presents = None
+        else:
+            presents = re.search(r"кажд\w*\s+(?:\w+\s+){0,2}?(?:команд|групп)\w*\s+(?:\w+\s+){0,3}?(?:представ|выступ|расскаж|покаж|защит)", after, re.I)
         if presents and not _NOT_ALL.search(after[:presents.end() + 80]):
             left = duration - work
             if left < groups_count:
