@@ -22,16 +22,18 @@ from .mutex import local_llm_lock
 
 
 class LLMError(RuntimeError):
-    def __init__(self, code: str, message: str, retryable: bool = False):
+    def __init__(self, code: str, message: str, retryable: bool = False, retry_after: float | None = None):
         """Сохраняет стабильный код ошибки LLM, сообщение и признак допустимости повторной попытки.
 
         Параметры:
-            `code`, `message`, `retryable`.
+            `code`, `message`, `retryable`;
+            `retry_after` - сколько секунд просит подождать провайдер (заголовок `Retry-After` ответа 429).
         """
         super().__init__(message)
         self.code = code
         self.message = message
         self.retryable = retryable
+        self.retry_after = retry_after
 
 
 @dataclass
@@ -119,6 +121,9 @@ def _http_json(url: str, *, method: str = "GET", body: dict | None = None, heade
             payload = json.loads(raw)
         except json.JSONDecodeError:
             payload = {"raw": raw[:2000]}
+        retry_after = exc.headers.get("Retry-After") if exc.headers else None
+        if retry_after and isinstance(payload, dict):
+            payload["_retry_after"] = retry_after
         return exc.code, payload
     except (socket.timeout, TimeoutError) as exc:
         raise LLMError("MODEL_TIMEOUT", f"Истекло время ожидания модели ({timeout} с)", retryable=True) from exc
@@ -143,7 +148,20 @@ def _raise_for_status(status: int, payload: Any) -> None:
     if status in (401, 403):
         raise LLMError("MODEL_AUTH_ERROR", f"Ошибка авторизации у провайдера ({status})")
     if status == 429:
-        raise LLMError("RATE_LIMITED", "Превышен лимит запросов провайдера", retryable=True)
+        # Текст шлюза говорит, какой лимит сработал (запросов или токенов в минуту, одновременных запросов).
+        detail = ""
+        if isinstance(payload, dict):
+            error = payload.get("error")
+            detail = str((error.get("message") if isinstance(error, dict) else error) or payload.get("message") or payload.get("raw") or "")
+        detail = " ".join(detail.split())[:300]
+        retry_after = None
+        if isinstance(payload, dict) and payload.get("_retry_after") is not None:
+            try:
+                retry_after = float(payload["_retry_after"])
+            except (TypeError, ValueError):
+                retry_after = None
+        message = "Превышен лимит запросов провайдера" + (f": {detail}" if detail else "")
+        raise LLMError("RATE_LIMITED", message, retryable=True, retry_after=retry_after)
     if status >= 500:
         raise LLMError("MODEL_UNAVAILABLE", f"Ошибка сервера модели ({status}): {text}", retryable=True)
     raise LLMError("MODEL_ERROR", f"Модель отклонила запрос ({status}): {text}")

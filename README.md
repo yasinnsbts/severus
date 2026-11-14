@@ -1094,7 +1094,7 @@ disable_thinking_method
 
 ### Параллельная работа
 
-LLM-сервис ведёт до `max_parallel_generations` генераций одновременно (по умолчанию 30), следующие `max_waiting_generations` ждут со статусом `queued`, сверх этого создание задачи получает 503 `SERVICE_BUSY` (retryable). Настройки - в `services/school_events_llm/config/service.json`, подробности - в README сервиса. Обращения к локальной модели внутри процесса идут по одному (`local_model_max_parallel`).
+LLM-сервис ведёт до `max_parallel_generations` генераций одновременно (по умолчанию 30), а к модели одновременно идёт не больше `max_parallel_llm_requests` обращений (10: шлюз УрФУ при 30 одновременных обращениях отвечает 429), следующие `max_waiting_generations` ждут со статусом `queued`, сверх этого создание задачи получает 503 `SERVICE_BUSY` (retryable). Настройки - в `services/school_events_llm/config/service.json`, подробности - в README сервиса. Обращения к локальной модели внутри процесса идут по одному (`local_model_max_parallel`).
 
 Если один LM Studio используют несколько процессов, можно включить общий lock-файл через `LOCAL_LLM_MUTEX_ENABLED=true`.
 

@@ -367,7 +367,8 @@ class ServiceConfigTest(unittest.TestCase):
     def test_defaults_from_json(self):
         config = Settings(root=ROOT, env={}).service()
         self.assertEqual(config["max_parallel_generations"], 30)
-        self.assertEqual(config["max_parallel_llm_requests"], 30)
+        # Обращений к шлюзу одновременно - 10: при 30 шлюз УрФУ отвечает 429 (нагрузка 14.11), генераций по-прежнему 30.
+        self.assertEqual(config["max_parallel_llm_requests"], 10)
         self.assertEqual(config["local_model_max_parallel"], 1)
 
 

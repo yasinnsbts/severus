@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import re
 import time
 import uuid
@@ -723,23 +724,38 @@ class Generator:
 
         Повторяются только ошибки с `retryable=True`: 429, 5xx, таймаут, недоступность сети.
         Ошибки авторизации и конфигурации (`MODEL_AUTH_ERROR`, неизвестная модель) не повторяются.
-        Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`.
+        Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`;
+        для лимита шлюза (`RATE_LIMITED`, 429) - свои, больше: `defaults.rate_limit_retry_attempts`
+        и `defaults.rate_limit_backoff_seconds`. Если шлюз прислал `Retry-After`, пауза не меньше неё.
+        К паузе добавляется случайный разброс `defaults.retry_jitter` (±30%): иначе генерации, получившие отказ
+        одновременно, возвращаются в шлюз тоже одновременно и снова получают отказ (нагрузка 30 генераций, 14.11).
         Каждый повтор - отдельный вызов модели: учитывается в `calls` и пишется в трассу (`llm_call_retry`).
         """
         retries = int(self.defaults.get("provider_retry_attempts", 2))
         backoff = list(self.defaults.get("provider_retry_backoff_seconds", [3, 10])) or [0]
-        for retry in range(retries + 1):
+        limit_retries = int(self.defaults.get("rate_limit_retry_attempts", retries))
+        limit_backoff = list(self.defaults.get("rate_limit_backoff_seconds", backoff)) or backoff
+        jitter = float(self.defaults.get("retry_jitter", 0.0))
+        retry = 0
+        while True:
             self.calls += 1
             try:
                 return self.client.generate(**kwargs)
             except LLMError as exc:
-                if not exc.retryable or retry >= retries:
+                limited = exc.code == "RATE_LIMITED"
+                allowed, pauses = (limit_retries, limit_backoff) if limited else (retries, backoff)
+                if not exc.retryable or retry >= allowed:
                     raise
-                wait = float(backoff[min(retry, len(backoff) - 1)])
+                wait = float(pauses[min(retry, len(pauses) - 1)])
+                if limited and exc.retry_after:
+                    wait = max(wait, float(exc.retry_after))
+                if jitter:
+                    wait = round(wait * random.uniform(1 - jitter, 1 + jitter), 1)
+                retry += 1
                 self.trace.event("llm_call_retry", call_id=call_id, stage=stage, variant_id=variant_id,
-                                 retry=retry + 1, error_code=exc.code, message=exc.message, wait_seconds=wait)
+                                 retry=retry, error_code=exc.code, message=exc.message, wait_seconds=wait,
+                                 retry_after=getattr(exc, "retry_after", None))
                 self._sleep(wait)
-        raise AssertionError("недостижимо")  # pragma: no cover
 
     @staticmethod
     def _format_error(exc: Exception) -> str:

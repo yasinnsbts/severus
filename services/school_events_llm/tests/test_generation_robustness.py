@@ -199,9 +199,36 @@ class ProviderRetryTest(unittest.TestCase):
             outcome = gen.run(request("ex1_knowledge_day"), job_id="job")
             retries = [e for e in events(run_dir) if e["event_type"] == "llm_call_retry"]
         self.assertEqual(outcome.project["status"], "completed")
-        self.assertEqual(gen.sleeps, [3.0, 10.0])
+        # Лимит шлюза: паузы 5 и 10 с со случайным разбросом ±30% (config/generation.json).
+        self.assertEqual(len(gen.sleeps), 2)
+        self.assertTrue(3.5 <= gen.sleeps[0] <= 6.5 and 7.0 <= gen.sleeps[1] <= 13.0, gen.sleeps)
         self.assertEqual([(e["stage"], e["retry"], e["error_code"]) for e in retries],
                          [("scenario_plan", 1, "RATE_LIMITED"), ("scenario_plan", 2, "RATE_LIMITED")])
+
+    def test_rate_limit_more_retries_and_retry_after(self):
+        """Нагрузка 30 генераций (14.11): на 429 до 5 повторов, пауза не меньше Retry-After шлюза;
+        на прочие временные ошибки - по-прежнему 2 повтора."""
+        error = LLMError("RATE_LIMITED", "429", retryable=True, retry_after=30)
+        gen = generator(FlakyLLM(fixture(), "scenario_plan", error, fail_times=5))
+        self.assertEqual(gen.run(request("ex1_knowledge_day")).project["status"], "completed")
+        self.assertEqual(len(gen.sleeps), 5)
+        self.assertTrue(all(s >= 30 * 0.7 for s in gen.sleeps), gen.sleeps)
+        self.assertTrue(gen.sleeps[-1] >= 60 * 0.7)
+        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("RATE_LIMITED", "429", retryable=True), fail_times=6))
+        with self.assertRaises(LLMError):
+            gen.run(request("ex1_knowledge_day"))
+        self.assertEqual(gen.calls, 6)
+
+    def test_rate_limit_message_and_retry_after_from_gateway(self):
+        """Текст шлюза (какой лимит сработал) и Retry-After попадают в ошибку и в трассу."""
+        from app.llm.client import _raise_for_status
+        with self.assertRaises(LLMError) as ctx:
+            _raise_for_status(429, {"error": {"message": "Rate limit exceeded: rpm limit 60 for key"}, "_retry_after": "12"})
+        self.assertEqual(ctx.exception.message, "Превышен лимит запросов провайдера: Rate limit exceeded: rpm limit 60 for key")
+        self.assertEqual(ctx.exception.retry_after, 12.0)
+        with self.assertRaises(LLMError) as ctx:
+            _raise_for_status(429, {"raw": "Too Many Requests"})
+        self.assertEqual((ctx.exception.message, ctx.exception.retry_after), ("Превышен лимит запросов провайдера: Too Many Requests", None))
 
     def test_retries_exhausted(self):
         """Если провайдер так и не ответил, ошибка модели доходит до задачи как есть, без «готового» результата."""
