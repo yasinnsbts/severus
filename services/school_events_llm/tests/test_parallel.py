@@ -257,13 +257,14 @@ class GatewayCacheTest(unittest.TestCase):
 
     PROFILE = {"base_url": "http://gateway.invalid/v1", "model_id": "GigaChat-2-Max", "local": False, "gateway_cache": True}
 
-    def bodies(self, cfg, metas, statuses=None):
+    def bodies(self, cfg, metas, statuses=None, errors=None):
         client = OpenAICompatibleClient("urfu", cfg, "k", None)
         sent, statuses = [], list(statuses or [])
 
         def fake_call(body):
             sent.append(json.loads(json.dumps(body)))
-            return (statuses.pop(0) if statuses else 200), {"choices": [{"message": {"content": "{}"}}]}
+            status = statuses.pop(0) if statuses else 200
+            return status, (errors or {}).get(status, {"choices": [{"message": {"content": "{}"}}]})
 
         client._call = fake_call
         for meta in metas:
@@ -294,6 +295,29 @@ class GatewayCacheTest(unittest.TestCase):
         self.assertNotIn("cache", sent[1])
         self.assertNotIn("cache", sent[2])
         self.assertIn("c2", sent[2]["messages"][-1]["content"])
+
+    def test_reasoning_effort(self):
+        """Рассуждения GigaChat: уровень этапа из meta или профиля; не для моделей с выключенными рассуждениями;
+        шлюз ответил 400 на параметр - повтор без него и дальше без него (проверка шлюза УрФУ 14.11: параметр принимается)."""
+        profile = {**self.PROFILE, "reasoning_mode": "provider_default"}
+        sent = self.bodies(profile, [{"call_id": "c1", "reasoning_effort": "medium"}, {"call_id": "c2"}])
+        self.assertEqual(sent[0]["reasoning_effort"], "medium")
+        self.assertNotIn("reasoning_effort", sent[1])
+        self.assertEqual(self.bodies({**profile, "reasoning_effort": "low"}, [{"call_id": "c"}])[0]["reasoning_effort"], "low")
+        self.assertNotIn("reasoning_effort", self.bodies({**profile, "reasoning_mode": "disabled"}, [{"reasoning_effort": "high"}])[0])
+        sent = self.bodies(profile, [{"reasoning_effort": "medium"}, {"reasoning_effort": "medium"}], statuses=[400],
+                           errors={400: {"error": {"message": "Unsupported parameter: reasoning_effort"}}})
+        self.assertEqual(["reasoning_effort" in body for body in sent], [True, False, False])
+        self.assertTrue(all("cache" in body for body in sent))  # обход кэша не отключился
+
+    def test_reasoning_content_kept_apart(self):
+        client = OpenAICompatibleClient("urfu", {**self.PROFILE, "reasoning_mode": "provider_default"}, "k", None)
+        client._call = lambda body: (200, {"choices": [{"message": {"content": '{"a": 1}', "reasoning_content": "4 × 3 = 12, 12 + 10 = 22"}}]})
+        result = client.generate(messages=[{"role": "user", "content": "x"}], task_name="t", output_schema=None, max_tokens=10,
+                                 temperature=0.4, meta={"reasoning_effort": "medium"})
+        self.assertEqual(result.text, '{"a": 1}')
+        self.assertEqual(result.reasoning, "4 × 3 = 12, 12 + 10 = 22")
+        self.assertEqual(result.request_params["reasoning_effort"], "medium")
 
     def test_profiles_and_setting(self):
         models = Settings(root=ROOT, env={}).models()["models"]

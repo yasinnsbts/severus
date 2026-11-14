@@ -31,31 +31,38 @@
     }
   },
   "audience_award_min_voters_warning": 6,
+  "reasoning_extra_output_tokens": 2000,
   "tasks": {
     "variation_plan": {
       "max_output_tokens": 3900,
       "max_output_tokens_per_variant": 1300,
-      "temperature_hint": 0.65
+      "temperature_hint": 0.65,
+      "reasoning_effort": null
     },
     "scenario_plan": {
       "max_output_tokens": 3500,
-      "temperature_hint": 0.4
+      "temperature_hint": 0.4,
+      "reasoning_effort": null
     },
     "scenario_blocks": {
       "max_output_tokens": 6000,
-      "temperature_hint": 0.45
+      "temperature_hint": 0.45,
+      "reasoning_effort": null
     },
     "scenario_block": {
       "max_output_tokens": 4500,
-      "temperature_hint": 0.45
+      "temperature_hint": 0.45,
+      "reasoning_effort": null
     },
     "materials": {
       "max_output_tokens": 4000,
-      "temperature_hint": 0.4
+      "temperature_hint": 0.4,
+      "reasoning_effort": null
     },
     "quality_review": {
       "max_output_tokens": 1800,
-      "temperature_hint": 0.1
+      "temperature_hint": 0.1,
+      "reasoning_effort": null
     }
   }
 }
