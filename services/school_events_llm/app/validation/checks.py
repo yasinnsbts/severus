@@ -13,7 +13,7 @@ from typing import Any
 
 from ..catalog import Catalog
 from ..generation.humanize import leftover_ids
-from ..generation.source_refs import document_mentions
+from ..generation.source_refs import document_confirmed, document_mentions
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
 from ..script_length import script_min_chars
@@ -498,7 +498,7 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     # «указ губернатора №1022-УГ», а для учеников это выглядит как официальный факт.
     for loc, text in texts:
         for sentence, stem in document_mentions(text):
-            if stem in sources_text:
+            if document_confirmed(stem, sources_text):
                 continue
             quote = sentence if len(sentence) <= 110 else sentence[:107] + "..."
             add("DOC-UNSOURCED", "warning", loc, f"Ссылка на документ без проверенного источника: «{quote}»", "blocks", repairable=False)

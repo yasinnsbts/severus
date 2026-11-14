@@ -133,6 +133,28 @@ class Bug11DatesTest(unittest.TestCase):
         self.assertEqual(variant["materials"][0]["content"],
                          f"С уважением, Маша\n{DATE_BLANK}\nДата: {DATE_BLANK}\n17 января 1934 года область разделили.")
 
+    def test_recorded_new_year_run(self):
+        """Трасса BUG-11 (Новый год, 5-8): лист «Исторические факты» с 1 января 1700 года и 1 сентября,
+        в fact_claims только одна фраза. Теперь факты записаны с проверенными фрагментами, предупреждений нет."""
+        outcome, _ = replay("replay_gigachat_bug11_new_year")
+        variant = outcome.project["variants"][0]
+        self.assertEqual(variant["quality_report"]["issues"], [])
+        self.assertIn("src_new_year_v19_01", {s["source_id"] for s in variant["sources"]})
+
+    def test_list_number_is_not_document_number(self):
+        """«Исторический факт №2: До указа Петра I…» - номер пункта, а не номер указа; «указ… №1022-УГ» - номер указа."""
+        from app.generation.source_refs import document_mentions
+        self.assertFalse(document_mentions("Исторический факт №2: До указа Петра I Новый год начинался 1 сентября."))
+        self.assertTrue(document_mentions("Выдержка из указа губернатора Свердловской области №1022-УГ."))
+
+    def test_decree_confirmed_by_fragment_verb(self):
+        """«Пётр I издал указ… с 1 января 1700 года» подтверждает фрагмент «…постановил начать год с 1 января 1700 года»."""
+        from app.generation.source_refs import document_confirmed
+        quotes = " ".join(f.get("quote", "") for f in catalog().verified_fragments("new_year", "RU-SVE")).lower()
+        self.assertTrue(document_confirmed("указ", quotes))
+        sverdlovsk = " ".join(f.get("quote", "") for f in catalog().verified_fragments("sverdlovsk_oblast_day", "RU-SVE")).lower()
+        self.assertFalse(document_confirmed("указ", sverdlovsk))
+
     def test_fact_from_fragment_registered(self):
         """«…начать год с 1 января 1700 года» есть в проверенной цитате о Новом годе - факт записывается программой."""
         fragments = catalog().verified_fragments("new_year", "RU-SVE")
