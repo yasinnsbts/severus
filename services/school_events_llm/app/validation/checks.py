@@ -412,11 +412,14 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
 
     # Проверка содержимого сценарных блоков.
     detail = n.teacher_preferences["script_detail"]
+    warning_ratio = float((gen_cfg.get("script_length") or {}).get("warning_ratio", 0.9))
     for b in timeline:
         min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"], n.age_group)
-        if len(b["teacher_script"]) < min_chars:
+        warning_chars = max(1, int(round(min_chars * warning_ratio)))
+        if len(b["teacher_script"]) < warning_chars:
             add("SCRIPT-SHORT", "warning", f"timeline.{b['block_id']}",
-                f"Реплики педагога короче {min_chars} символов для блока на {b['duration_minutes']} мин ({len(b['teacher_script'])})", "blocks")
+                f"Реплики педагога короче 90% нормы: {len(b['teacher_script'])} из {min_chars} символов "
+                f"для блока на {b['duration_minutes']} мин", "blocks")
         if len(b["pupil_actions"]) < 2:
             add("PUPIL-ACTIONS-FEW", "warning", f"timeline.{b['block_id']}", f"Действий учеников меньше двух ({len(b['pupil_actions'])})", "blocks")
 
