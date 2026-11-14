@@ -185,8 +185,29 @@ def _fix_enum(value: Any, kind: str) -> Any:
     return _FALLBACK.get(kind, value)
 
 
-def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
-    """Проходит по полям-перечислениям ответа этапа и исправляет значения через `_fix_enum`."""
+def _fix_mechanic(rec: Any, where: str, changes: list[dict[str, Any]],
+                  mechanics_by_value: dict[str, list[str]] | None) -> None:
+    """Механика ценности, которую не удалось распознать (`sharing`, `storytelling`), - первая разрешённая каталогом
+    для этой ценности (`family` → `family_research`), иначе `discussion`.
+
+    GigaChat на просьбу исправить такое значение возвращал тот же ответ байт в байт (прогон 14.11, Рождество 7 кл):
+    повторные вызовы не помогали, и весь сценарий падал из-за одного поля.
+    """
+    if not isinstance(rec, dict) or rec.get("mechanic_type") in _ENUMS["mechanic_type"]:
+        return
+    allowed = [m for m in (mechanics_by_value or {}).get(str(rec.get("value_id")), []) if m in _ENUMS["mechanic_type"]]
+    new = allowed[0] if allowed else "discussion"
+    changes.append({"kind": "enum_fallback", "field": where, "from": rec.get("mechanic_type"), "to": new})
+    rec["mechanic_type"] = new
+
+
+def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]],
+               mechanics_by_value: dict[str, list[str]] | None = None) -> None:
+    """Проходит по полям-перечислениям ответа этапа и исправляет значения через `_fix_enum`.
+
+    `mechanics_by_value` - разрешённые механики ценностей из каталога (`allowed_mechanic_types`):
+    по ним выбирается замена механики, которую не удалось распознать.
+    """
     def fix(obj: Any, key: str, kind: str, where: str) -> None:
         if isinstance(obj, dict) and key in obj:
             new = _fix_enum(obj[key], kind)
@@ -208,10 +229,12 @@ def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]]) -> None:
                 fix(a, "activity_type", "activity_type", f"concepts.{i}.key_activities.{j}.activity_type")
             for j, v in enumerate(items(c, "values_to_mechanics")):
                 fix(v, "mechanic_type", "mechanic_type", f"concepts.{i}.values_to_mechanics.{j}.mechanic_type")
+                _fix_mechanic(v, f"concepts.{i}.values_to_mechanics.{j}.mechanic_type", changes, mechanics_by_value)
     if stage == "scenario_plan":
         fix(data.get("grouping_request"), "mode", "engagement_mode", "grouping_request.mode")
         for j, v in enumerate(items(data.get("concept"), "values_to_mechanics")):
             fix(v, "mechanic_type", "mechanic_type", f"concept.values_to_mechanics.{j}.mechanic_type")
+            _fix_mechanic(v, f"concept.values_to_mechanics.{j}.mechanic_type", changes, mechanics_by_value)
         for j, r in enumerate(items(data, "roles")):
             if isinstance(r, dict) and r.get("role_mode") is not None:
                 fix(r, "role_mode", "role_mode", f"roles.{j}.role_mode")
@@ -299,18 +322,21 @@ def fix_family_tasks(materials: list[dict[str, Any]], values: list[str]) -> list
 
 
 def prepare_stage_output(stage: str, data: Any, resources: set[str],
-                         dependency_ids: set[str] | None = None) -> list[dict[str, Any]]:
+                         dependency_ids: set[str] | None = None,
+                         mechanics_by_value: dict[str, list[str]] | None = None) -> list[dict[str, Any]]:
     """Исправляет до проверки схемы ошибки ответа, которые однозначно понятны программе.
 
     - План: материалы с ID ресурса (`paper`, `markers`) убираются из `planned_materials` и из блоков.
     - Материалы: такие же материалы убираются; адресат вида `parent_audience` приводится к `parent`.
+    - Концепции и план: механика ценности не из списка - разрешённая каталогом для этой ценности (`_fix_mechanic`).
     - Все этапы: `material_id`, `role_id` и ссылки на них - к виду `^[a-z][a-z0-9_]*$`, ID блоков - к `block_NN`
       (`ids.normalize_ids`); зависимости материалов - только из словаря (`ids.normalize_dependencies`).
     Всё остальное проверяет схема, и при ошибке модель исправляет ответ сама.
 
     Параметры:
         stage: этап; data: разобранный JSON ответа (меняется на месте); resources: см. `resource_ids`;
-        dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать).
+        dependency_ids: ID словаря `catalog/dependencies.json` (None - зависимости не трогать);
+        mechanics_by_value: разрешённые механики ценностей из каталога (None - замена `discussion`).
 
     Возвращает:
         Список исправлений для трассы.
@@ -318,7 +344,7 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
     changes: list[dict[str, Any]] = []
     if not isinstance(data, dict):
         return changes
-    _fix_enums(data, stage, changes)
+    _fix_enums(data, stage, changes, mechanics_by_value)
     normalize_ids(stage, data, changes)
     if stage == "materials":
         normalize_material_fields(data, changes)
@@ -577,7 +603,8 @@ class Generator:
                     meta={**(meta or {}), "call_id": call_id})
                 raw = result.text
                 data = extract_json(raw)
-                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies))
+                mechanics = {vid: list(value.get("allowed_mechanic_types") or []) for vid, value in self.catalog.values.items()}
+                fixes = prepare_stage_output(stage, data, resource_ids(n), set(self.catalog.dependencies), mechanics)
                 if fixes:
                     self.trace.event("stage_output_fixed", call_id=call_id, stage=stage, variant_id=variant_id, fixes=fixes)
                 parsed_obj = model_cls.model_validate(data)

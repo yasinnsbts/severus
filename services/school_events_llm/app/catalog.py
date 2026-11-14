@@ -158,14 +158,16 @@ class Catalog:
         return dict(self.events)
 
     def verified_fragments(self, event_id: str, region_id: str, cultural_context: bool = True) -> list[dict[str, Any]]:
-        """Проверенные фрагменты для события (ТЗ 17.2). Только status=verified."""
+        """Проверенные фрагменты для события (ТЗ 17.2). Только status=verified; фрагменты с регионом `RU` - для всех регионов России."""
         event = self.events.get(event_id, {})
         topics = {t.split("/", 1)[-1] for t in event.get("regional_topics", [])}
         result = []
         for frag in self.fragments.values():
             if frag.get("verification_status", frag.get("status")) != "verified":
                 continue
-            if region_id not in frag.get("regions", [region_id]):
+            regions = frag.get("regions", [region_id])
+            # Федеральный фрагмент (`RU`) годится для любого региона России (`RU-SVE`).
+            if region_id not in regions and not any(region_id.startswith(f"{r}-") for r in regions):
                 continue
             by_event = event_id in frag.get("events", [])
             by_topic = bool(topics.intersection(frag.get("topics", [])))

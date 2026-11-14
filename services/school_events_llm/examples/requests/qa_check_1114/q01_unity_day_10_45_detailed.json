@@ -1,0 +1,42 @@
+{
+  "event_id": "unity_day",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 10,
+  "pupils_count": 26,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": true,
+    "room": "classroom",
+    "available_materials": [
+      "paper",
+      "markers",
+      "whatman"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "medium",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 1,
+    "language": "ru"
+  }
+}

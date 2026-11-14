@@ -413,8 +413,8 @@ class Composer:
                 f'<fragment source_id="{fragment["source_id"]}" fragment_id="{fragment["fragment_id"]}" '
                 f'title="{source.get("title", "")}">\n{body}\n</fragment>'
             )
-        items.append("Сведения, которых нет в этих фрагментах (годы, века, имена, происхождение обычаев), "
-                     "не добавляй: о них говори обобщённо или не говори совсем.")
+        items.append("Сведения, которых нет в этих фрагментах (годы, века, имена, происхождение обычаев, традиции "
+                     "других стран и народов), не добавляй: о них говори обобщённо или не говори совсем.")
         return {"fragments": "\n\n".join(items)}
 
     def compose(
