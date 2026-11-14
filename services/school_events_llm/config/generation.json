@@ -25,6 +25,9 @@
       "brief": 5,
       "standard": 12,
       "detailed": 20
+    },
+    "age_factor": {
+      "1-4": 0.7
     }
   },
   "audience_award_min_voters_warning": 6,

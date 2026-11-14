@@ -24,7 +24,7 @@ from app.generation.humanize import build_names, humanize_text, humanize_variant
 from app.markdown import variant_to_markdown
 from app.normalize import normalize
 from app.prompting.composer import Composer
-from app.validation.checks import validate_variant
+from app.validation.checks import _confirmed, _culture_claims, validate_variant
 from app.validation.inner_timing import inner_timing_problems
 from tests.helpers import ROOT, catalog, minimal_request, settings
 from tests.test_gigachat_matrix_replays import replay
@@ -154,6 +154,30 @@ class InnerTimingTest(unittest.TestCase):
         self.assertTrue(self.problems(10, "У вас 7 минут на рисунок. Потом у вас есть 5 минут на выставку.", groups=1))
         self.assertTrue(self.problems(10, "Каждая пара представит открытку, по 1 минуте на пару.", groups=1, pairs=13))
 
+    def test_time_per_group_phrasings(self):
+        """Формы «N минут на группу» и «время выступления - N минут» (прогон QA c2, BUG-03)."""
+        self.assertEqual(self.problems(10, "Каждая группа представит лист. (4 минуты на группу)", groups=4),
+                         ["выступления: 4 групп × 4 мин = 16 мин, а на блок 10 мин"])
+        self.assertTrue(self.problems(10, "Группы по очереди рассказывают, по 3-4 минуты на группу.", groups=4))
+        self.assertTrue(self.problems(10, "Каждая группа рассказывает о плакате. Время выступления - 4 минуты.", groups=4))
+        self.assertTrue(self.problems(10, "Пары по очереди показывают открытки, по 1 минуте на пару.", groups=1, pairs=13))
+        self.assertFalse(self.problems(10, "Каждая группа представит плакат. Время выступления - 2 минуты.", groups=4))
+        self.assertFalse(self.problems(10, "Две-три группы по желанию представят работу, по 4 минуты на группу.", groups=4))
+        self.assertFalse(self.problems(10, "Время на выступления - 8 минут. Каждая группа представит плакат.", groups=4))
+
+    def test_qa_run_c2_presentations_block(self):
+        """Блок из прогона QA c2 (День единства, 10 класс): 4 группы по 3 минуты в 10-минутном этапе."""
+        block = {
+            "duration_minutes": 10,
+            "teacher_script": ("Каждая группа представит свой информационный лист. Группа номер один, готовы? "
+                               "У вас три минуты. (Аналогично проходят презентации остальных трёх групп.)"),
+            "pupil_actions": ["Выступающие представляют информационный лист своей группы, рассказывают о традициях "
+                              "выбранного народа (3 минуты на группу)",
+                              "Остальные учащиеся внимательно слушают"],
+        }
+        self.assertEqual(inner_timing_problems(block, groups_count=4, pairs_count=0),
+                         ["выступления: 4 групп × 3 мин = 12 мин, а на блок 10 мин"])
+
     def test_work_then_all_groups_present(self):
         text = "На выполнение задания вам даётся 10 минут. Затем каждая команда представит свой коллаж всему классу."
         self.assertTrue(self.problems(12, text, groups=4))
@@ -233,11 +257,123 @@ class EventAccuracyTest(unittest.TestCase):
         n.event_id = "new_year"
         self.assertNotIn("EVENT-MIXUP", {code for code, _, _ in _issues(v, n)})
 
+    def test_country_list_in_material(self):
+        """Факты списком под страной-заголовком (прогон QA E2E-13, BUG-11): «Италия:» и ниже «- Украшают вертеп»."""
+        n, v = setup("ex1_knowledge_day")
+        n = copy.copy(n)
+        n.event_id = "christmas"
+        material = v["materials"][0]
+        material["content"] = ("На каждой карточке - традиции одной страны. Например:\n\nИталия:\n"
+                               "- Украшают вертеп\n- Дарят подарки утром\n\n**Германия:**\n- Пекут штоллен")
+        self.assertIn(("CULTURE-UNSOURCED", "warning", f"materials.{material['material_id']}"), _issues(v, n))
+        # Заголовок не страна и обычный текст без страны - не сведения о традициях страны.
+        material["content"] = "Индивидуальная работа:\n- Готовят ответы\n\nРоссия - наша общая страна.\n- Ставят задачи"
+        self.assertNotIn("CULTURE-UNSOURCED", {code for code, _, _ in _issues(v, n)})
+
+    def test_goal_with_year_must_be_covered(self):
+        """Задача «Знакомство с событиями 1612 года» из карточки, а о 1612 годе в сценарии ни слова (QA c2, повтор)."""
+        n, v = setup("ex1_knowledge_day")
+        n = copy.copy(n)
+        n.educational_goals = ["Воспитание гражданской идентичности", "Знакомство с событиями 1612 года"]
+        issues = _issues(v, n)
+        self.assertIn(("GOAL-UNCOVERED", "warning", "concept"), issues)
+        self.assertEqual(1, sum(code == "GOAL-UNCOVERED" for code, _, _ in issues))
+        v["timeline"][1]["teacher_script"] += " Вспомним, что произошло в 1612 году."
+        self.assertNotIn("GOAL-UNCOVERED", {code for code, _, _ in _issues(v, n)})
+
     def test_century_needs_source(self):
         n, v = setup("ex1_knowledge_day")
         v["timeline"][1]["teacher_script"] += " Этот обычай появился в XVII веке."
         self.assertIn(("FACT-UNREGISTERED", "warning", f"timeline.{v['timeline'][1]['block_id']}"), _issues(v, n))
 
+
+
+# Проверенные цитаты о Рождестве из обновлённого каталога (PR #28): дата и православные традиции, о других странах ни слова.
+CHRISTMAS_FRAGMENTS = [
+    {"fragment_id": "frag_test_christmas_001", "source_id": "src_test_christmas", "verification_status": "verified",
+     "events": ["christmas"], "topics": [], "regions": ["RU"],
+     "quote": "Рождество Христово отмечается в ночь с 6 на 7 января. Традиции включают сочельник, приготовление кутьи и колядование."},
+    {"fragment_id": "frag_test_christmas_002", "source_id": "src_test_christmas", "verification_status": "verified",
+     "events": ["christmas"], "topics": [], "regions": ["RU"],
+     "quote": "Рождество Христово, которое православные верующие отмечают в ночь с 6 на 7 января, - особенный, торжественный день."},
+]
+
+
+def catalog_with(fragments):
+    """Каталог, в котором у события уже есть проверенные фрагменты (как после обновления каталога)."""
+    base = catalog()
+    return dataclasses.replace(base, fragments={**base.fragments, **{f["fragment_id"]: f for f in fragments}})
+
+
+class CultureSourcesTest(unittest.TestCase):
+    """Один проверенный источник у события не отключает проверку остальных утверждений о традициях (QA 14.11)."""
+
+    def issues(self, text, fragments=(), event_id="christmas", where="material"):
+        n, v = setup("ex1_knowledge_day")
+        n = copy.copy(n)
+        n.event_id = event_id
+        if where == "material":
+            v["materials"][0]["content"] = text
+            loc = f"materials.{v['materials'][0]['material_id']}"
+        else:
+            v["timeline"][1]["teacher_script"] += " " + text
+            loc = f"timeline.{v['timeline'][1]['block_id']}"
+        found = validate_variant(v, n, catalog_with(list(fragments)), settings().generation())
+        return [i for i in found if i.code == "CULTURE-UNSOURCED" and i.location == loc]
+
+    def test_federal_fragment_applies_to_region(self):
+        """Фрагменты с регионом `RU` подходят запросу из Свердловской области (`RU-SVE`)."""
+        found = {f["fragment_id"] for f in catalog_with(CHRISTMAS_FRAGMENTS).verified_fragments("christmas", "RU-SVE")}
+        self.assertLessEqual({f["fragment_id"] for f in CHRISTMAS_FRAGMENTS}, found)
+
+    def test_other_countries_flagged_with_sources(self):
+        """Источник о дате Рождества есть, а традиции Японии и Италии он не подтверждает."""
+        for text in ("В Японии традиционно едят рождественский торт.",
+                     "Италия:\n- Украшают вертеп\n- Дарят подарки утром",
+                     "Во многих итальянских домах ставят вертеп.",
+                     "Рождественские традиции Германии: пекут штоллен и украшают дом венками."):
+            with self.subTest(text=text):
+                self.assertTrue(self.issues(text, CHRISTMAS_FRAGMENTS))
+        self.assertTrue(self.issues("В Японии традиционно едят рождественский торт.", CHRISTMAS_FRAGMENTS, where="block"))
+
+    def test_capital_letters(self):
+        """«В Японии традиционно…» ловится так же, как «в Японии традиционно…»: текст приводится к нижнему регистру."""
+        for text in ("в Японии традиционно едят торт.", "В Японии традиционно едят торт.", "В ЯПОНИИ ТРАДИЦИОННО ЕДЯТ ТОРТ.",
+                     "Во Франции принято дарить подарки.", "У Татар принято печь чак-чак.", "ИТАЛИЯ:\n- Украшают вертеп"):
+            with self.subTest(text=text):
+                self.assertTrue(self.issues(text))
+                self.assertTrue(self.issues(text, CHRISTMAS_FRAGMENTS))
+
+    def test_confirmed_by_source(self):
+        """Утверждение о стране, которая есть в проверенном фрагменте, не помечается."""
+        russia = dict(CHRISTMAS_FRAGMENTS[0], fragment_id="frag_test_christmas_003",
+                      quote="В России в сочельник готовят кутью, а дети ходят колядовать.")
+        self.assertFalse(self.issues("В России в сочельник готовят кутью.", [russia]))
+        self.assertTrue(self.issues("В России в сочельник готовят кутью.", CHRISTMAS_FRAGMENTS))
+        # «У народов Сибири» не подтверждается фрагментом, где есть только слово «народ».
+        unity = {"fragment_id": "frag_test_unity", "source_id": "src_test_unity", "verification_status": "verified",
+                 "events": ["unity_day"], "regions": ["RU"], "quote": "Праздник посвящён событиям 1612 года, когда народное ополчение освободило Москву."}
+        self.assertTrue(self.issues("У народов Сибири принято устраивать праздник.", [unity], event_id="unity_day"))
+
+    def test_not_a_tradition_claim(self):
+        """Без страны или без утверждения о традиции предупреждения нет, и с источником, и без."""
+        for text in ("Индивидуальная работа:\n- Готовят ответы", "Россия - наша общая страна.\n- Ставят задачи",
+                     "В индивидуальном порядке ученики готовят ответы.", "Подумайте, как праздник отмечают в вашей семье."):
+            with self.subTest(text=text):
+                self.assertFalse(self.issues(text))
+                self.assertFalse(self.issues(text, CHRISTMAS_FRAGMENTS))
+
+    def test_recorded_runs_with_updated_catalog(self):
+        """Записанные прогоны о Рождестве: с цитатами из обновлённого каталога традиции других стран по-прежнему помечаются."""
+        sources_text = " ".join(f["quote"] for f in CHRISTMAS_FRAGMENTS).lower()
+        for name, material_id in (("replay_gigachat_content_christmas", "research_cards"),
+                                  ("replay_gigachat_content_christmas_v2", "country_cards")):
+            with self.subTest(name=name):
+                outcome, _ = replay(name)
+                material = next(m for m in outcome.project["variants"][0]["materials"] if m["material_id"] == material_id)
+                claims = _culture_claims(material["content"])
+                self.assertTrue(claims)
+                self.assertTrue([quote for quote, places in claims if not _confirmed(places, sources_text)])
 
 
 class ContentCheckRunTest(unittest.TestCase):
@@ -258,7 +394,8 @@ class ContentCheckRunTest(unittest.TestCase):
         outcome, _ = replay("replay_gigachat_content_unity_day")
         variant = outcome.project["variants"][0]
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
-        self.assertEqual(codes, {"CULTURE-UNSOURCED"})
+        # О 1612 годе в прогоне ни слова, а задача из карточки его обещает (замечание QA 14.11).
+        self.assertEqual(codes, {"CULTURE-UNSOURCED", "GOAL-UNCOVERED"})
         joined = "\n".join(_variant_texts(variant))
         self.assertNotIn("culture_cards", joined)
         self.assertNotIn("project_template", joined)

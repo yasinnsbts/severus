@@ -15,7 +15,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from app.cli import main
+from app.contracts import llm as c03
 from app.generation.pipeline import StageFailed, _fix_enum, prepare_stage_output, resource_ids
+from app.llm.jsonx import extract_json
 from app.normalize import normalize
 from app.trace import RunTrace
 from tests.helpers import EXAMPLES, ROOT, catalog, request, settings
@@ -87,6 +89,40 @@ class EnumFixTest(unittest.TestCase):
                          ("whole_class", "creative_product", "team_task"))
         self.assertEqual([f["field"] for f in fixes], ["concepts.0.engagement_mode", "concepts.0.planned_structure.1.activity_type",
                                                        "concepts.0.key_activities.0.activity_type"])
+
+
+class MechanicFallbackTest(unittest.TestCase):
+    """Механика ценности не из списка (прогон 14.11, Рождество 7 кл, 30 мин): для «семьи» модель писала `sharing`
+    и на просьбу исправить трижды вернула тот же ответ байт в байт - сценарий падал на первом этапе."""
+
+    @staticmethod
+    def mechanics():
+        return {vid: value.get("allowed_mechanic_types", []) for vid, value in catalog().values.items()}
+
+    def test_recorded_gigachat_answer_passes_schema(self):
+        raw = (ROOT / "tests" / "fixtures" / "replay_gigachat_q03_mechanic" / "variation_plan.raw.txt").read_text(encoding="utf-8")
+        data = extract_json(raw)
+        fixes = prepare_stage_output("variation_plan", data, set(), None, self.mechanics())
+        c03.VariationPlanResponse.model_validate(data)
+        self.assertIn({"kind": "enum_fallback", "field": "concepts.0.values_to_mechanics.1.mechanic_type",
+                       "from": "sharing", "to": "family_research"}, fixes)
+        self.assertEqual(data["concepts"][0]["values_to_mechanics"][0]["mechanic_type"], "culture_comparison")
+
+    def test_fallback_by_value(self):
+        """Замена - первая разрешённая механика ценности; без каталога или для чужой ценности - `discussion`."""
+        for value_id, mechanics, expected in (("mutual_aid", self.mechanics(), "team_task"),
+                                               ("family", None, "discussion"), ("unknown_value", self.mechanics(), "discussion")):
+            with self.subTest(value_id=value_id):
+                data = {"concept": {"values_to_mechanics": [{"value_id": value_id, "mechanic_type": "storytelling"}]}}
+                prepare_stage_output("scenario_plan", data, set(), None, mechanics)
+                self.assertEqual(data["concept"]["values_to_mechanics"][0]["mechanic_type"], expected)
+
+    def test_known_values_untouched(self):
+        data = {"concepts": [{"values_to_mechanics": [{"value_id": "family", "mechanic_type": "discussion"},
+                                                      {"value_id": "family", "mechanic_type": "Joint product"}]}]}
+        fixes = prepare_stage_output("variation_plan", data, set(), None, self.mechanics())
+        self.assertEqual([r["mechanic_type"] for r in data["concepts"][0]["values_to_mechanics"]], ["discussion", "joint_product"])
+        self.assertNotIn("enum_fallback", {f["kind"] for f in fixes})
 
 
 class CliStageFailedTest(unittest.TestCase):

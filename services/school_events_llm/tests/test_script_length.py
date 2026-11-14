@@ -11,7 +11,8 @@ from app.llm.fixture import FixtureLLM
 from app.normalize import normalize
 from app.prompting.composer import Composer
 from app.script_length import script_min_chars, script_target_chars
-from tests.helpers import catalog, golden, request, settings
+from app.validation.checks import validate_variant
+from tests.helpers import catalog, golden, minimal_request, request, settings
 from tests.test_validation_render import codes, setup
 
 
@@ -27,6 +28,28 @@ class ScriptLengthTest(unittest.TestCase):
         self.assertLess(script_min_chars(cfg, "standard", 10), script_min_chars(cfg, "detailed", 10))
         self.assertLess(script_min_chars(cfg, "brief", 10), script_min_chars(cfg, "standard", 10))
         self.assertGreater(script_target_chars(cfg, "detailed", 10), script_min_chars(cfg, "detailed", 10))
+
+    def test_younger_grades_shorter(self):
+        """Для 1-4 классов норма меньше (age_factor 0,7): с восьмилетними говорят короче (QA c3, BUG-05)."""
+        cfg = gen_cfg()
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, "1-4"), int(script_min_chars(cfg, "detailed", 10) * 0.7))
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, "5-8"), script_min_chars(cfg, "detailed", 10))
+        self.assertEqual(script_min_chars(cfg, "detailed", 10, None), script_min_chars(cfg, "detailed", 10))
+
+    def test_younger_grades_prompt_and_warning(self):
+        """Промпт блока для 1-4 классов называет уменьшенный объём и просит короткие предложения; SCRIPT-SHORT по той же норме."""
+        n = normalize(minimal_request(grade_group="1-4", teacher_preferences={"script_detail": "detailed"}), catalog(), settings())
+        composed = Composer(settings(), catalog()).compose(
+            "scenario_block", n, stage_input="",
+            output_vars={"variant_id": "v1", "block_id": "block_02", "start_minute": "5", "block_minutes": "10"})
+        text = "\n".join(m["content"] for m in composed.messages)
+        self.assertIn(f"на 10 мин - от {script_min_chars(gen_cfg(), 'detailed', 10, '1-4')},", text)
+        self.assertIn("короткими простыми предложениями", text)
+        _, v = setup("ex1_knowledge_day")
+        block = v["timeline"][2]
+        block["teacher_script"] = "Х" * (script_min_chars(gen_cfg(), "detailed", block["duration_minutes"], "1-4") + 5)
+        self.assertNotIn("SCRIPT-SHORT", {i.code for i in validate_variant(v, n, catalog(), gen_cfg())
+                                          if i.location == f"timeline.{block['block_id']}"})
 
     def test_warning_depends_on_block_duration(self):
         """Один и тот же текст достаточен для короткого блока и мал для длинного."""

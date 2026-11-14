@@ -386,7 +386,7 @@ class Composer:
                 f"{RESOURCE_TITLES[resource].capitalize()}: наличие не подтверждено; только как дополнение с вариантом без него."
             )
         checklist.append(f"Каждая ценность ({', '.join(n.values)}) реализована действием участников хотя бы в одном блоке.")
-        checklist.append(f"Объём реплик педагога {script_length_rule(self.gen_cfg, tp['script_detail'])}.")
+        checklist.append(f"Объём реплик педагога {script_length_rule(self.gen_cfg, tp['script_detail'], n.age_group)}.")
         if tp["preparation_effort"] == "minimal":
             checklist.append("Минимальная подготовка: без сложного реквизита и покупок; суммарная подготовка материалов не больше 20 минут.")
         checklist.append("Фактические утверждения только по справочным фрагментам с записью в `fact_claims`; неподтверждённые факты не придумывать.")
@@ -413,8 +413,8 @@ class Composer:
                 f'<fragment source_id="{fragment["source_id"]}" fragment_id="{fragment["fragment_id"]}" '
                 f'title="{source.get("title", "")}">\n{body}\n</fragment>'
             )
-        items.append("Сведения, которых нет в этих фрагментах (годы, века, имена, происхождение обычаев), "
-                     "не добавляй: о них говори обобщённо или не говори совсем.")
+        items.append("Сведения, которых нет в этих фрагментах (годы, века, имена, происхождение обычаев, традиции "
+                     "других стран и народов), не добавляй: о них говори обобщённо или не говори совсем.")
         return {"fragments": "\n\n".join(items)}
 
     def compose(
@@ -555,7 +555,7 @@ class Composer:
             "first_value_id": n.values[0],
             "duration_minutes": str(n.duration_minutes),
             "pupils_count": str(n.pupils_count),
-            "script_min_chars": script_length_rule(self.gen_cfg, n.teacher_preferences["script_detail"]),
+            "script_min_chars": script_length_rule(self.gen_cfg, n.teacher_preferences["script_detail"], n.age_group),
             "dependency_ids": ", ".join(self.catalog.dependencies),
             "parent_roles_example": "",
             "voting_example": "null",
@@ -580,7 +580,7 @@ class Composer:
         if stage == "scenario_block" and str(merged_output_vars.get("block_minutes", "")).isdigit():
             minutes = int(merged_output_vars["block_minutes"])
             merged_output_vars["script_min_chars"] = (
-                f"для этого блока на {minutes} мин - {script_size_text(self.gen_cfg, n.teacher_preferences['script_detail'], minutes)}"
+                f"для этого блока на {minutes} мин - {script_size_text(self.gen_cfg, n.teacher_preferences['script_detail'], minutes, n.age_group)}"
             )
         output_spec = use(f"output/{stage}.md", merged_output_vars)
 

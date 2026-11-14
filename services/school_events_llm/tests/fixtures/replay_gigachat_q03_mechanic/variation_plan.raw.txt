@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Рождественские традиции мира",
+      "summary": "Участники знакомятся с разными праздничными обычаями, создают коллективную карту традиций и обсуждают семейные ритуалы.",
+      "narrative_approach": "Педагог предлагает путешествие по странам, изучая рождественские традиции вместе с учениками. Затем ребята делятся личными впечатлениями и рисуют общую карту традиций.",
+      "primary_mechanic": "creative_workshop",
+      "engagement_mode": "whole_class",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Путешествие по традиционным праздникам",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Коллективная карта традиций",
+          "activity_type": "joint_product",
+          "approx_minutes": 12
+        },
+        {
+          "order": 3,
+          "title": "Семейные рассказы",
+          "activity_type": "sharing",
+          "approx_minutes": 6
+        },
+        {
+          "order": 4,
+          "title": "Итоговое слово педагога",
+          "activity_type": "reflection",
+          "approx_minutes": 7
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "joint_product",
+          "description": "Дети совместно рисуют большую карту мира и отмечают на ней страны с необычными рождественскими традициями."
+        }
+      ],
+      "distinctive_result": "Большая настенная карта с отмеченными традициями разных стран и рисунков учащихся.",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "cultural_diversity",
+          "mechanic_type": "culture_comparison",
+          "mechanic": "Создание общей карты с традициями разных стран"
+        },
+        {
+          "value_id": "family",
+          "mechanic_type": "sharing",
+          "mechanic": "Обмен рассказами о семейных празднованиях по желанию"
+        }
+      ]
+    }
+  ]
+}
