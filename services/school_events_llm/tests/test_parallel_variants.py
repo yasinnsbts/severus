@@ -3,8 +3,9 @@
 Три варианта шли по очереди 17 минут (415 + 326 + 297 с) и не успевали за 15-минутный срок ожидания
 фронтенда. Варианты независимы, поэтому до `max_parallel_variants` (3) создаются одновременно.
 Проверяется: варианты действительно идут одновременно, результат в порядке v1, v2, v3, трасса цельная
-(номера вызовов не повторяются, события и токены не теряются), неустранимая ошибка модели останавливает
-соседние варианты, а клиенты с записанными ответами и `1` в настройке работают по очереди, как раньше.
+(номера вызовов не повторяются, события и токены не теряются); ошибка, которую повтор не исправит
+(ключ не подходит), останавливает соседние варианты, а временный сбой шлюза валит только свой вариант;
+клиенты с записанными ответами и `1` в настройке работают по очереди, как раньше.
 """
 
 import copy
@@ -68,6 +69,7 @@ def run(client, *, parallel: int, count: int = 3, run_dir: Path | None = None):
     raw["generation"]["variants_count"] = count
     trace = RunTrace(run_dir, full_prompts=False, full_responses=False, secrets=[]) if run_dir else None
     gen = Generator(settings(), catalog(), client, trace=trace, parallel_variants=parallel)
+    gen._sleep = lambda seconds: None  # паузы между повторами в тестах не ждём
     return gen, gen.run(raw)
 
 
@@ -131,6 +133,19 @@ class ParallelVariantsTest(unittest.TestCase):
             self.assertEqual(sorted(e["variant_id"] for e in log if e["event_type"] == "variant_stopped"), ["v1", "v3"])
             # Остановленные варианты не дошли до материалов.
             self.assertNotIn("materials", [c["task"] for c in client.calls])
+
+    def test_temporary_outage_fails_only_own_variant(self):
+        """Сбой сети или 5xx шлюза у варианта v2 не прошёл и после повторов: падает только v2, v1 и v3
+        доделываются, генерация `partial` - фронтенд покажет два готовых сценария. И по очереди так же."""
+        error = LLMError("MODEL_UNAVAILABLE", "Ошибка сервера модели (502)", retryable=True)
+        for parallel in (3, 1):
+            with self.subTest(parallel=parallel):
+                client = SlowFixture(goldens(3), delay=0.01, fail=("v2", "scenario_plan", error))
+                gen, outcome = run(client, parallel=parallel)
+                self.assertEqual([(v.variant_id, v.status) for v in outcome.variants],
+                                 [("v1", "completed"), ("v2", "failed"), ("v3", "completed")])
+                self.assertEqual((outcome.project["status"], outcome.project["completed_variants"]), ("partial", 2))
+                self.assertIn("502", outcome.variants[1].error)
 
     def test_ordinary_failure_does_not_stop_neighbours(self):
         """Вариант, не прошедший схему, - обычная неудача: соседние варианты доделываются."""

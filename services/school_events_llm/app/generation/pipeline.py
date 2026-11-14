@@ -74,11 +74,19 @@ class VariantOutcome:
 
 class VariantsStopped(LLMError):
     """Вариант остановлен, потому что соседний вариант той же генерации получил неустранимую ошибку модели
-    (модель недоступна, ключ не подходит): дальше обращаться к ней бессмысленно."""
+    (ключ не подходит, модель не настроена): дальше обращаться к ней бессмысленно."""
 
 
-# Ошибки модели, после которых остальные варианты генерации не запускаются и останавливаются.
+# Ошибки модели, после которых остальные варианты генерации не запускаются и останавливаются, - только
+# те, что повтор не исправит (`retryable=False`): ключ не подходит, модель не описана или выключена.
+# Временный сбой сети или 5xx шлюза (`MODEL_UNAVAILABLE` с `retryable=True`) после своих повторов валит
+# только свой вариант: соседние доделываются, и фронтенд покажет готовые («Готова часть сценариев»).
 FATAL_MODEL_ERRORS = ("MODEL_UNAVAILABLE", "MODEL_AUTH_ERROR")
+
+
+def stops_other_variants(exc: Exception) -> bool:
+    """Ошибка останавливает остальные варианты генерации (`FATAL_MODEL_ERRORS` без повтора)."""
+    return isinstance(exc, LLMError) and exc.code in FATAL_MODEL_ERRORS and not exc.retryable
 
 
 @dataclass
@@ -746,8 +754,8 @@ class Generator:
         для лимита шлюза (`RATE_LIMITED`, 429) - свои, больше: `defaults.rate_limit_retry_attempts`
         и `defaults.rate_limit_backoff_seconds`. Если шлюз прислал `Retry-After`, пауза не меньше неё.
         Для сбоя сети или 5xx шлюза (`MODEL_UNAVAILABLE`) - тоже свои: `defaults.unavailable_retry_attempts`
-        и `defaults.unavailable_backoff_seconds` (4 повтора, около минуты): после такой ошибки варианта
-        останавливаются и соседние варианты генерации, поэтому короткий перерыв шлюза лучше переждать.
+        и `defaults.unavailable_backoff_seconds` (4 повтора, около минуты): короткий перерыв шлюза лучше
+        переждать, чем потерять вариант.
         Таймаут (`MODEL_TIMEOUT`) повторяется по-прежнему 2 раза: каждая попытка ждёт ответа до `timeout_seconds`.
         К паузе добавляется случайный разброс `defaults.retry_jitter` (±30%): иначе генерации, получившие отказ
         одновременно, возвращаются в шлюз тоже одновременно и снова получают отказ (нагрузка 30 генераций, 14.11).
@@ -1209,7 +1217,7 @@ class Generator:
             return None
         except (StageFailed, LLMError) as exc:
             outcome = VariantOutcome(vid, None, [], None, "failed", str(exc))
-            if isinstance(exc, LLMError) and exc.code in FATAL_MODEL_ERRORS:
+            if stops_other_variants(exc):
                 with self._lock:
                     self._fatal = self._fatal or exc
                 self.trace.event("variant_failed", variant_id=vid, error=str(exc))
@@ -1227,10 +1235,10 @@ class Generator:
 
         Варианты независимы: каждый строится по своей концепции и знает только концепции соседей, а не их
         результат. Поэтому до `max_parallel_variants` вариантов создаются одновременно; к модели они идут
-        через общий предел `max_parallel_llm_requests`. Если модель недоступна или ключ не подходит
-        (`FATAL_MODEL_ERRORS`), остальные варианты не начинаются и останавливаются на следующем обращении
-        к модели - как раньше, когда после такой ошибки цикл по вариантам прерывался. Результат - в порядке
-        вариантов (v1, v2, v3), а не в порядке готовности.
+        через общий предел `max_parallel_llm_requests`. Если ключ не подходит или модель не настроена
+        (`stops_other_variants`), остальные варианты не начинаются и останавливаются на следующем обращении
+        к модели. Временный сбой сети или шлюза после своих повторов валит только свой вариант. Результат -
+        в порядке вариантов (v1, v2, v3), а не в порядке готовности.
         """
         workers = self._variant_workers(len(selected))
         if workers == 1:
