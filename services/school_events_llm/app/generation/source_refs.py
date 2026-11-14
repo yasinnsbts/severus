@@ -86,6 +86,14 @@ def _supported(claim: str, fragment: dict[str, Any]) -> bool:
     return all(document_confirmed(stem, source) for _, stem in document_mentions(claim))
 
 
+# Любая группа в скобках, где есть ID фрагмента или источника: «(frag_new_year_001, frag_new_year_005)»,
+# «(fragment_id: frag_new_year_001)», «[источники: frag_…; frag_…]» (замечание QA 14.11: ID в реплике блока).
+_ANY_ID = re.compile(r"\b(?:frag|src)_[a-z0-9_]+", re.I)
+_GROUP_WITH_ID = re.compile(r"[ \t]*[(\[](?P<inner>[^()\[\]\n]*?\b(?:frag|src)_[a-z0-9_]+[^()\[\]\n]*?)[)\]]", re.I)
+# Слова-подписи вокруг ID, которые без ID ничего не значат.
+_ID_LABELS = re.compile(r"fact_claims?|fragment_id|source_id|claim_id|источник\w*|фрагмент\w*|см\.?|согласно|по|и|and", re.I)
+# ID без скобок: «Согласно frag_new_year_001, …», «… (источник frag_x)» уже убраны группой.
+_BARE_ID = re.compile(r"(?:\b(?:согласно|по\s+данным|см\.?|источник\w*:?|фрагмент\w*:?)[ \t]+)?\b(?:frag|src)_[a-z0-9_]+(?:[ \t]*[,;][ \t]*\b(?:frag|src)_[a-z0-9_]+)*[,;:]?", re.I)
 _LIST_MARK = re.compile(r"^\s*(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
 _SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
 
@@ -100,6 +108,45 @@ def _claim_before(text: str, start: int) -> str:
     ends = [m.end() for m in _SENTENCE_END.finditer(line[:-1])]
     sentence = line[ends[-1]:] if ends else line
     return _LIST_MARK.sub("", sentence).strip()
+
+
+def _drop_refs(text: str, rx: re.Pattern[str], matches: list[re.Match[str]]) -> str:
+    """Вырезает найденные ссылки. Скобки, где есть смысл кроме ссылки, остаются без ID; после ссылки в начале
+    предложения («Согласно frag_x, Пётр…») первая буква становится заглавной."""
+    out, pos = [], 0
+    for match in matches:
+        out.append(text[pos:match.start()])
+        replacement = ""
+        if rx is _GROUP_WITH_ID:
+            rest = _ID_LABELS.sub("", _ANY_ID.sub("", match.group("inner")))
+            if len(re.sub(r"[\W\d_]+", "", rest)) >= 3:
+                inner = _BARE_ID.sub("", match.group("inner"))
+                inner = re.sub(r"[ \t]*[,;:][ \t]*$", "", re.sub(r"^[ \t]*[,;:][ \t]*", "", inner.strip()))
+                opening = match.group(0).lstrip()[0]
+                replacement = " " + opening + inner + (")" if opening == "(" else "]")
+        pos = match.end()
+        before = "".join(out).rstrip(" \t")
+        if not replacement and (not before or before[-1] in ".!?\n"):
+            following = text[pos:].lstrip(" \t,;:")
+            skipped = len(text) - pos - len(following)
+            if following[:1].islower():
+                out.append(replacement + " " * (1 if before else 0))
+                out.append(following[:1].upper())
+                pos += skipped + 1
+                continue
+        out.append(replacement)
+    out.append(text[pos:])
+    return "".join(out)
+
+
+def _claim_around(text: str, match: re.Match[str]) -> str:
+    """Фраза, внутри которой стоит ссылка без скобок: «Согласно frag_x, Пётр I постановил…» - предложение целиком без ссылки."""
+    start = max(text.rfind(ch, 0, match.start()) for ch in ".!?\n") + 1
+    ends = [i for i in (text.find(ch, match.end()) for ch in ".!?\n") if i != -1]
+    end = min(ends) + 1 if ends else len(text)
+    sentence = (text[start:match.start()] + text[match.end():end]).strip(" ,;:")
+    sentence = _LIST_MARK.sub("", sentence).strip()
+    return sentence[:1].upper() + sentence[1:]
 
 
 def _resolve(src: str | None, frag: str | None, fragments: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -156,6 +203,29 @@ def move_source_refs(variant: dict[str, Any], fragments: list[dict[str, Any]]) -
                     registered.append(claim_id)
             if matches:
                 text = rx.sub("", text)
+        # Остальные формы: несколько ID в скобках, подпись «fragment_id:», ID без скобок.
+        for rx in (_GROUP_WITH_ID, _BARE_ID):
+            matches = list(rx.finditer(text))
+            if not matches:
+                continue
+            for match in matches:
+                ids = [m.group(0) for m in _ANY_ID.finditer(match.group(0))]
+                refs.append("/".join(ids))
+                claim = _claim_before(text, match.start()) if rx is _GROUP_WITH_ID else _claim_around(text, match)
+                for ref in ids:
+                    low = ref.lower()
+                    fragment = _resolve(low if low.startswith("src_") else None, low if low.startswith("frag_") else None, fragments)
+                    # Записывается только фраза с годом или датой: «Раздайте карточки (см. frag_x)» - не факт.
+                    has_date = bool(_YEAR.search(claim) or _DATE.search(claim))
+                    if fragment and claim and has_date and claim.lower() not in known and _supported(claim, fragment):
+                        claim_id = f"fc_{len(claims) + 1:02d}"
+                        claims.append({"claim_id": claim_id, "text": claim, "location": location,
+                                       "source_id": fragment["source_id"], "fragment_id": fragment["fragment_id"],
+                                       "needs_teacher_check": False})
+                        known.add(claim.lower())
+                        registered.append(claim_id)
+                        break
+            text = _drop_refs(text, rx, matches)
         if not refs:
             return text
         changes.append({"field": where, "refs": refs, "registered": registered})

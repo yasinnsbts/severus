@@ -74,6 +74,33 @@ class MoveSourceRefsTest(unittest.TestCase):
                 self.assertNotIn("src_", variant["materials"][0]["content"])
                 self.assertEqual(variant["fact_claims"], [])
 
+    def test_fragment_ids_in_block_script(self):
+        """Второй баг-лист 14.11 (BUG-16, job_20261114_173643_41aa2f): `frag_new_year_001`, `frag_new_year_005`
+        в реплике педагога - несколько ID в скобках, подпись «fragment_id:», ссылка без скобок."""
+        cases = {
+            "Пётр I перенёс Новый год на 1 января 1700 года (frag_new_year_001, frag_new_year_005). Давайте обсудим.":
+                "Пётр I перенёс Новый год на 1 января 1700 года. Давайте обсудим.",
+            "Пётр I перенёс Новый год на 1 января 1700 года (fragment_id: frag_new_year_001).":
+                "Пётр I перенёс Новый год на 1 января 1700 года.",
+            "Ребята! Согласно frag_new_year_001, Пётр I постановил начать год с 1 января 1700 года.":
+                "Ребята! Пётр I постановил начать год с 1 января 1700 года.",
+            "Пётр I постановил начать год с 1 января 1700 года [источники: frag_new_year_001; frag_new_year_005].":
+                "Пётр I постановил начать год с 1 января 1700 года.",
+        }
+        for text, expected in cases.items():
+            with self.subTest(text=text):
+                variant = bare_variant("", text)
+                move_source_refs(variant, fragments("new_year"))
+                self.assertEqual(variant["timeline"][0]["teacher_script"], expected)
+                self.assertEqual([c["fragment_id"] for c in variant["fact_claims"]], ["frag_new_year_001"])
+
+    def test_parentheses_with_meaning_kept(self):
+        """Скобки, где есть смысл кроме ссылки, остаются без ID; фраза без года и даты фактом не записывается."""
+        variant = bare_variant("", "Раздайте карточки (по одной на команду, см. frag_new_year_002). Начинаем. Это дата (в 1700 году).")
+        move_source_refs(variant, fragments("new_year"))
+        self.assertEqual(variant["timeline"][0]["teacher_script"], "Раздайте карточки (по одной на команду). Начинаем. Это дата (в 1700 году).")
+        self.assertEqual(variant["fact_claims"], [])
+
     def test_text_without_refs_untouched(self):
         variant = bare_variant("Карточка: герб области.\n\nОбсудите в группе.")
         before = copy.deepcopy(variant)
