@@ -122,6 +122,19 @@ _COUNTRY_HEAD = re.compile(r"^(?:\d{1,2}[.)]\s*|[-\u2013\u2014\u2022]\s*)?(?P<co
 _LIST_ITEM = re.compile(r"^(?:[-\u2013\u2014\u2022*]|\d{1,2}[.)])\s*")
 
 
+# Задание для поиска и открытый вопрос - не утверждение: «Изучите, как итальянцы отмечают Рождество»,
+# «Какой ужин готовят итальянцы?». Вопрос «Почему в Италии популярны вертепы?» подаёт факт как готовый - остаётся.
+_RESEARCH_TASK = re.compile(
+    r"^(?:изучи|узна|исследу|найди|выясни|спроси|подумай|обсуди|сравни|опиши|нарисуй|расскажи|подготовь|запиши|прочитай|посмотри)\w*\b"
+)
+_OPEN_QUESTION = re.compile(r"^(?:как|какой|какая|какое|какие|каким|какую|когда|что|где|кто|чем|сколько|зачем|ли)\b[^?]*\?\s*$")
+
+
+def _is_claim(sentence: str) -> bool:
+    """Предложение утверждает, а не даёт задание и не спрашивает (текст в нижнем регистре, без маркера списка)."""
+    return not (_RESEARCH_TASK.match(sentence) or _OPEN_QUESTION.match(sentence))
+
+
 def _places(lowered: str) -> set[str]:
     """Ключи стран и народов, о которых говорит фраза (текст уже в нижнем регистре)."""
     return {key for key, pattern in _PLACE_PATTERNS.items() if pattern.search(lowered)}
@@ -158,11 +171,11 @@ def _culture_claims(text: str) -> list[tuple[str, set[str]]]:
             head = ""
         for sentence in _SENTENCE.findall(plain):
             low = sentence.lower()
-            if not _TRADITION_CLAIM.search(low):
+            if not _TRADITION_CLAIM.search(low) or not _is_claim(_LIST_ITEM.sub("", low.strip())):
                 continue
             places = _places(low)
             if places:
-                found.append((sentence.strip(), places))
+                found.append((_LIST_ITEM.sub("", sentence.strip()), places))
             elif head:
                 found.append((f"{head_title}: {_LIST_ITEM.sub('', sentence.strip())}", {head}))
     return found

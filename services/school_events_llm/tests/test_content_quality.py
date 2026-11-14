@@ -98,6 +98,22 @@ class HumanizeTextTest(unittest.TestCase):
         self.assertEqual(leftover_ids(result), ["world_map_poster"])
 
 
+class MetaNotesTest(unittest.TestCase):
+    def test_size_note_removed(self):
+        """Прогон 14.11 (Рождество 7 кл): «Объём текста сценария для педагога составляет около 780 символов.» в реплике."""
+        from app.generation.humanize import drop_meta_notes
+        block = json.loads((FIXTURES / "qa_v3_christmas_presentations_block.json").read_text(encoding="utf-8"))
+        variant = {"timeline": [block], "materials": [{"material_id": "m", "content": "Символы области: герб и флаг. Герб - символ края.",
+                                                     "teacher_notes": "Раздайте 25 карточек."}], "teacher_instructions": []}
+        changes = drop_meta_notes(variant)
+        self.assertEqual(changes, [{"field": "timeline.block_03.teacher_script",
+                                    "removed": ["Объём текста сценария для педагога составляет около 780 символов."]}])
+        script = variant["timeline"][0]["teacher_script"]
+        self.assertNotIn("символов", script)
+        self.assertIn("итого шесть минут.\nУчитель следит за временем", script)
+        self.assertEqual(variant["materials"][0]["content"], "Символы области: герб и флаг. Герб - символ края.")
+
+
 class HumanizeVariantTest(unittest.TestCase):
     def test_replay_with_ids_in_model_text(self):
         """Модель пишет ID в репликах, действиях и памятке - в готовом варианте их нет, предупреждений тоже."""
@@ -177,6 +193,15 @@ class InnerTimingTest(unittest.TestCase):
         }
         self.assertEqual(inner_timing_problems(block, groups_count=4, pairs_count=0),
                          ["выступления: 4 групп × 3 мин = 12 мин, а на блок 10 мин"])
+
+    def test_speaker_time_and_per_minute(self):
+        """Прогон 14.11 (Рождество 7 кл): 6 команд, «Спикеру даётся одна минута», «по минуте на каждую группу» в 6-минутном
+        этапе - всё сходится, предупреждения нет. Две минуты спикеру при тех же 6 командах - уже 12 минут."""
+        block = json.loads((FIXTURES / "qa_v3_christmas_presentations_block.json").read_text(encoding="utf-8"))
+        self.assertEqual(inner_timing_problems(block, groups_count=6, pairs_count=0, next_duration=5, next_title="Подведение итогов"), [])
+        self.assertEqual(self.problems(6, "Каждая команда выберет спикера, он расскажет о коллаже. Спикеру даётся две минуты.", groups=6),
+                         ["выступления: 6 групп × 2 мин = 12 мин, а на блок 6 мин"])
+        self.assertTrue(self.problems(4, "Команды по очереди представляют коллажи, по минуте на каждую группу.", groups=6))
 
     def test_work_then_all_groups_present(self):
         text = "На выполнение задания вам даётся 10 минут. Затем каждая команда представит свой коллаж всему классу."
@@ -362,6 +387,16 @@ class CultureSourcesTest(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertFalse(self.issues(text))
                 self.assertFalse(self.issues(text, CHRISTMAS_FRAGMENTS))
+
+    def test_quote_is_a_claim_not_a_task(self):
+        """Прогон 14.11 (Рождество 5-8): в цитату попадает утверждение «Почему в Италии популярны вертепы?»,
+        а не задание «Изучите, как итальянцы отмечают Рождество» и не открытый вопрос."""
+        text = ("Группа 1: Италия\nИзучите, как итальянцы отмечают Рождество. Найдите ответы на вопросы:\n"
+                "- Какой традиционный ужин готовят итальянцы?\n- Почему в Италии популярны вертепы?")
+        self.assertEqual(_culture_claims(text)[0][0], "Почему в Италии популярны вертепы?")
+        found = self.issues(text)
+        self.assertIn("Почему в Италии популярны вертепы?", found[0].message)
+        self.assertFalse(self.issues("Изучите, как итальянцы отмечают Рождество.\n- Какой ужин готовят итальянцы?\n- Когда дарят подарки в Италии?"))
 
     def test_recorded_runs_with_updated_catalog(self):
         """Записанные прогоны о Рождестве: с цитатами из обновлённого каталога традиции других стран по-прежнему помечаются."""

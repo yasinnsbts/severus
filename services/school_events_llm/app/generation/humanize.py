@@ -213,3 +213,60 @@ def leftover_ids(text: str) -> list[str]:
         return []
     clean = _URL.sub(" ", text)
     return re.findall(_LEFT + r"(?:block_\d+|" + _SNAKE + r")(?![\w/])", clean)
+
+
+# Фраза о самом сценарии, которую модель переносит из требований промпта в реплику:
+# «Объём текста сценария для педагога составляет около 780 символов.» (прогон 14.11, Рождество 7 кл).
+# Нужны и число символов (знаков), и слово о тексте: «символы области» и «герб - символ» не трогаются.
+_META_SENTENCE = re.compile(r"[^.!?\n]*[.!?]?")
+_META_SIZE = re.compile(r"\b\d{2,5}\s*(?:символ|знак)\w*", re.I)
+_META_WORD = re.compile(r"объ[её]м|длин\w*\s+(?:текст|реплик|сценари)|текст\w*\s+(?:сценари|реплик)|реплик\w*\s+педагог", re.I)
+
+
+def _drop_meta(text: str) -> tuple[str, list[str]]:
+    removed: list[str] = []
+    kept: list[str] = []
+    for line in text.split("\n"):
+        parts = []
+        for sentence in _META_SENTENCE.findall(line):
+            if sentence.strip() and _META_SIZE.search(sentence) and _META_WORD.search(sentence):
+                removed.append(sentence.strip())
+            else:
+                parts.append(sentence)
+        new_line = "".join(parts).rstrip()
+        if new_line.strip() or not line.strip():
+            kept.append(new_line)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip(), removed
+
+
+def drop_meta_notes(variant: dict[str, Any]) -> list[dict[str, Any]]:
+    """Убирает из текстов для педагога фразы о самом сценарии («объём текста… около 780 символов»).
+
+    Возвращает:
+        Список изменений для трассы: поле и убранные фразы.
+    """
+    changes: list[dict[str, Any]] = []
+
+    def fix(obj: Any, key: str, where: str) -> None:
+        if isinstance(obj, dict) and isinstance(obj.get(key), str):
+            new, removed = _drop_meta(obj[key])
+            if removed:
+                obj[key] = new
+                changes.append({"field": where, "removed": removed})
+
+    for block in variant.get("timeline") or []:
+        fix(block, "teacher_script", f"timeline.{block.get('block_id')}.teacher_script")
+        actions = block.get("pupil_actions") or []
+        for index in range(len(actions)):
+            holder = {"text": actions[index]}
+            fix(holder, "text", f"timeline.{block.get('block_id')}.pupil_actions.{index}")
+            actions[index] = holder["text"]
+    for material in variant.get("materials") or []:
+        for key in ("content", "teacher_notes"):
+            fix(material, key, f"materials.{material.get('material_id')}.{key}")
+    instructions = variant.get("teacher_instructions") or []
+    for index in range(len(instructions)):
+        holder = {"text": instructions[index]}
+        fix(holder, "text", f"teacher_instructions.{index}")
+        instructions[index] = holder["text"]
+    return changes
