@@ -154,6 +154,30 @@ class InnerTimingTest(unittest.TestCase):
         self.assertTrue(self.problems(10, "У вас 7 минут на рисунок. Потом у вас есть 5 минут на выставку.", groups=1))
         self.assertTrue(self.problems(10, "Каждая пара представит открытку, по 1 минуте на пару.", groups=1, pairs=13))
 
+    def test_time_per_group_phrasings(self):
+        """Формы «N минут на группу» и «время выступления - N минут» (прогон QA c2, BUG-03)."""
+        self.assertEqual(self.problems(10, "Каждая группа представит лист. (4 минуты на группу)", groups=4),
+                         ["выступления: 4 групп × 4 мин = 16 мин, а на блок 10 мин"])
+        self.assertTrue(self.problems(10, "Группы по очереди рассказывают, по 3-4 минуты на группу.", groups=4))
+        self.assertTrue(self.problems(10, "Каждая группа рассказывает о плакате. Время выступления - 4 минуты.", groups=4))
+        self.assertTrue(self.problems(10, "Пары по очереди показывают открытки, по 1 минуте на пару.", groups=1, pairs=13))
+        self.assertFalse(self.problems(10, "Каждая группа представит плакат. Время выступления - 2 минуты.", groups=4))
+        self.assertFalse(self.problems(10, "Две-три группы по желанию представят работу, по 4 минуты на группу.", groups=4))
+        self.assertFalse(self.problems(10, "Время на выступления - 8 минут. Каждая группа представит плакат.", groups=4))
+
+    def test_qa_run_c2_presentations_block(self):
+        """Блок из прогона QA c2 (День единства, 10 класс): 4 группы по 3 минуты в 10-минутном этапе."""
+        block = {
+            "duration_minutes": 10,
+            "teacher_script": ("Каждая группа представит свой информационный лист. Группа номер один, готовы? "
+                               "У вас три минуты. (Аналогично проходят презентации остальных трёх групп.)"),
+            "pupil_actions": ["Выступающие представляют информационный лист своей группы, рассказывают о традициях "
+                              "выбранного народа (3 минуты на группу)",
+                              "Остальные учащиеся внимательно слушают"],
+        }
+        self.assertEqual(inner_timing_problems(block, groups_count=4, pairs_count=0),
+                         ["выступления: 4 групп × 3 мин = 12 мин, а на блок 10 мин"])
+
     def test_work_then_all_groups_present(self):
         text = "На выполнение задания вам даётся 10 минут. Затем каждая команда представит свой коллаж всему классу."
         self.assertTrue(self.problems(12, text, groups=4))
