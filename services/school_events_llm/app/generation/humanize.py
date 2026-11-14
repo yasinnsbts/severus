@@ -223,18 +223,42 @@ def leftover_ids(text: str) -> list[str]:
 # Нужны и число символов (знаков), и слово о тексте: «символы области» и «герб - символ» не трогаются.
 _META_SENTENCE = re.compile(r"[^.!?\n]*[.!?]?")
 _META_SIZE = re.compile(r"\b\d{2,5}\s*(?:символ|знак)\w*", re.I)
-# Служебная пометка стороны карточки перед текстом: «1. side_a: Грязно в классе» (прогон 14.11, День знаний 2 кл).
-_SIDE_LABEL = re.compile(r"\b(?:side|сторона)_?[ab12]\s*[:\-]\s*", re.I)
+# Английская подпись поля перед текстом пункта: «1. side_a: Грязно в классе», «station_name: Школа будущего;
+# Задание: …» (прогоны 14.11). Знакомая подпись - по-русски, незнакомая snake_case - убирается, пометка стороны
+# карточки - убирается. Одно незнакомое английское слово с двоеточием не трогается: это может быть название.
+_FIELD_LABEL_RU = {
+    "side_a": "", "side_b": "", "side_1": "", "side_2": "", "front": "", "back": "",
+    "station_name": "Станция", "station": "Станция", "name": "Название", "title": "Название",
+    "task": "Задание", "assignment": "Задание", "question": "Вопрос", "answer": "Ответ", "correct_answer": "Правильный ответ",
+    "options": "Варианты", "hint": "Подсказка", "example": "Пример", "description": "Описание", "role": "Роль",
+    "time": "Время", "duration": "Время", "materials": "Материалы", "goal": "Цель", "step": "Шаг", "criterion": "Критерий",
+    "criteria": "Критерии", "note": "Примечание", "notes": "Примечание", "instruction": "Инструкция", "instructions": "Инструкция",
+    "group": "Группа", "team": "Команда", "text": "Текст", "situation": "Ситуация", "problem": "Проблема", "solution": "Решение",
+}
+_FIELD_LABEL = re.compile(
+    r"(?P<pre>^[ \t]*(?:\d{1,2}[.)][ \t]*|[-\u2022*][ \t]*)?|[;.?!][ \t]+)(?P<label>[A-Za-z]+(?:_[A-Za-z0-9]+)*)[ \t]*:(?!//)[ \t]*",
+    re.M,
+)
+
+
+def _relabel(match: re.Match[str], removed: list[str]) -> str:
+    label = match.group("label")
+    key = label.lower()
+    if key in _FIELD_LABEL_RU:
+        removed.append(label + ":")
+        title = _FIELD_LABEL_RU[key]
+        return match.group("pre") + (f"{title}: " if title else "")
+    if "_" in key:
+        removed.append(label + ":")
+        return match.group("pre")
+    return match.group(0)
 _META_WORD = re.compile(r"объ[её]м|длин\w*\s+(?:текст|реплик|сценари)|текст\w*\s+(?:сценари|реплик)|реплик\w*\s+педагог", re.I)
 
 
 def _drop_meta(text: str) -> tuple[str, list[str]]:
     removed: list[str] = []
     kept: list[str] = []
-    labels = _SIDE_LABEL.findall(text)
-    if labels:
-        text = _SIDE_LABEL.sub("", text)
-        removed.extend(label.strip() for label in labels)
+    text = _FIELD_LABEL.sub(lambda m: _relabel(m, removed), text)
     for line in text.split("\n"):
         parts = []
         for sentence in _META_SENTENCE.findall(line):
@@ -250,7 +274,7 @@ def _drop_meta(text: str) -> tuple[str, list[str]]:
 
 def drop_meta_notes(variant: dict[str, Any]) -> list[dict[str, Any]]:
     """Убирает из текстов для педагога фразы о самом сценарии («объём текста… около 780 символов»)
-    и служебные пометки стороны карточки («side_a:»).
+    и английские подписи полей перед текстом пункта («side_a:», «station_name:»).
 
     Возвращает:
         Список изменений для трассы: поле и убранные фразы.

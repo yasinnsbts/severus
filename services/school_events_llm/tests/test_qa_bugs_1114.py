@@ -129,6 +129,34 @@ class Bug16TechIdsTest(unittest.TestCase):
         self.assertEqual(material["teacher_notes"], "Раздайте. Также понадобится: конверты, glitter glue.")
 
 
+class FieldLabelsTest(unittest.TestCase):
+    def test_english_labels_in_text(self):
+        """Прогон qa_check_1114b v2 (r02): «1. station_name: Школа будущего; Задание: …» в карточках станций.
+        Меняется только текст материала; поля JSON (`material_id`, `type`, `teacher_fallback`…) не трогаются."""
+        from app.generation.humanize import drop_meta_notes
+        variant = {"timeline": [], "teacher_instructions": [], "materials": [{"material_id": "station_tasks", "teacher_notes": "",
+                   "content": "1. station_name: Школа будущего; Задание: Подумайте.\n2. station_name: Помощь школе; task: Предложите.\n"
+                              "- Question: Какой праздник? Answer: Новый год.\nСсылка: https://example.org/a. Excel: таблица."}]}
+        drop_meta_notes(variant)
+        self.assertEqual(variant["materials"][0]["content"],
+                         "1. Станция: Школа будущего; Задание: Подумайте.\n2. Станция: Помощь школе; Задание: Предложите.\n"
+                         "- Вопрос: Какой праздник? Ответ: Новый год.\nСсылка: https://example.org/a. Excel: таблица.")
+        self.assertEqual(variant["materials"][0]["material_id"], "station_tasks")
+
+
+class MechanicNotAllowedTest(unittest.TestCase):
+    def test_val004_fixed_by_program(self):
+        """Прогон qa_check_1114b (r02 v2): «citizenship: механика joint_product не из допустимых» - ближайшая разрешённая."""
+        mechanics = {vid: v.get("allowed_mechanic_types", []) for vid, v in catalog().values.items()}
+        data = {"concept": {"values_to_mechanics": [{"value_id": "citizenship", "mechanic_type": "joint_product"},
+                                                    {"value_id": "family", "mechanic_type": "team_task"},
+                                                    {"value_id": "mutual_aid", "mechanic_type": "team_task"}]}}
+        fixes = prepare_stage_output("scenario_plan", data, set(), None, mechanics)
+        self.assertEqual([r["mechanic_type"] for r in data["concept"]["values_to_mechanics"]],
+                         ["class_collective_task", "joint_product", "team_task"])
+        self.assertEqual([f["kind"] for f in fixes if f["kind"] == "mechanic_not_allowed"], ["mechanic_not_allowed"] * 2)
+
+
 class Bug11DatesTest(unittest.TestCase):
     def test_letter_date_blanked(self):
         outcome, _ = replay("replay_gigachat_bug09_helpers")

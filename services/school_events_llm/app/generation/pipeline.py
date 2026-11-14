@@ -187,20 +187,43 @@ def _fix_enum(value: Any, kind: str) -> Any:
     return _FALLBACK.get(kind, value)
 
 
+# Близкие механики: если выбранная модельно не разрешена для ценности, берётся ближайшая разрешённая.
+_MECHANIC_NEAR = {
+    "joint_product": ("class_collective_task", "team_task", "real_problem_solving", "discussion"),
+    "team_task": ("class_collective_task", "pair_task", "joint_product", "real_problem_solving"),
+    "pair_task": ("team_task", "class_collective_task", "discussion"),
+    "class_collective_task": ("team_task", "joint_product", "real_problem_solving"),
+    "real_problem_solving": ("class_collective_task", "team_task", "discussion"),
+    "culture_comparison": ("discussion", "source_work"),
+    "source_work": ("culture_comparison", "discussion"),
+    "family_research": ("discussion", "joint_product"),
+    "discussion": ("source_work", "culture_comparison", "class_collective_task"),
+}
+
+
 def _fix_mechanic(rec: Any, where: str, changes: list[dict[str, Any]],
                   mechanics_by_value: dict[str, list[str]] | None) -> None:
-    """Механика ценности, которую не удалось распознать (`sharing`, `storytelling`), - первая разрешённая каталогом
-    для этой ценности (`family` → `family_research`), иначе `discussion`.
+    """Механика ценности не из списка или не разрешённая каталогом для этой ценности - разрешённая.
 
-    GigaChat на просьбу исправить такое значение возвращал тот же ответ байт в байт (прогон 14.11, Рождество 7 кл):
-    повторные вызовы не помогали, и весь сценарий падал из-за одного поля.
+    - Не из списка (`sharing`, `storytelling`): первая разрешённая для ценности (`family` → `family_research`),
+      иначе `discussion`. GigaChat на просьбу исправить такое значение возвращал тот же ответ байт в байт
+      (прогон 14.11, Рождество 7 кл): повторные вызовы не помогали, и весь сценарий падал из-за одного поля.
+    - Из списка, но не разрешённая для ценности (`citizenship` с `joint_product`, предупреждение `VAL-004`):
+      ближайшая разрешённая по `_MECHANIC_NEAR` (`class_collective_task`), иначе первая разрешённая.
     """
-    if not isinstance(rec, dict) or rec.get("mechanic_type") in _ENUMS["mechanic_type"]:
+    if not isinstance(rec, dict):
         return
+    current = rec.get("mechanic_type")
     allowed = [m for m in (mechanics_by_value or {}).get(str(rec.get("value_id")), []) if m in _ENUMS["mechanic_type"]]
-    new = allowed[0] if allowed else "discussion"
-    changes.append({"kind": "enum_fallback", "field": where, "from": rec.get("mechanic_type"), "to": new})
-    rec["mechanic_type"] = new
+    if current not in _ENUMS["mechanic_type"]:
+        new = allowed[0] if allowed else "discussion"
+        changes.append({"kind": "enum_fallback", "field": where, "from": current, "to": new})
+        rec["mechanic_type"] = new
+        return
+    if allowed and current not in allowed:
+        new = next((m for m in _MECHANIC_NEAR.get(current, ()) if m in allowed), allowed[0])
+        changes.append({"kind": "mechanic_not_allowed", "field": where, "value_id": rec.get("value_id"), "from": current, "to": new})
+        rec["mechanic_type"] = new
 
 
 def _fix_enums(data: dict, stage: str, changes: list[dict[str, Any]],
