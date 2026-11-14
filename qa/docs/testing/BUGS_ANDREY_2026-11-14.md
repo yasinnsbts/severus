@@ -33,16 +33,3 @@
 | **Итого** | **23** | **71,3 мин** | **659 290** | **28 665** |
 
 Группы шли параллельно, фактическое wall-clock ~32 минуты. Prompt — 532 113, completion — 127 177.
-
-## Трассы
-
-```
-data/runs/job_82d4c68ece134a399630e910af46df51   BUG-14, labour_jury — passed
-data/runs/job_973ee39c07e14b85b6fab80860ca3411   UI, 2 варианта, BUG-17 — passed
-data/runs/job_20261114_160425_65d1ea             BUG-16, sverdlovsk, TECH-ID
-data/runs/job_657d4b90889a4184856245c1a518d9ac   BUG-16, new_year 35, TECH-ID
-data/runs/job_b55c1df6d37b4985af1582981000b131   BUG-18, variants_3 v1, INNER-TIMING
-data/runs/job_3e6ea29c79184bf1a25e9e10d47ebda3   BUG-11, new_year 35, 1699
-```
-
-В каждом каталоге: `calls/`, `events.jsonl`, `variants/*/validation.json`, `variant_package.json`.
