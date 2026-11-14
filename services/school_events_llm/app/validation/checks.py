@@ -16,7 +16,7 @@ from ..generation.humanize import leftover_ids
 from ..generation.source_refs import document_confirmed, document_mentions
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
-from ..script_length import script_min_chars
+from ..script_length import script_min_chars, script_short_limit
 from .inner_timing import grouping_counts, inner_timing_problems
 
 _YEAR = re.compile(r"(?<!\d)(1[0-9]{3}|20[0-9]{2})(?!\d)")
@@ -414,9 +414,11 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     detail = n.teacher_preferences["script_detail"]
     for b in timeline:
         min_chars = script_min_chars(gen_cfg, detail, b["duration_minutes"], n.age_group)
-        if len(b["teacher_script"]) < min_chars:
+        length = len(b["teacher_script"])
+        if length < script_short_limit(gen_cfg, detail, b["duration_minutes"], n.age_group):
             add("SCRIPT-SHORT", "warning", f"timeline.{b['block_id']}",
-                f"Реплики педагога короче {min_chars} символов для блока на {b['duration_minutes']} мин ({len(b['teacher_script'])})", "blocks")
+                f"Реплики педагога короче нормы: {length} из {min_chars} символов ({round(100 * length / min_chars)}%) "
+                f"для блока на {b['duration_minutes']} мин", "blocks")
         if len(b["pupil_actions"]) < 2:
             add("PUPIL-ACTIONS-FEW", "warning", f"timeline.{b['block_id']}", f"Действий учеников меньше двух ({len(b['pupil_actions'])})", "blocks")
 

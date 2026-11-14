@@ -28,7 +28,8 @@
     },
     "age_factor": {
       "1-4": 0.7
-    }
+    },
+    "short_warning_ratio": 0.9
   },
   "audience_award_min_voters_warning": 6,
   "reasoning_extra_output_tokens": 2000,

@@ -24,6 +24,16 @@ def script_min_chars(gen_cfg: dict[str, Any], detail: str, minutes: int, age_gro
     return int((cfg["base_chars"][detail] + cfg["chars_per_minute"][detail] * max(int(minutes), 1)) * factor)
 
 
+def script_short_limit(gen_cfg: dict[str, Any], detail: str, minutes: int, age_group: str | None = None) -> int:
+    """Порог предупреждения `SCRIPT-SHORT`: доля от минимума (`script_length.short_warning_ratio`, по умолчанию 0,9).
+
+    Недобор в несколько процентов (323 из 350 символов) - не повод для замечания эксперту: модель пишет
+    впритык к названному числу. Предупреждение остаётся для заметно коротких реплик (461 из 600).
+    """
+    ratio = float(gen_cfg["script_length"].get("short_warning_ratio", 0.9))
+    return int(script_min_chars(gen_cfg, detail, minutes, age_group) * ratio)
+
+
 def script_target_chars(gen_cfg: dict[str, Any], detail: str, minutes: int, age_group: str | None = None) -> int:
     """Объём, к которому модель просим стремиться: в полтора раза больше минимума.
 

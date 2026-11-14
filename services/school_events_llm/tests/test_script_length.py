@@ -51,6 +51,22 @@ class ScriptLengthTest(unittest.TestCase):
         self.assertNotIn("SCRIPT-SHORT", {i.code for i in validate_variant(v, n, catalog(), gen_cfg())
                                           if i.location == f"timeline.{block['block_id']}"})
 
+    def test_small_shortfall_not_flagged(self):
+        """BUG-05 (QA 14.11): недобор до 10% - без предупреждения (r08: 323 из 350), заметный - с ним (r10: 461 из 600)."""
+        from app.script_length import script_short_limit
+        cfg = gen_cfg()
+        self.assertEqual(script_short_limit(cfg, "detailed", 10), int(script_min_chars(cfg, "detailed", 10) * 0.9))
+        n, v = setup("ex1_knowledge_day")
+        block = v["timeline"][2]
+        minimum = script_min_chars(cfg, n.teacher_preferences["script_detail"], block["duration_minutes"], n.age_group)
+        where = f"timeline.{block['block_id']}"
+        block["teacher_script"] = "Х" * int(minimum * 0.92)
+        self.assertNotIn(("SCRIPT-SHORT", where), {(i.code, i.location) for i in validate_variant(v, n, catalog(), cfg)})
+        block["teacher_script"] = "Х" * int(minimum * 0.77)
+        found = [i for i in validate_variant(v, n, catalog(), cfg) if i.code == "SCRIPT-SHORT" and i.location == where]
+        self.assertEqual(len(found), 1)
+        self.assertIn(f"{int(minimum * 0.77)} из {minimum} символов (77%)", found[0].message)
+
     def test_warning_depends_on_block_duration(self):
         """Один и тот же текст достаточен для короткого блока и мал для длинного."""
         n, v = setup("ex1_knowledge_day")

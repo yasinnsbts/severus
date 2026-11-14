@@ -149,7 +149,8 @@ class MatrixReplayTest(unittest.TestCase):
         self.assertEqual(client.calls.count("materials"), 1)
         variant = outcome.project["variants"][0]
         codes = {i["code"] for i in variant["quality_report"]["issues"]}
-        self.assertEqual(codes, {"SCRIPT-SHORT"})
+        # Реплики 764 из 800 и 559 из 600 символов (93-95% нормы) с 14.11 не дают SCRIPT-SHORT (порог 90%).
+        self.assertEqual(codes, set())
         self.assertIn("award_instruction", {m["type"] for m in variant["materials"]})
 
     def test_ballot_still_forbidden_with_jury(self):
