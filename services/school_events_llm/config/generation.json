@@ -14,8 +14,8 @@
     "max_repair_attempts_per_stage": 2,
     "provider_retry_attempts": 2,
     "provider_retry_backoff_seconds": [3, 10],
-    "rate_limit_retry_attempts": 5,
-    "rate_limit_backoff_seconds": [5, 10, 20, 40, 60],
+    "rate_limit_retry_attempts": 7,
+    "rate_limit_backoff_seconds": [5, 10, 20, 40, 60, 60, 60],
     "retry_jitter": 0.3
   },
   "script_length": {

@@ -14,6 +14,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .ids import KEY_RU
+
 # Названия типов материалов для текста, если материала с таким ID в варианте нет.
 MATERIAL_TYPE_TITLES = {
     "teacher_instruction": "памятка педагогу",
@@ -224,17 +226,10 @@ def leftover_ids(text: str) -> list[str]:
 _META_SENTENCE = re.compile(r"[^.!?\n]*[.!?]?")
 _META_SIZE = re.compile(r"\b\d{2,5}\s*(?:символ|знак)\w*", re.I)
 # Английская подпись поля перед текстом пункта: «1. side_a: Грязно в классе», «station_name: Школа будущего;
-# Задание: …» (прогоны 14.11). Знакомая подпись - по-русски, незнакомая snake_case - убирается, пометка стороны
+# Задание: …» (прогоны 14.11). Знакомая подпись - по-русски (словарь `ids.KEY_RU`, общий с содержанием
+# материалов), незнакомая snake_case - убирается, пометка стороны
 # карточки - убирается. Одно незнакомое английское слово с двоеточием не трогается: это может быть название.
-_FIELD_LABEL_RU = {
-    "side_a": "", "side_b": "", "side_1": "", "side_2": "", "front": "", "back": "",
-    "station_name": "Станция", "station": "Станция", "name": "Название", "title": "Название",
-    "task": "Задание", "assignment": "Задание", "question": "Вопрос", "answer": "Ответ", "correct_answer": "Правильный ответ",
-    "options": "Варианты", "hint": "Подсказка", "example": "Пример", "description": "Описание", "role": "Роль",
-    "time": "Время", "duration": "Время", "materials": "Материалы", "goal": "Цель", "step": "Шаг", "criterion": "Критерий",
-    "criteria": "Критерии", "note": "Примечание", "notes": "Примечание", "instruction": "Инструкция", "instructions": "Инструкция",
-    "group": "Группа", "team": "Команда", "text": "Текст", "situation": "Ситуация", "problem": "Проблема", "solution": "Решение",
-}
+_FIELD_LABEL_RU = KEY_RU
 _FIELD_LABEL = re.compile(
     r"(?P<pre>^[ \t]*(?:\d{1,2}[.)][ \t]*|[-\u2022*][ \t]*)?|[;.?!][ \t]+)(?P<label>[A-Za-z]+(?:_[A-Za-z0-9]+)*)[ \t]*:(?!//)[ \t]*",
     re.M,

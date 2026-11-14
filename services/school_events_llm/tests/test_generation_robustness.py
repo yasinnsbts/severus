@@ -206,18 +206,19 @@ class ProviderRetryTest(unittest.TestCase):
                          [("scenario_plan", 1, "RATE_LIMITED"), ("scenario_plan", 2, "RATE_LIMITED")])
 
     def test_rate_limit_more_retries_and_retry_after(self):
-        """Нагрузка 30 генераций (14.11): на 429 до 5 повторов, пауза не меньше Retry-After шлюза;
-        на прочие временные ошибки - по-прежнему 2 повтора."""
+        """Нагрузка 30 генераций (14.11, 15.11): на 429 до 7 повторов, пауза не меньше Retry-After шлюза;
+        на прочие временные ошибки - по-прежнему 2 повтора. 15.11 одному обращению не хватило пяти повторов
+        (шестой отказ подряд), и вариант пропал вместе с готовыми этапами."""
         error = LLMError("RATE_LIMITED", "429", retryable=True, retry_after=30)
-        gen = generator(FlakyLLM(fixture(), "scenario_plan", error, fail_times=5))
+        gen = generator(FlakyLLM(fixture(), "scenario_plan", error, fail_times=7))
         self.assertEqual(gen.run(request("ex1_knowledge_day")).project["status"], "completed")
-        self.assertEqual(len(gen.sleeps), 5)
+        self.assertEqual(len(gen.sleeps), 7)
         self.assertTrue(all(s >= 30 * 0.7 for s in gen.sleeps), gen.sleeps)
         self.assertTrue(gen.sleeps[-1] >= 60 * 0.7)
-        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("RATE_LIMITED", "429", retryable=True), fail_times=6))
+        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("RATE_LIMITED", "429", retryable=True), fail_times=8))
         with self.assertRaises(LLMError):
             gen.run(request("ex1_knowledge_day"))
-        self.assertEqual(gen.calls, 6)
+        self.assertEqual(gen.calls, 8)
 
     def test_rate_limit_message_and_retry_after_from_gateway(self):
         """Текст шлюза (какой лимит сработал) и Retry-After попадают в ошибку и в трассу."""

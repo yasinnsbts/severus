@@ -76,7 +76,8 @@ class JsonRepairTest(unittest.TestCase):
 class MaterialFieldsTest(unittest.TestCase):
     def test_content_to_text(self):
         self.assertEqual(content_to_text(["Вопрос один", "Вопрос два"]), "1. Вопрос один\n2. Вопрос два")
-        self.assertEqual(content_to_text([{"question": "Что?", "answer": "Это"}]), "1. Вопрос: Что?; Ответ: Это")
+        # После «?» точка с запятой не нужна: «Что?; Ответ» читается как опечатка.
+        self.assertEqual(content_to_text([{"question": "Что?", "answer": "Это"}]), "1. Вопрос: Что? Ответ: Это")
         self.assertEqual(content_to_text({"Язык": "Башкирский", "приветствие": "Сәлам!"}), "Язык: Башкирский\nприветствие: Сәлам!")
 
     def test_empty_used_in_blocks_and_props(self):

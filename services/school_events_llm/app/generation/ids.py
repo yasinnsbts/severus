@@ -231,9 +231,22 @@ NOT_FAMILY_TASK_TYPES = {"parent_instruction", "audience_ballot", "jury_scorecar
 
 
 # Английские ключи, которые модели пишут внутри содержания материала, - по-русски для педагога.
-_KEY_RU = {"question": "Вопрос", "answer": "Ответ", "answers": "Ответы", "correct_answer": "Правильный ответ",
-           "options": "Варианты", "title": "Название", "name": "Название", "description": "Описание",
-           "task": "Задание", "hint": "Подсказка", "example": "Пример", "text": "Текст", "role": "Роль"}
+# Пустая подпись - ключ ничего не говорит педагогу («side_a»), остаётся только значение.
+# Этим же словарём `humanize` переводит подписи «ключ:», которые модель пишет прямо в тексте.
+KEY_RU = {"question": "Вопрос", "answer": "Ответ", "answers": "Ответы", "correct_answer": "Правильный ответ",
+          "options": "Варианты", "title": "Название", "name": "Название", "description": "Описание",
+          "task": "Задание", "assignment": "Задание", "hint": "Подсказка", "example": "Пример", "text": "Текст",
+          "role": "Роль", "story": "История", "quality": "Качество", "qualities": "Качества", "theme": "Тема",
+          "topic": "Тема", "fact": "Факт", "facts": "Факты", "tradition": "Традиция", "traditions": "Традиции",
+          "country": "Страна", "date": "Дата", "place": "Место", "station": "Станция", "station_name": "Станция",
+          "criterion": "Критерий", "criteria": "Критерии", "points": "Баллы", "max_points": "Максимум баллов",
+          "score": "Баллы", "step": "Шаг", "goal": "Цель", "time": "Время", "duration": "Время",
+          "materials": "Материалы", "instruction": "Инструкция", "instructions": "Инструкция", "note": "Примечание",
+          "notes": "Примечание", "group": "Группа", "team": "Команда", "situation": "Ситуация", "problem": "Проблема",
+          "solution": "Решение", "side_a": "", "side_b": "", "side_1": "", "side_2": "", "front": "", "back": ""}
+# Ключ с именем героя или станции первым в пункте («hero_name: Анна Сергеевна») - заголовок пункта без подписи.
+_HEADING_KEY = re.compile(r"[a-z]+_name|hero|person|character")
+_LATIN_KEY = re.compile(r"[A-Za-z][A-Za-z0-9_]*")
 
 
 # Служебные ключи, которые модель кладёт внутрь содержания материала: в текст для педагога они не попадают
@@ -273,14 +286,40 @@ def content_to_text(value: Any) -> Any:
     """Текст материала, если модель вернула его списком или словарём, а не строкой.
 
     - Список строк -> нумерованный список (вопросы, пункты чек-листа).
-    - Список словарей -> нумерованные пункты «ключ: значение; …» (карточки станций, вопросы с ответами).
-    - Словарь -> строки «ключ: значение».
-    Строка возвращается без изменений.
+    - Список словарей -> нумерованные пункты «Подпись: значение; …» (карточки станций, вопросы с ответами).
+    - Словарь -> строки «Подпись: значение».
+    Подписи по-русски (`KEY_RU`); незнакомый английский ключ («qualities») не показывается, остаётся значение;
+    имя героя или станции первым в пункте («hero_name») - заголовок пункта без подписи (замечание к прогону 15.11:
+    «1. Анна Сергеевна; story: …; qualities: …» в карточках героев). Строка возвращается без изменений.
     """
+    def label(key: Any) -> str | None:
+        """Подпись ключа: русская, пустая (только значение) или сам ключ, если он написан по-русски."""
+        name = str(key).strip()
+        lower = name.lower()
+        if lower in KEY_RU:
+            return KEY_RU[lower]
+        return "" if _LATIN_KEY.fullmatch(name) else name
+
+    def join(parts: list[str]) -> str:
+        text = ""
+        for part in parts:
+            if text:
+                text += " " if text.rstrip().endswith((".", "!", "?", "\u2026")) else "; "
+            text += part
+        return text
+
     def item(v: Any) -> str:
         if isinstance(v, dict):
-            return "; ".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(x)}" for k, x in v.items()
-                             if x not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS)
+            parts = []
+            for i, (k, x) in enumerate((k, x) for k, x in v.items()
+                                       if x not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS):
+                body = item(x)
+                if i == 0 and str(k).lower() not in KEY_RU and _HEADING_KEY.fullmatch(str(k).lower()):
+                    parts.append(body if body.endswith((".", "!", "?")) else body + ".")
+                    continue
+                title = label(k)
+                parts.append(f"{title}: {body}" if title else body)
+            return join(parts)
         if isinstance(v, list):
             return ", ".join(item(x) for x in v)
         return str(v).strip()
@@ -289,8 +328,13 @@ def content_to_text(value: Any) -> Any:
         lines = [item(v) for v in value if v not in (None, "", [], {})]
         return "\n".join(f"{i}. {line}" for i, line in enumerate(lines, 1))
     if isinstance(value, dict):
-        return "\n".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(v)}" for k, v in value.items()
-                         if v not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS)
+        lines = []
+        for k, v in value.items():
+            if v in (None, "", []) or str(k).lower() in _TECH_CONTENT_KEYS:
+                continue
+            title = label(k)
+            lines.append(f"{title}: {item(v)}" if title else item(v))
+        return "\n".join(lines)
     return value
 
 

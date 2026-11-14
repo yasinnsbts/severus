@@ -511,9 +511,15 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
 
     # Ссылки на указы, законы и постановления, которых нет в проверенных фрагментах: модель придумывает
     # «указ губернатора №1022-УГ», а для учеников это выглядит как официальный факт.
+    # Документ подтверждает и название источника фрагмента: цитата «День образования Свердловской области -
+    # 17 января» взята из «Указа Губернатора Свердловской области № 1022-УГ», хотя слова «указ» в ней нет
+    # (ложное предупреждение в прогоне 15.11).
+    catalog_sources = getattr(catalog, "sources", None) or {}
+    source_titles = " ".join(str((catalog_sources.get(f.get("source_id")) or {}).get("title") or "") for f in fragments)
+    documents_text = (sources_text + " " + source_titles.lower()).strip()
     for loc, text in texts:
         for sentence, stem in document_mentions(text):
-            if document_confirmed(stem, sources_text):
+            if document_confirmed(stem, documents_text, sentence):
                 continue
             quote = sentence if len(sentence) <= 110 else sentence[:107] + "..."
             add("DOC-UNSOURCED", "warning", loc, f"Ссылка на документ без проверенного источника: «{quote}»", "blocks", repairable=False)

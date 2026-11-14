@@ -68,9 +68,30 @@ def document_mentions(text: str) -> list[tuple[str, str]]:
 _DECREE_VERB = re.compile(r"постановил|повелел|велел|указал|издал|подписал|утвердил|учредил|установил")
 
 
-def document_confirmed(stem: str, source_text: str) -> bool:
-    """Документ (основа «указ», «закон»…) есть в тексте проверенных фрагментов (нижний регистр)."""
-    return stem in source_text or (stem in ("указ", "постановлени", "распоряжени", "декрет") and bool(_DECREE_VERB.search(source_text)))
+# Кто издал документ: если фраза его называет, он должен быть и в источнике. Тогда «указ губернатора»
+# подтверждается источником «Указ Губернатора Свердловской области № 1022-УГ», а «указ Президента» - нет.
+# Император и царь не проверяются: «Пётр I издал указ» подтверждает «Пётр I постановил…» без слова «царь».
+_ISSUER = re.compile(r"\b(губернатор|президент|правительств|министерств|министр|госдум|дум[аыуое]\b|законодательн|мэр"
+                     r"|администрац)")
+_DOC_NUMBER = re.compile(r"№\s*(\d+)")
+
+
+def document_confirmed(stem: str, source_text: str, sentence: str = "") -> bool:
+    """Документ (основа «указ», «закон»…) есть в тексте проверенных фрагментов и названиях их источников (нижний регистр).
+
+    Если передана фраза: названный в ней издатель («губернатор», «правительство») и номер («№ 1022-УГ») тоже должны
+    быть в этом тексте.
+    """
+    found = stem in source_text or (stem in ("указ", "постановлени", "распоряжени", "декрет") and bool(_DECREE_VERB.search(source_text)))
+    if not found or not sentence:
+        return found
+    low = sentence.lower()
+    if any(issuer.group(1)[:3 if issuer.group(1).startswith("дум") else None] not in source_text for issuer in _ISSUER.finditer(low)):
+        return False
+    # Номер - только после слова документа: «Исторический факт №1: Пётр I издал указ…» - номер пункта.
+    word = _DOC_WORD.search(low)
+    numbers = _DOC_NUMBER.findall(source_text)
+    return all(number in numbers for number in _DOC_NUMBER.findall(low[word.start():] if word else ""))
 
 
 def _supported(claim: str, fragment: dict[str, Any]) -> bool:
@@ -83,7 +104,7 @@ def _supported(claim: str, fragment: dict[str, Any]) -> bool:
     tokens = [m.group(0).lower() for m in list(_YEAR.finditer(claim)) + list(_DATE.finditer(claim))]
     if any(token not in source for token in tokens):
         return False
-    return all(document_confirmed(stem, source) for _, stem in document_mentions(claim))
+    return all(document_confirmed(stem, source, sentence) for sentence, stem in document_mentions(claim))
 
 
 # Любая группа в скобках, где есть ID фрагмента или источника: «(frag_new_year_001, frag_new_year_005)»,
