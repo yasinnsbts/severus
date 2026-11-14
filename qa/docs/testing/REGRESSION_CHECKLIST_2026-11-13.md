@@ -1,5 +1,7 @@
 # Чек-лист регрессии (13.11.2026)
 
+> Исторический прогон 13.11. Актуальные статусы на 14.11: `BUG-03` закрыт, `BUG-09` и `BUG-11` возвращены, `BUG-13` остаётся открытым; см. `BUG_LIST.md` и `REGRESSION_REPORT_2026-11-14.md`.
+
 Стенд: Backend `GENERATOR_MODE=llm_service`, LLM-сервис с реальной моделью `urfu_gigachat_2_max`, Frontend `http://127.0.0.1:5173`.  
 Ветка: `QA/Maksim`, коммит `c8abb3a` (включает main и PR #30).
 
