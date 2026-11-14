@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Классный квест: найдём знания вместе!",
+      "summary": "Участники отправляются в увлекательное путешествие по станциям, выполняя задания на взаимопомощь и гражданскую ответственность.",
+      "narrative_approach": "Начинается с общей цели – собрать карту знаний, затем команды проходят станции, помогая друг другу и обсуждая реальные проблемы класса, завершают представлением открытий классу и зрителям.",
+      "primary_mechanic": "quest_route",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {"order": 1, "title": "Приветствие и введение в игру", "activity_type": "discussion", "approx_minutes": 5},
+        {"order": 2, "title": "Разделение на команды и объяснение маршрута", "activity_type": "team_task", "approx_minutes": 5},
+        {"order": 3, "title": "Станция взаимопомощи", "activity_type": "team_task", "approx_minutes": 10},
+        {"order": 4, "title": "Гражданская инициатива: идея для класса", "activity_type": "real_problem_solving", "approx_minutes": 10},
+        {"order": 5, "title": "Представление идей и итоги", "activity_type": "performance", "approx_minutes": 10},
+        {"order": 6, "title": "Рефлексия и награждение", "activity_type": "reflection", "approx_minutes": 5}
+      ],
+      "key_activities": [
+        {"activity_type": "team_task", "description": "Команды выполняют задания, требующие распределения ролей и помощи друг другу"},
+        {"activity_type": "real_problem_solving", "description": "Обсуждается реальная проблема класса и предлагаются пути решения"}
+      ],
+      "distinctive_result": "Созданная совместно карта целей класса на новый учебный год",
+      "differs_from": [
+        {"variant_id": "v2", "difference": "Используется механика квеста с прохождением станций, тогда как v2 фокусируется на создании коллективного договора через дискуссию."},
+        {"variant_id": "v3", "difference": "Основана на прохождении активных станций, в отличие от проектной работы над индивидуальным письмом самому себе в будущем."}
+      ],
+      "values_to_mechanics": [
+        {"value_id": "mutual_aid", "mechanic_type": "team_task", "mechanic": "Задание на станции требует совместного обсуждения и распределения обязанностей внутри команды."},
+        {"value_id": "citizenship", "mechanic_type": "real_problem_solving", "mechanic": "Участники предлагают конкретные инициативы по улучшению жизни класса или школы."}
+      ]
+    },
+    {
+      "variant_id": "v2",
+      "title": "Договор класса: наши права и обязанности",
+      "summary": "Дети разрабатывают собственный кодекс поведения, обсуждая важность взаимоподдержки и гражданской ответственности.",
+      "narrative_approach": "Педагог предлагает обсудить, каким они хотят видеть свой класс, затем организуются небольшие группы для составления предложений, после чего проводится общее обсуждение и принятие кодекса.",
+      "primary_mechanic": "collaborative_planning",
+      "engagement_mode": "mixed",
+      "planned_structure": [
+        {"order": 1, "title": "Приветствие и объявление темы", "activity_type": "discussion", "approx_minutes": 5},
+        {"order": 2, "title": "Групповая работа: разработка пунктов кодекса", "activity_type": "class_collective_task", "approx_minutes": 15},
+        {"order": 3, "title": "Общие дебаты: какие пункты принять?", "activity_type": "discussion", "approx_minutes": 10},
+        {"order": 4, "title": "Голосование за лучший пункт", "activity_type": "voting", "approx_minutes": 10},
+        {"order": 5, "title": "Подписание договора и рефлексия", "activity_type": "reflection", "approx_minutes": 5}
+      ],
+      "key_activities": [
+        {"activity_type": "class_collective_task", "description": "Создание общего документа с правами и обязанностями учащихся"},
+        {"activity_type": "voting", "description": "Родители-зрители голосуют за наиболее значимый пункт договора"}
+      ],
+      "distinctive_result": "Коллективно разработанный и подписанный всеми учениками договор класса",
+      "differs_from": [
+        {"variant_id": "v1", "difference": "Фокус на разработке коллективного документа через дискуссии, а не на прохождении станций квеста."},
+        {"variant_id": "v3", "difference": "Совместная выработка норм поведения, в отличие от индивидуального планирования будущего."}
+      ],
+      "values_to_mechanics": [
+        {"value_id": "mutual_aid", "mechanic_type": "class_collective_task", "mechanic": "Каждый ученик участвует в составлении общих правил, учитывается мнение каждого."},
+        {"value_id": "citizenship", "mechanic_type": "discussion", "mechanic": "Обсуждение гражданских прав и обязанностей, формирование понимания важности соблюдения правил сообщества."}
+      ]
+    },
+    {
+      "variant_id": "v3",
+      "title": "Письмо будущему себе: мои цели и мечты",
+      "summary": "Ученики пишут письма самим себе, определяя учебные и личностные цели на предстоящий год.",
+      "narrative_approach": "После короткого вступления ученики индивидуально работают над письмами, затем делятся впечатлениями в парах, а некоторые читают отрывки публично. Завершается созданием выставки писем.",
+      "primary_mechanic": "mini_project",
+      "engagement_mode": "pairs",
+      "planned_structure": [
+        {"order": 1, "title": "Приветствие и вступительное слово", "activity_type": "discussion", "approx_minutes": 5},
+        {"order": 2, "title": "Индивидуальное написание письма", "activity_type": "individual_task", "approx_minutes": 15},
+        {"order": 3, "title": "Работа в парах: обмен впечатлениями", "activity_type": "pair_task", "approx_minutes": 10},
+        {"order": 4, "title": "Выставка писем и выбор лучшего", "activity_type": "creative_product", "approx_minutes": 10},
+        {"order": 5, "title": "Рефлексия и завершение", "activity_type": "reflection", "approx_minutes": 5}
+      ],
+      "key_activities": [
+        {"activity_type": "individual_task", "description": "Написание личного письма с целями на будущее"},
+        {"activity_type": "pair_task", "description": "Обсуждение и поддержка партнёра в достижении целей"}
+      ],
+      "distinctive_result": "Персональные письма ученикам на будущий год, выставка лучших работ",
+      "differs_from": [
+        {"variant_id": "v1", "difference": "Акцент на индивидуальной работе и личных целях, в отличие от командного прохождения станций."},
+        {"variant_id": "v2", "difference": "Личное планирование вместо разработки коллективного договора класса."}
+      ],
+      "values_to_mechanics": [
+        {"value_id": "mutual_aid", "mechanic_type": "pair_task", "mechanic": "Партнёры поддерживают друг друга в постановке и достижении целей."},
+        {"value_id": "citizenship", "mechanic_type": "individual_task", "mechanic": "Определение личной ответственности за своё развитие и вклад в сообщество класса."}
+      ]
+    }
+  ]
+}

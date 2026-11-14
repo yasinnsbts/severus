@@ -30,8 +30,9 @@ from ..trace import RunTrace
 from ..usage import TokenTally
 from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
-from .humanize import drop_meta_notes, humanize_variant
-from .source_refs import move_source_refs
+from .humanize import blank_template_dates, drop_meta_notes, humanize_variant
+from .plan_fixes import fallback_material, fix_parent_role_counts, fix_plan_for_request, fix_type_by_id
+from .source_refs import move_source_refs, register_fragment_facts
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
@@ -345,6 +346,8 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
     - План: материалы с ID ресурса (`paper`, `markers`) убираются из `planned_materials` и из блоков.
     - Материалы: такие же материалы убираются; адресат вида `parent_audience` приводится к `parent`.
     - Концепции и план: механика ценности не из списка - разрешённая каталогом для этой ценности (`_fix_mechanic`).
+    - План и материалы: тип по `material_id` для листа жюри, бюллетеня, памяток (`plan_fixes.fix_type_by_id`);
+      число в роли родителей не меньше 1.
     - Все этапы: `material_id`, `role_id` и ссылки на них - к виду `^[a-z][a-z0-9_]*$`, ID блоков - к `block_NN`
       (`ids.normalize_ids`); зависимости материалов - только из словаря (`ids.normalize_dependencies`).
     Всё остальное проверяет схема, и при ошибке модель исправляет ответ сама.
@@ -364,6 +367,12 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
         return changes
     _fix_enums(data, stage, changes, mechanics_by_value)
     normalize_ids(stage, data, changes)
+    # Тип материала по material_id («jury_scorecard» с типом «quiz»), число в роли родителей не меньше 1.
+    if stage == "scenario_plan":
+        fix_type_by_id(data.get("planned_materials"), "planned_materials", "type", changes)
+        fix_parent_role_counts(data.get("roles"), changes)
+    if stage == "materials":
+        fix_type_by_id(data.get("materials"), "materials", "type", changes)
     if stage == "materials":
         normalize_material_fields(data, changes)
         if dependency_ids is not None:
@@ -898,6 +907,10 @@ class Generator:
             roles_added = complete_block_roles(plan)
             if roles_added:
                 self.trace.event("block_roles_completed", variant_id=vid, added=roles_added)
+            # Число родителей по ролям и обязательные материалы для их ролей - программой, без повторного вызова.
+            plan_fixes = fix_plan_for_request(plan, n.parents_enabled, n.parents_count, n.parent_audience_engagement)
+            if plan_fixes and blocks_res is None:
+                self.trace.event("plan_fixed", variant_id=vid, fixes=plan_fixes)
             minutes = normalize_minutes([b["proposed_minutes"] for b in plan["blocks"]], n.duration_minutes, min_block)
             grid = build_grid(minutes)
             g_mode, sizes, g_notes = compute_grouping(plan["grouping_request"]["mode"], n.pupils_count,
@@ -969,6 +982,13 @@ class Generator:
             ref_fixes = fix_material_refs(mat, timeline)
             if ref_fixes:
                 self.trace.event("material_refs_fixed", variant_id=vid, fixes=ref_fixes)
+            # Обязательный материал, который добавила в план программа, а этап материалов не написал: простая версия.
+            have = {m.material_id for m in mat.materials}
+            for fix in plan_fixes:
+                if fix["kind"] == "required_material_added" and fix["material_id"] not in have:
+                    title = next(m["title"] for m in plan["planned_materials"] if m["material_id"] == fix["material_id"])
+                    mat.materials.append(c03.Material.model_validate(fallback_material(fix["type"], fix["material_id"], title, plan, timeline)))
+                    self.trace.event("required_material_fallback", variant_id=vid, material_id=fix["material_id"], type=fix["type"])
             # Блок ссылается на материал, если материал указан для этого блока.
             created = {m.material_id for m in mat.materials}
             for b in timeline:
@@ -1004,9 +1024,18 @@ class Generator:
                 if family_fixes:
                     self.trace.event("family_task_fixed", variant_id=vid, fixes=family_fixes)
                 # Ссылки на источники в тексте («(fact_claims: src_x/frag_y)») убираются, подтверждённые факты регистрируются.
-                refs = move_source_refs(body, self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context))
+                fragments = self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context)
+                refs = move_source_refs(body, fragments)
                 if refs:
                     self.trace.event("source_refs_moved", variant_id=vid, fields=refs[:30])
+                # Год или дата из проверенного фрагмента, не записанные моделью в fact_claims, записываются программой.
+                registered = register_fragment_facts(body, fragments)
+                if registered:
+                    self.trace.event("fragment_facts_registered", variant_id=vid, facts=registered[:30])
+                # Дата подписи в шаблоне письма - пустое место для даты, а не факт.
+                dates = blank_template_dates(body)
+                if dates:
+                    self.trace.event("template_dates_blanked", variant_id=vid, fields=dates)
                 # Фразы о самом сценарии («объём текста… около 780 символов») из реплик убираются.
                 meta = drop_meta_notes(body)
                 if meta:

@@ -151,6 +151,44 @@ def normalize_ids(stage: str, data: dict, changes: list[dict[str, Any]]) -> None
             _fix_key(voting, "block_id", block_id, "voting.block_id", changes)
 
 
+# Частые расходники и реквизит, которых нет в словаре зависимостей: в заметке педагогу - по-русски, а не ID
+# (замечание QA 14.11: «Также понадобится: colored_papers»).
+_THING_RU = {
+    "cardboard": "картон", "colored_cardboard": "цветной картон", "envelope": "конверты", "plasticine": "пластилин",
+    "clay": "глина", "paint": "краски", "paints": "краски", "watercolor": "акварель", "gouache": "гуашь", "brush": "кисти",
+    "ribbon": "ленты", "balloon": "воздушные шары", "thread": "нитки", "string": "верёвка", "rope": "верёвка",
+    "magnet": "магниты", "button": "пуговицы", "bead": "бусины", "fabric": "ткань", "cup": "стаканчики",
+    "plate": "тарелки", "napkin": "салфетки", "bag": "пакеты", "glove": "перчатки", "rake": "грабли",
+    "shovel": "лопаты", "seed": "семена", "pot": "горшки", "flower_pot": "цветочные горшки", "water": "вода",
+    "bucket": "вёдра", "sponge": "губки", "rag": "тряпки", "broom": "веники", "trash_bag": "мешки для мусора",
+    "garbage_bag": "мешки для мусора", "ball": "мяч", "basket": "корзина", "candle": "свечи", "badge": "значки",
+    "name_tag": "бейджи", "name_badge": "бейджи", "photo": "фотографии", "picture": "картинки", "image": "картинки",
+    "map": "карта", "globe": "глобус", "book": "книги", "dice": "кубики", "card": "карточки", "token": "жетоны",
+    "chip": "фишки", "medal": "медали", "certificate": "грамоты", "diploma": "грамоты", "prize": "призы",
+    "gift": "подарки", "speaker": "колонка", "laptop": "ноутбук", "microphone": "микрофон", "camera": "фотоаппарат",
+    "stapler": "степлер", "paper_clip": "скрепки", "pushpin": "кнопки", "pin": "булавки", "ruler": "линейки",
+    "eraser": "ластики", "sharpener": "точилки", "folder": "папки", "notebook": "тетради", "clipboard": "планшеты для записей",
+    "decoration": "украшения", "garland": "гирлянда", "costume": "костюмы", "hat": "шапки", "mask": "маски",
+}
+
+
+def _singular(key: str) -> str:
+    """«colored_papers» - «colored_paper», «boxes» - «box», «envelopes» - «envelope»."""
+    for suffix, repl in (("ies", "y"), ("ches", "ch"), ("shes", "sh"), ("xes", "x"), ("s", "")):
+        if key.endswith(suffix) and len(key) > len(suffix) + 2:
+            return key[: -len(suffix)] + repl
+    return key
+
+
+def _readable(raw: str) -> str:
+    """Название расходника для педагога: по-русски из `_THING_RU`, иначе без подчёркиваний и не как ID."""
+    key = slug_id(raw, "dep")
+    for candidate in (key, _singular(key)):
+        if candidate in _THING_RU:
+            return _THING_RU[candidate]
+    return raw.strip() if not re.fullmatch(r"[a-z0-9_]+", raw.strip()) else raw.strip().replace("_", " ")
+
+
 def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[dict[str, Any]]) -> None:
     """Оставляет в `materials[].dependencies` только ID из словаря зависимостей.
 
@@ -167,7 +205,10 @@ def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[d
             if not isinstance(raw, str) or not raw.strip():
                 continue
             key = slug_id(raw, "dep")
-            key = key if key in dependency_ids else DEPENDENCY_SYNONYMS.get(key, key)
+            for candidate in (key, _singular(key)):
+                if candidate in dependency_ids or candidate in DEPENDENCY_SYNONYMS:
+                    key = candidate if candidate in dependency_ids else DEPENDENCY_SYNONYMS[candidate]
+                    break
             if key in dependency_ids:
                 if key != raw:
                     changes.append({"kind": "dependency_fixed", "material_id": m.get("material_id"), "from": raw, "to": key})
@@ -178,7 +219,8 @@ def normalize_dependencies(data: dict, dependency_ids: set[str], changes: list[d
         m["dependencies"] = kept
         if unknown:
             changes.append({"kind": "dependency_moved_to_notes", "material_id": m.get("material_id"), "values": unknown})
-            note = "Также понадобится: " + ", ".join(unknown) + "."
+            names = list(dict.fromkeys(_readable(x) for x in unknown))
+            note = "Также понадобится: " + ", ".join(names) + "."
             notes = m.get("teacher_notes")
             m["teacher_notes"] = f"{notes.rstrip()} {note}" if isinstance(notes, str) and notes.strip() else note
 

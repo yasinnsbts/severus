@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Весенний трудовой марафон",
+      "summary": "Интерактивное занятие, где ученики делятся на команды, выполняют серию трудовых задач, связанных с благоустройством школьного пространства, и представляют результаты своей деятельности.",
+      "narrative_approach": "Мероприятие начинается с обсуждения важности труда и взаимопомощи, затем ученики объединяются в команды для выполнения практических заданий по благоустройству территории школы. Завершается событием презентация проектов и награждение команд.",
+      "primary_mechanic": "mini_project",
+      "engagement_mode": "small_groups",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Приветствие и вводная беседа",
+          "activity_type": "discussion",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Формирование команд и распределение ролей",
+          "activity_type": "team_task",
+          "approx_minutes": 5
+        },
+        {
+          "order": 3,
+          "title": "Практическая часть: выполнение трудовых задач",
+          "activity_type": "project_pitch",
+          "approx_minutes": 30
+        },
+        {
+          "order": 4,
+          "title": "Подведение итогов и представление проектов",
+          "activity_type": "performance",
+          "approx_minutes": 15
+        },
+        {
+          "order": 5,
+          "title": "Рефлексия и награждение",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "team_task",
+          "description": "Участники работают в командах над реализацией проекта благоустройства школьной территории"
+        },
+        {
+          "activity_type": "project_pitch",
+          "description": "Команды презентуют выполненные задания и рассказывают о процессе работы"
+        }
+      ],
+      "distinctive_result": "Благоустроенная территория школы и приобретённый опыт совместной работы",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "labour_creation",
+          "mechanic_type": "joint_product",
+          "mechanic": "Создание общего результата - благоустроенной территории школы"
+        },
+        {
+          "value_id": "mutual_aid",
+          "mechanic_type": "team_task",
+          "mechanic": "Распределение обязанностей и сотрудничество в команде для достижения общей цели"
+        }
+      ]
+    }
+  ]
+}

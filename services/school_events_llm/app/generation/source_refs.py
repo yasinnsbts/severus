@@ -164,3 +164,39 @@ def move_source_refs(variant: dict[str, Any], fragments: list[dict[str, Any]]) -
     variant["teacher_instructions"] = [fix(x, f"teacher_instructions.{i}", "teacher_instructions") if isinstance(x, str) else x
                                        for i, x in enumerate(variant.get("teacher_instructions") or [])]
     return changes
+
+
+def register_fragment_facts(variant: dict[str, Any], fragments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Записывает в `fact_claims` фразы с годом или датой, которые подтверждает проверенный фрагмент события.
+
+    Модель берёт факт из справочного фрагмента («начать год с 1 января 1700 года»), но не записывает его
+    в `fact_claims`, и проверка `FACT-UNREGISTERED` срабатывает на проверенный факт (замечание QA 14.11).
+    Фраза записывается, только если все её годы и даты есть в одном фрагменте и она не добавляет к нему
+    документов (`_supported`). Дату самого события из карточки каталога проверка и так не считает фактом.
+
+    Возвращает:
+        Список изменений для трассы: место, фраза, фрагмент.
+    """
+    changes: list[dict[str, Any]] = []
+    if not fragments:
+        return changes
+    claims = variant.setdefault("fact_claims", [])
+    claimed = " ".join(str(c.get("text") or "") for c in claims).lower()
+    sources = [(f, str(f.get("quote") or f.get("text") or f.get("text_excerpt") or "").lower()) for f in fragments]
+    texts = [(b.get("block_id", ""), b.get("teacher_script") or "") for b in variant.get("timeline") or []]
+    texts += [(m.get("material_id", ""), m.get("content") or "") for m in variant.get("materials") or []]
+    for location, text in texts:
+        for sentence in re.findall(r"[^.!?\n]+[.!?]?", text):
+            tokens = [m.group(0).lower() for m in list(_YEAR.finditer(sentence)) + list(_DATE.finditer(sentence))]
+            if not tokens or all(token in claimed for token in tokens):
+                continue
+            claim = _LIST_MARK.sub("", sentence).strip()
+            fragment = next((f for f, source in sources if all(t in source for t in tokens) and _supported(claim, f)), None)
+            if not fragment:
+                continue
+            claim_id = f"fc_{len(claims) + 1:02d}"
+            claims.append({"claim_id": claim_id, "text": claim, "location": location, "source_id": fragment["source_id"],
+                           "fragment_id": fragment["fragment_id"], "needs_teacher_check": False})
+            claimed += " " + claim.lower()
+            changes.append({"location": location, "claim_id": claim_id, "fragment_id": fragment["fragment_id"], "text": claim[:120]})
+    return changes

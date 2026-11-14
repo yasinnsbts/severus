@@ -38,6 +38,9 @@ OTHER_TITLES = {
     "audience_award": "приз зрительских симпатий",
     "small_groups": "малые группы",
     "whole_class": "весь класс",
+    # Поле плана участия родителей, которое модель называет «материалом» (замечание QA 14.11).
+    "teacher_fallback": "запасной план на случай, если родители не придут",
+    "parent_participation_plan": "план участия родителей",
 }
 
 # Латинское обозначение: snake_case (card_task, block_03) или одно слово из известных ID.
@@ -276,4 +279,33 @@ def drop_meta_notes(variant: dict[str, Any]) -> list[dict[str, Any]]:
         holder = {"text": instructions[index]}
         fix(holder, "text", f"teacher_instructions.{index}")
         instructions[index] = holder["text"]
+    return changes
+
+
+# Дата подписи в шаблоне письма или бланка отдельной строкой: «1 сентября 2023 г.», «Дата: 01.09.2023».
+# Это не факт, а место для даты, и год модель ставит неверный (прогон QA 14.11: 2023 вместо текущего года).
+_MONTHS = r"(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)"
+_DATE_LINE = re.compile(
+    r"^(?P<label>[ \t]*(?:дата|число)?[ \t]*:?[ \t]*)(?:«?\d{1,2}»?[ \t]+" + _MONTHS + r"|\d{1,2}\.\d{1,2}\.)[ \t]*(?:19|20)\d{2}"
+    r"[ \t]*(?:г\.?|года?)?[ \t]*$",
+    re.I | re.M,
+)
+DATE_BLANK = "«___» __________ 20__ г."
+
+
+def blank_template_dates(variant: dict[str, Any]) -> list[dict[str, Any]]:
+    """Заменяет дату-строку в материалах (подпись письма, бланк) на пустое место для даты.
+
+    Возвращает:
+        Список изменений для трассы: материал и заменённые строки.
+    """
+    changes: list[dict[str, Any]] = []
+    for material in variant.get("materials") or []:
+        content = material.get("content")
+        if not isinstance(content, str):
+            continue
+        found = [m.group(0).strip() for m in _DATE_LINE.finditer(content)]
+        if found:
+            material["content"] = _DATE_LINE.sub(lambda m: m.group("label") + DATE_BLANK, content)
+            changes.append({"field": f"materials.{material.get('material_id')}.content", "dates": found})
     return changes

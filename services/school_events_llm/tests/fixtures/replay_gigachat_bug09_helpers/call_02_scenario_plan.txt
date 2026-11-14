@@ -1,0 +1,157 @@
+```json
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Классный квест: найдём знания вместе!",
+  "concept": {
+    "summary": "Увлекательный квест, в ходе которого учащиеся делятся на команды, выполняют задания на взаимопомощь и решают реальные проблемы класса, формируя карту целей на новый учебный год.",
+    "goal": "Формирование мотивации к обучению, развитие навыков сотрудничества и гражданской ответственности среди учащихся.",
+    "tasks": [
+      "Развитие навыков взаимодействия и взаимопомощи в команде",
+      "Выработка предложений по решению реальных проблем класса",
+      "Создание карты целей класса на новый учебный год"
+    ],
+    "expected_outcomes": [
+      "Совместно созданная карта целей класса",
+      "Повышение интереса учащихся к учебной деятельности",
+      "Укрепление командного духа и атмосферы взаимоподдержки"
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "team_task",
+        "mechanic": "Выполнение заданий на станциях требует активного взаимодействия и поддержки членов команды",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Предложение решений реальных проблем класса и участие в принятии совместных решений",
+        "block_ids": ["block_04"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 5,
+    "block_ids": ["block_03", "block_04"]
+  },
+  "roles": [
+    {
+      "role_id": "teacher_1",
+      "participant_type": "teacher",
+      "title": "Ведущий педагог",
+      "count": 1
+    },
+    {
+      "role_id": "pupils_all",
+      "participant_type": "pupils_group",
+      "title": "Учащиеся",
+      "count": 27
+    },
+    {
+      "role_id": "parent_helpers",
+      "participant_type": "parent",
+      "role_mode": "helper",
+      "title": "Помощники-педагоги",
+      "count": 5
+    },
+    {
+      "role_id": "parent_audience",
+      "participant_type": "parent",
+      "role_mode": "audience",
+      "title": "Зрители",
+      "count": 7
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и введение в игру",
+      "purpose": "Настроить атмосферу начала нового учебного года, представить структуру мероприятия",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Разделение на команды и объяснение маршрута",
+      "purpose": "Организовать участников в команды, разъяснить правила прохождения квеста",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["route_map"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Станция взаимопомощи",
+      "purpose": "Развитие навыков командной работы и взаимопомощи",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["cooperation_tasks"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Гражданская инициатива: идея для класса",
+      "purpose": "Генерация предложений по улучшению жизни класса",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_helpers"],
+      "planned_material_ids": ["initiative_cards"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Представление идей и итоги",
+      "purpose": "Демонстрация предложенных инициатив зрителями и родителями",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["audience_ballot"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Рефлексия и награждение",
+      "purpose": "Подведение итогов, вручение символического приза зрительских симпатий",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_audience"],
+      "planned_material_ids": ["award_instruction"]
+    }
+  ],
+  "planned_materials": [
+    {
+      "material_id": "route_map",
+      "type": "handout",
+      "title": "Карта маршрута",
+      "purpose": "Инструкция для команд по прохождению станций"
+    },
+    {
+      "material_id": "cooperation_tasks",
+      "type": "activity_card",
+      "title": "Карточки задач на взаимодействие",
+      "purpose": "Задания для развития навыков взаимопомощи"
+    },
+    {
+      "material_id": "initiative_cards",
+      "type": "worksheet",
+      "title": "Листы идей для гражданских инициатив",
+      "purpose": "Сбор предложений по улучшению жизни класса"
+    },
+    {
+      "material_id": "audience_ballot",
+      "type": "audience_ballot",
+      "title": "Бюллетени для голосования",
+      "purpose": "Организация голосования зрителей"
+    },
+    {
+      "material_id": "award_instruction",
+      "type": "award_instruction",
+      "title": "Инструкция по награждению",
+      "purpose": "Руководство по проведению церемонии награждения"
+    },
+    {
+      "material_id": "parent_instruction",
+      "type": "parent_instruction",
+      "title": "Памятка для родителей-помощников",
+      "purpose": "Краткое руководство для родителей, участвующих в качестве помощников"
+    }
+  ]
+}
+```
