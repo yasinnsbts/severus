@@ -233,14 +233,28 @@ class ProviderRetryTest(unittest.TestCase):
 
     def test_retries_exhausted(self):
         """Если провайдер так и не ответил, ошибка модели доходит до задачи как есть, без «готового» результата."""
-        client = FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_UNAVAILABLE", "503", retryable=True), fail_times=5)
+        client = FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_UNAVAILABLE", "503", retryable=True), fail_times=10)
         gen = generator(client)
         with self.assertRaises(LLMError) as ctx:
             gen.run(request("ex1_knowledge_day"))
         self.assertEqual(ctx.exception.code, "MODEL_UNAVAILABLE")
-        self.assertEqual(gen.calls, 3)
+        self.assertEqual(gen.calls, 5)
         self.assertEqual(job_status.exception_error(ctx.exception),
                          {"code": "MODEL_UNAVAILABLE", "message": "503", "field": None, "retryable": True})
+
+    def test_unavailable_waits_about_a_minute(self):
+        """Сбой сети или 5xx шлюза: 4 повтора с паузами 3, 10, 20, 30 с (±30%) - короткий перерыв шлюза
+        пережидается, а не валит варианты генерации. Таймаут - по-прежнему 2 повтора: каждая попытка
+        ждёт ответа до `timeout_seconds`, пять таких попыток - это 25 минут."""
+        gen = generator(FlakyLLM(fixture(), "scenario_plan", LLMError("MODEL_UNAVAILABLE", "502", retryable=True), fail_times=4))
+        self.assertEqual(gen.run(request("ex1_knowledge_day")).project["status"], "completed")
+        self.assertEqual(len(gen.sleeps), 4)
+        for pause, base in zip(gen.sleeps, (3, 10, 20, 30)):
+            self.assertTrue(base * 0.7 <= pause <= base * 1.3, gen.sleeps)
+        gen = generator(FlakyLLM(fixture(), "variation_plan", LLMError("MODEL_TIMEOUT", "timeout", retryable=True), fail_times=5))
+        with self.assertRaises(LLMError):
+            gen.run(request("ex1_knowledge_day"))
+        self.assertEqual(gen.calls, 3)
 
     def test_auth_error_not_retried(self):
         """Ошибка авторизации не повторяется: повтор ничего не изменит."""

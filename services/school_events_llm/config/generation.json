@@ -16,6 +16,8 @@
     "provider_retry_backoff_seconds": [3, 10],
     "rate_limit_retry_attempts": 7,
     "rate_limit_backoff_seconds": [5, 10, 20, 40, 60, 60, 60],
+    "unavailable_retry_attempts": 4,
+    "unavailable_backoff_seconds": [3, 10, 20, 30],
     "retry_jitter": 0.3
   },
   "script_length": {

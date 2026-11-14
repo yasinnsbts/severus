@@ -745,6 +745,10 @@ class Generator:
         Число повторов и паузы - `defaults.provider_retry_attempts` и `defaults.provider_retry_backoff_seconds`;
         для лимита шлюза (`RATE_LIMITED`, 429) - свои, больше: `defaults.rate_limit_retry_attempts`
         и `defaults.rate_limit_backoff_seconds`. Если шлюз прислал `Retry-After`, пауза не меньше неё.
+        Для сбоя сети или 5xx шлюза (`MODEL_UNAVAILABLE`) - тоже свои: `defaults.unavailable_retry_attempts`
+        и `defaults.unavailable_backoff_seconds` (4 повтора, около минуты): после такой ошибки варианта
+        останавливаются и соседние варианты генерации, поэтому короткий перерыв шлюза лучше переждать.
+        Таймаут (`MODEL_TIMEOUT`) повторяется по-прежнему 2 раза: каждая попытка ждёт ответа до `timeout_seconds`.
         К паузе добавляется случайный разброс `defaults.retry_jitter` (±30%): иначе генерации, получившие отказ
         одновременно, возвращаются в шлюз тоже одновременно и снова получают отказ (нагрузка 30 генераций, 14.11).
         Каждый повтор - отдельный вызов модели: учитывается в `calls` и пишется в трассу (`llm_call_retry`).
@@ -753,6 +757,8 @@ class Generator:
         backoff = list(self.defaults.get("provider_retry_backoff_seconds", [3, 10])) or [0]
         limit_retries = int(self.defaults.get("rate_limit_retry_attempts", retries))
         limit_backoff = list(self.defaults.get("rate_limit_backoff_seconds", backoff)) or backoff
+        down_retries = int(self.defaults.get("unavailable_retry_attempts", retries))
+        down_backoff = list(self.defaults.get("unavailable_backoff_seconds", backoff)) or backoff
         jitter = float(self.defaults.get("retry_jitter", 0.0))
         retry = 0
         while True:
@@ -764,7 +770,8 @@ class Generator:
                 return self.client.generate(**kwargs)
             except LLMError as exc:
                 limited = exc.code == "RATE_LIMITED"
-                allowed, pauses = (limit_retries, limit_backoff) if limited else (retries, backoff)
+                allowed, pauses = ((limit_retries, limit_backoff) if limited
+                                   else (down_retries, down_backoff) if exc.code == "MODEL_UNAVAILABLE" else (retries, backoff))
                 if not exc.retryable or retry >= allowed:
                     raise
                 wait = float(pauses[min(retry, len(pauses) - 1)])
