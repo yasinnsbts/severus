@@ -1,0 +1,42 @@
+{
+  "event_id": "knowledge_day",
+  "region_id": "RU-SVE",
+  "grade_group": "5-8",
+  "grade": 6,
+  "pupils_count": 27,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": true,
+    "parents_count": 12,
+    "parent_roles": [
+      "audience",
+      "helper"
+    ],
+    "parent_audience_engagement": "none",
+    "parent_notes": null
+  },
+  "resources": {
+    "projector": true,
+    "printer": false,
+    "internet": true,
+    "audio": true,
+    "room": "classroom",
+    "available_materials": [],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "detailed",
+    "difficulty": "standard",
+    "interaction_level": "medium",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 2,
+    "language": "ru"
+  }
+}

@@ -24,6 +24,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from ..generation.grouping import plural
+
 _WORD_NUMBERS = {
     "одну": 1, "одна": 1, "одной": 1, "полторы": 1.5, "две": 2, "два": 2, "двух": 2, "три": 3, "трёх": 3, "трех": 3,
     "четыре": 4, "четырёх": 4, "пять": 5, "пяти": 5, "шесть": 6, "семь": 7, "восемь": 8, "десять": 10,
@@ -57,6 +59,13 @@ _INTERVAL = re.compile(
     re.I,
 )
 _SENTENCE = re.compile(r"[^.!?\n]+[.!?\n]?")
+# Переход команд между станциями: «перемещаетесь на следующую станцию», «по кругу», «маршрут».
+_ROTATION = re.compile(r"(?:перемещ|переход|перейд|меня)\w*\s+(?:\w+\s+){0,3}?(?:на\s+)?следующ\w*\s+станци|по\s+кругу|по\s+маршрут|станци\w*\s+по\s+очеред", re.I)
+_STATION_TIME = re.compile(r"(?:на\s+)?кажд\w*\s+станци\w*\s+(?:\w+\s+){0,4}?" + _RANGE + _MIN + r"|" + _RANGE + _MIN + r"\s+на\s+(?:кажд\w*\s+)?станци", re.I)
+_STATION_ORDINAL = re.compile(r"\b(перв|втор|трет|четв[её]рт|пят|шест|седьм|восьм)(?:ая|ой|ую|ья|ей|ью)\s+станци", re.I)
+_STATION_CARDINAL = re.compile(r"\b(\d+|две|двух|три|тр[её]х|четыре|четыр[её]х|пять|пяти|шесть|шести|семь|семи)\s+(?:\w+\s+)?станци", re.I)
+_CARDINALS = {"две": 2, "двух": 2, "три": 3, "трех": 3, "трёх": 3, "четыре": 4, "четырех": 4, "четырёх": 4,
+              "пять": 5, "пяти": 5, "шесть": 6, "шести": 6, "семь": 7, "семи": 7}
 # Выступления групп в следующем блоке: «Каждая группа коротко поделится своими находками», «выступление каждой группы»,
 # «Дети представляют результаты своего маршрута классу», «Первая команда, расскажите».
 _NEXT_PRESENTS = re.compile(
@@ -100,6 +109,34 @@ def _first_number(match: re.Match[str]) -> float | None:
     return None
 
 
+def _station_count(text: str) -> int:
+    """Число станций по тексту: «квест из пяти станций» - 5; «Первая станция… Четвёртая станция… И последняя станция» - 5."""
+    for match in _STATION_CARDINAL.finditer(text):
+        token = match.group(1).lower()
+        value = int(token) if token.isdigit() else _CARDINALS.get(token, 0)
+        if value > 1:
+            return value
+    ordinals = {m.group(1).lower().replace("ё", "е") for m in _STATION_ORDINAL.finditer(text)}
+    if len(ordinals) < 2:
+        return 0
+    return len(ordinals) + (1 if re.search(r"последн\w*\s+станци", text, re.I) else 0)
+
+
+def _intervals(text: str, duration: int, next_duration: int) -> list[str]:
+    """Правило 2: сумма отрезков «у вас N минут» больше длительности блока и следующего блока."""
+    values: list[float] = []
+    for match in _INTERVAL.finditer(text):
+        value = _first_number(match)
+        if value and (not values or values[-1] != value):
+            values.append(value)
+    total = sum(values)
+    if values and total > duration + next_duration:
+        parts = " + ".join(_fmt(x) for x in values)
+        limit = f"{duration} мин блока" + (f" и {next_duration} мин следующего" if next_duration else "")
+        return [f"отрезки работы: {parts} = {_fmt(total)} мин, больше чем {limit}"]
+    return []
+
+
 def _fmt(x: float) -> str:
     return str(int(x)) if x == int(x) else str(x).replace(".", ",")
 
@@ -123,6 +160,21 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
     # «по минуте на каждую группу» - одна минута, хотя числа нет.
     text = re.sub(r"\bпо\s+минуте\b", "по 1 минуте", text, flags=re.I)
     problems: list[str] = []
+
+    # 0. Станции по кругу: команды работают одновременно, но каждая проходит все станции подряд, поэтому круг
+    # занимает «число станций × минуты на станцию» (замечание QA 14.11, BUG-18: сообщение говорило о выступлениях групп).
+    # Если станции идут в следующих этапах («Станция первая: …»), этот этап только объявляет маршрут.
+    if _ROTATION.search(text) and not re.search(r"станци", next_title, re.I):
+        for match in _STATION_TIME.finditer(text):
+            minutes = _first_number(match)
+            stations = _station_count(text) or (groups_count if groups_count > 1 else 0)
+            if minutes and stations > 1 and stations * minutes > duration:
+                problems.append(f"станции по кругу: каждая команда проходит {stations} {plural(stations, 'станцию', 'станции', 'станций')} "
+                                f"× {_fmt(minutes)} мин = {_fmt(stations * minutes)} мин, "
+                                f"а на блок {duration} мин")
+            break
+        if problems or _STATION_TIME.search(text):
+            return problems + _intervals(text, duration, next_duration)
 
     # 1. Выступления по очереди. Кто выступает и сколько минут, модель часто пишет в соседних фразах
     # («Каждая команда представит свой раздел. На выступление у вас 2 минуты»), поэтому смотрим пару фраз.
@@ -166,17 +218,7 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
                 problems.append(f"после {_fmt(work)} мин работы на выступления {groups_count} групп остаётся {_fmt(max(left, 0))} мин")
 
     # 2. Сумма отрезков работы.
-    values: list[float] = []
-    for match in _INTERVAL.finditer(text):
-        value = _first_number(match)
-        if value and (not values or values[-1] != value):
-            values.append(value)
-    total = sum(values)
-    if values and total > duration + next_duration:
-        parts = " + ".join(_fmt(x) for x in values)
-        limit = f"{duration} мин блока" + (f" и {next_duration} мин следующего" if next_duration else "")
-        problems.append(f"отрезки работы: {parts} = {_fmt(total)} мин, больше чем {limit}")
-    return problems
+    return problems + _intervals(text, duration, next_duration)
 
 
 def grouping_counts(variant: dict[str, Any]) -> tuple[int, int]:

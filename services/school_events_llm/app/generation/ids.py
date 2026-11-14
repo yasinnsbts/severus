@@ -236,6 +236,39 @@ _KEY_RU = {"question": "Вопрос", "answer": "Ответ", "answers": "От�
            "task": "Задание", "hint": "Подсказка", "example": "Пример", "text": "Текст", "role": "Роль"}
 
 
+# Служебные ключи, которые модель кладёт внутрь содержания материала: в текст для педагога они не попадают
+# (замечание QA 14.11: «…1700 года.; fact_claims:; fragment_id: frag_new_year_001» в слайдах).
+_TECH_CONTENT_KEYS = {"fact_claims", "fact_claim", "fragment_id", "source_id", "claim_id", "material_id", "block_id",
+                      "needs_teacher_check"}
+_CLAIM_TEXT_KEYS_IN_CONTENT = ("text", "fact", "claim", "content", "description", "answer", "info")
+
+
+def pull_content_claims(value: Any) -> list[dict[str, Any]]:
+    """Достаёт факты, которые модель вложила в пункты содержания материала (меняет `value` на месте).
+
+    Пункт `{"title": "Указ Петра I", "text": "Пётр I издал указ… 1700 года.", "fact_claims": [{"source_id", "fragment_id"}]}`
+    даёт факт с текстом пункта и этим источником; служебные ключи из пункта убираются.
+
+    Возвращает:
+        Список фактов `{"text", "source_id", "fragment_id"}` (без `claim_id` и `location`).
+    """
+    claims: list[dict[str, Any]] = []
+    items = value if isinstance(value, list) else [value] if isinstance(value, dict) else []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        refs = item.pop("fact_claims", None) or item.pop("fact_claim", None)
+        own = {k: item.pop(k) for k in ("fragment_id", "source_id") if k in item}
+        refs = refs if isinstance(refs, list) else [refs] if isinstance(refs, dict) else []
+        if own:
+            refs.append(own)
+        text = next((str(item[k]).strip() for k in _CLAIM_TEXT_KEYS_IN_CONTENT if isinstance(item.get(k), str) and item[k].strip()), "")
+        for ref in refs:
+            if isinstance(ref, dict) and text and (ref.get("fragment_id") or ref.get("source_id")):
+                claims.append({"text": text, "source_id": ref.get("source_id"), "fragment_id": ref.get("fragment_id")})
+    return claims
+
+
 def content_to_text(value: Any) -> Any:
     """Текст материала, если модель вернула его списком или словарём, а не строкой.
 
@@ -246,7 +279,8 @@ def content_to_text(value: Any) -> Any:
     """
     def item(v: Any) -> str:
         if isinstance(v, dict):
-            return "; ".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(x)}" for k, x in v.items() if x not in (None, "", []))
+            return "; ".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(x)}" for k, x in v.items()
+                             if x not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS)
         if isinstance(v, list):
             return ", ".join(item(x) for x in v)
         return str(v).strip()
@@ -255,7 +289,8 @@ def content_to_text(value: Any) -> Any:
         lines = [item(v) for v in value if v not in (None, "", [], {})]
         return "\n".join(f"{i}. {line}" for i, line in enumerate(lines, 1))
     if isinstance(value, dict):
-        return "\n".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(v)}" for k, v in value.items() if v not in (None, "", []))
+        return "\n".join(f"{_KEY_RU.get(str(k).lower(), k)}: {item(v)}" for k, v in value.items()
+                         if v not in (None, "", []) and str(k).lower() not in _TECH_CONTENT_KEYS)
     return value
 
 
@@ -276,6 +311,10 @@ def normalize_material_fields(data: dict, changes: list[dict[str, Any]]) -> None
             m["family_task"] = False
             changes.append({"kind": "family_task_cleared", "material_id": m.get("material_id"), "type": m.get("type")})
         if isinstance(m.get("content"), (list, dict)):
+            pulled = pull_content_claims(m["content"])
+            if pulled:
+                data.setdefault("fact_claims", []).extend(dict(c, location=m.get("material_id") or "text") for c in pulled)
+                changes.append({"kind": "content_claims_pulled", "material_id": m.get("material_id"), "count": len(pulled)})
             m["content"] = content_to_text(m["content"])
             changes.append({"kind": "content_to_text", "material_id": m.get("material_id")})
         content = m.get("content")

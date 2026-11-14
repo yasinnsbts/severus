@@ -6,9 +6,9 @@ GigaChat на просьбу исправить ответ часто возвр
 - BUG-14: материал назван `jury_scorecard`, а тип у него `quiz`. Этап материалов обязан сохранить тип
   из плана, и вариант с жюри падал с `JURY-SCORECARD` после двух исправлений. Если `material_id`
   совпадает с названием типа (или начинается с него), тип ставится по `material_id`.
-- BUG-17: 12 родителей, роли «помощники» и «зрители», а модель делает 12 помощников и 1 зрителя (13).
-  Сумма по ролям родителей приводится к числу родителей: уменьшается самая большая роль, у каждой
-  роли остаётся хотя бы 1.
+- BUG-17: 12 родителей, роли «помощники» и «зрители», а модель делает 12 помощников и 1 зрителя (13)
+  в одном этапе. Если в каком-то этапе одновременно занято больше родителей, чем пришло, уменьшается самая
+  большая роль этого этапа, у каждой роли остаётся хотя бы 1. Роли в разных этапах не трогаются.
 - BUG-09: есть помощники, а памятки для них в плане нет; есть «приз зрительских симпатий», а инструкции
   к награждению нет; есть жюри, а листа критериев нет. Программа добавляет такой материал в план
   и в блоки, где заняты эти родители; тексты пишет этап материалов в том же вызове.
@@ -87,18 +87,23 @@ def fix_plan_for_request(plan: dict[str, Any], parents_enabled: bool, parents_co
         return changes
     parent_roles = [r for r in plan.get("roles", []) if r.get("participant_type") == "parent"]
 
-    # BUG-17: сумма по ролям родителей не больше числа родителей.
-    total = sum(r["count"] for r in parent_roles)
-    if parents_count >= len(parent_roles) and total > parents_count:
-        before = {r["role_id"]: r["count"] for r in parent_roles}
-        while total > parents_count:
-            largest = max(parent_roles, key=lambda r: r["count"])
-            if largest["count"] <= 1:
+    # BUG-17: в одном этапе одновременно занято не больше родителей, чем пришло. Роли в разных этапах
+    # («помощники» в работе, «зрители» в финале) могут быть одними и теми же людьми - их не трогаем.
+    by_id = {r["role_id"]: r for r in parent_roles}
+    before = {r["role_id"]: r["count"] for r in parent_roles}
+
+    def busy(block: dict[str, Any]) -> int:
+        return sum(by_id[rid]["count"] for rid in block.get("role_ids", []) if rid in by_id)
+
+    for block in plan.get("blocks", []):
+        while busy(block) > parents_count:
+            present = [by_id[rid] for rid in block.get("role_ids", []) if rid in by_id and by_id[rid]["count"] > 1]
+            if not present:
                 break
-            largest["count"] -= 1
-            total -= 1
-        changes.append({"kind": "parent_counts_balanced", "parents_count": parents_count,
-                        "from": before, "to": {r["role_id"]: r["count"] for r in parent_roles}})
+            max(present, key=lambda r: r["count"])["count"] -= 1
+    after = {r["role_id"]: r["count"] for r in parent_roles}
+    if after != before:
+        changes.append({"kind": "parent_counts_balanced", "parents_count": parents_count, "from": before, "to": after})
 
     # BUG-09: материалы, без которых роль родителей неполная.
     planned = plan.setdefault("planned_materials", [])
