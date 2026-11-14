@@ -31,6 +31,7 @@ from ..usage import TokenTally
 from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
 from .humanize import humanize_variant
+from .source_refs import move_source_refs
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
 
@@ -983,6 +984,10 @@ class Generator:
                 family_fixes = fix_family_tasks(body["materials"], n.values)
                 if family_fixes:
                     self.trace.event("family_task_fixed", variant_id=vid, fixes=family_fixes)
+                # Ссылки на источники в тексте («(fact_claims: src_x/frag_y)») убираются, подтверждённые факты регистрируются.
+                refs = move_source_refs(body, self.catalog.verified_fragments(n.event_id, n.region_id, n.cultural_context))
+                if refs:
+                    self.trace.event("source_refs_moved", variant_id=vid, fields=refs[:30])
                 # Технические ID в тексте для педагога заменяются названиями материалов и этапов.
                 tech = humanize_variant(body, self.catalog.dependencies, plan.get("planned_materials"))
                 if tech:
