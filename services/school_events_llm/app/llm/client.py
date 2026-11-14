@@ -55,6 +55,9 @@ class LLMResult:
 class LLMClient:
     model_key: str = "base"
     provider: str = "base"
+    # Можно ли генерировать варианты одной задачи одновременно. Клиенты, которые отвечают записанными
+    # ответами по порядку вызовов (повтор трасс в тестах), ставят False: при параллельных вариантах порядок другой.
+    parallel_variants_safe: bool = True
 
     def generate(self, *, messages: list[dict[str, str]], task_name: str, output_schema: dict | None,
                  max_tokens: int, temperature: float, meta: dict[str, Any] | None = None) -> LLMResult:

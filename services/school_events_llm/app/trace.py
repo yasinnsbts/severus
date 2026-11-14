@@ -37,6 +37,9 @@ class RunTrace:
         self.full_responses = full_responses
         self.secrets = [s for s in (secrets or []) if s]
         self._call_seq = 0
+        # Варианты одной генерации идут в разных потоках (`max_parallel_variants`): номера вызовов
+        # и строки events.jsonl не должны повторяться и перемешиваться.
+        self._lock = threading.Lock()
         if run_dir:
             (run_dir / "calls").mkdir(parents=True, exist_ok=True)
 
@@ -109,7 +112,7 @@ class RunTrace:
             return
         record = {"timestamp": datetime.now(timezone.utc).isoformat(), "event_type": event_type, **fields}
         line, _ = self._redact(json.dumps(record, ensure_ascii=False, default=str))
-        with (self.run_dir / "events.jsonl").open("a", encoding="utf-8") as fh:
+        with self._lock, (self.run_dir / "events.jsonl").open("a", encoding="utf-8") as fh:
             fh.write(line + "\n")
 
     def append_run_log(self, record: dict[str, Any]) -> None:
@@ -135,8 +138,9 @@ class RunTrace:
         Возвращает:
             str.
         """
-        self._call_seq += 1
-        return f"call_{self._call_seq:04d}"
+        with self._lock:
+            self._call_seq += 1
+            return f"call_{self._call_seq:04d}"
 
     def save_call(self, call_id: str, *, manifest: dict[str, Any], messages: list[dict[str, str]] | None,
                   prompt_md: str | None, raw: str | None, parsed: Any, reasoning: str | None = None) -> None:

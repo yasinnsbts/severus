@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from typing import Any
 
 
@@ -18,6 +19,8 @@ class TokenTally:
         self.calls = 0
         self.calls_without_usage = 0
         self.by_stage: dict[str, dict[str, int]] = {}
+        # Варианты одной генерации складывают токены из разных потоков (`max_parallel_variants`).
+        self._lock = threading.Lock()
 
     def add(self, stage: str, usage: dict[str, Any] | None) -> None:
         """Добавляет один ответ модели.
@@ -25,18 +28,19 @@ class TokenTally:
         Параметры:
             stage: этап конвейера; usage: поле `usage` ответа провайдера или None.
         """
-        self.calls += 1
-        row = self.by_stage.setdefault(stage, {"calls": 0, "prompt": 0, "completion": 0})
-        row["calls"] += 1
-        if not isinstance(usage, dict):
-            self.calls_without_usage += 1
-            return
-        prompt = int(usage.get("prompt_tokens") or 0)
-        completion = int(usage.get("completion_tokens") or 0)
-        self.prompt += prompt
-        self.completion += completion
-        row["prompt"] += prompt
-        row["completion"] += completion
+        with self._lock:
+            self.calls += 1
+            row = self.by_stage.setdefault(stage, {"calls": 0, "prompt": 0, "completion": 0})
+            row["calls"] += 1
+            if not isinstance(usage, dict):
+                self.calls_without_usage += 1
+                return
+            prompt = int(usage.get("prompt_tokens") or 0)
+            completion = int(usage.get("completion_tokens") or 0)
+            self.prompt += prompt
+            self.completion += completion
+            row["prompt"] += prompt
+            row["completion"] += completion
 
     def totals(self) -> dict[str, Any]:
         """Итог без разбивки: для вывода CLI."""

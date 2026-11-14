@@ -206,7 +206,8 @@ def create_app(settings: Settings | None = None, client_factory: ClientFactory |
                 full_responses=runtime_settings.flag("LOG_FULL_RESPONSES", True),
                 secrets=runtime_settings.secret_values(),
             )
-            outcome = Generator(runtime_settings, catalog, client, trace=trace).run(
+            outcome = Generator(runtime_settings, catalog, client, trace=trace,
+                                parallel_variants=int(service_cfg["max_parallel_variants"])).run(
                 raw_request,
                 job_id=job_id,
                 project_id=project_id,

@@ -1,0 +1,41 @@
+{
+  "event_id": "sverdlovsk_oblast_day",
+  "region_id": "RU-SVE",
+  "grade_group": "9-11",
+  "grade": 9,
+  "pupils_count": 34,
+  "duration_minutes": 45,
+  "format": "class_hour",
+  "participants": {
+    "teachers_count": 1,
+    "parents_enabled": false,
+    "parents_count": 0,
+    "parent_roles": [],
+    "parent_audience_engagement": "none"
+  },
+  "resources": {
+    "projector": true,
+    "printer": true,
+    "internet": false,
+    "audio": true,
+    "room": "classroom",
+    "available_materials": [
+      "paper",
+      "markers"
+    ],
+    "extra_notes": null
+  },
+  "teacher_preferences": {
+    "style": "interactive",
+    "script_detail": "standard",
+    "difficulty": "standard",
+    "interaction_level": "medium",
+    "group_work": true,
+    "preparation_effort": "minimal",
+    "notes": null
+  },
+  "generation": {
+    "variants_count": 2,
+    "language": "ru"
+  }
+}

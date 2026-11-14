@@ -11,8 +11,10 @@ import json
 import os
 import random
 import re
+import threading
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, get_args
@@ -68,6 +70,15 @@ class VariantOutcome:
     frontend: dict[str, Any] | None
     status: str
     error: str | None = None
+
+
+class VariantsStopped(LLMError):
+    """Вариант остановлен, потому что соседний вариант той же генерации получил неустранимую ошибку модели
+    (модель недоступна, ключ не подходит): дальше обращаться к ней бессмысленно."""
+
+
+# Ошибки модели, после которых остальные варианты генерации не запускаются и останавливаются.
+FATAL_MODEL_ERRORS = ("MODEL_UNAVAILABLE", "MODEL_AUTH_ERROR")
 
 
 @dataclass
@@ -590,11 +601,14 @@ REASONING_LEVELS = ("low", "medium", "high")
 
 
 class Generator:
-    def __init__(self, settings: Settings, catalog: Catalog, client: LLMClient, *, trace: RunTrace | None = None):
+    def __init__(self, settings: Settings, catalog: Catalog, client: LLMClient, *, trace: RunTrace | None = None,
+                 parallel_variants: int | None = None):
         """Инициализирует генератор и связывает настройки, каталог, LLM-клиент, Composer и трассировку.
 
         Параметры:
-            `settings`, `catalog`, `client`, `trace`.
+            `settings`, `catalog`, `client`, `trace`;
+            `parallel_variants`: сколько вариантов создавать одновременно; по умолчанию `max_parallel_variants`
+            из `config/service.json`.
         """
         self.settings = settings
         self.catalog = catalog
@@ -606,6 +620,10 @@ class Generator:
         self.calls = 0
         self.tokens = TokenTally()
         self._sleep = time.sleep  # подменяется в тестах, чтобы не ждать паузы между повторами
+        self.parallel_variants = int(parallel_variants if parallel_variants is not None
+                                     else settings.service().get("max_parallel_variants", 1))
+        self._lock = threading.Lock()
+        self._fatal: LLMError | None = None  # неустранимая ошибка модели в одном из вариантов
 
     # Лимит ответа модели для этапа.
     def reasoning_effort(self, stage: str) -> str | None:
@@ -738,7 +756,10 @@ class Generator:
         jitter = float(self.defaults.get("retry_jitter", 0.0))
         retry = 0
         while True:
-            self.calls += 1
+            if self._fatal is not None:
+                raise VariantsStopped(self._fatal.code, self._fatal.message)
+            with self._lock:
+                self.calls += 1
             try:
                 return self.client.generate(**kwargs)
             except LLMError as exc:
@@ -1163,6 +1184,59 @@ class Generator:
             return VariantOutcome(vid, package, issues, frontend, status, None if status == "completed" else "Критические проблемы после исправлений")
 
     # Генерация всей задачи с требуемым числом вариантов.
+    def _variant_workers(self, count: int) -> int:
+        """Сколько вариантов создавать одновременно: `parallel_variants`, но не больше числа вариантов;
+        1, если клиент отвечает записанными ответами по порядку (`parallel_variants_safe = False`)."""
+        if count < 2 or not getattr(self.client, "parallel_variants_safe", True):
+            return 1
+        return max(1, min(count, self.parallel_variants))
+
+    def _one_variant(self, n: NormalizedRequest, concept: dict, concepts: list[dict], meta: dict) -> VariantOutcome | None:
+        """Один вариант со своей записью в трассу. `None` - вариант остановлен из-за ошибки модели в соседнем."""
+        vid = concept["variant_id"]
+        others = [c for c in concepts if c["variant_id"] != vid]
+        try:
+            outcome = self.generate_variant(n, concept, others, meta)
+        except VariantsStopped:
+            self.trace.event("variant_stopped", variant_id=vid, error=str(self._fatal))
+            return None
+        except (StageFailed, LLMError) as exc:
+            outcome = VariantOutcome(vid, None, [], None, "failed", str(exc))
+            if isinstance(exc, LLMError) and exc.code in FATAL_MODEL_ERRORS:
+                with self._lock:
+                    self._fatal = self._fatal or exc
+                self.trace.event("variant_failed", variant_id=vid, error=str(exc))
+                return outcome
+        if outcome.package:
+            self.trace.write_json(f"variants/{outcome.variant_id}/variant_package.json", outcome.package)
+        self.trace.write_json(f"variants/{outcome.variant_id}/validation.json",
+                              {"status": outcome.status, "error": outcome.error, "issues": [i.to_dict() for i in outcome.issues]})
+        self.trace.event("variant_completed" if outcome.status == "completed" else "variant_failed",
+                         variant_id=outcome.variant_id, issues=len(outcome.issues))
+        return outcome
+
+    def _generate_variants(self, n: NormalizedRequest, selected: list[dict], concepts: list[dict], meta: dict) -> list[VariantOutcome]:
+        """Варианты после общего первого этапа (BUG-22, QA 14.11: три варианта по очереди шли 17 минут).
+
+        Варианты независимы: каждый строится по своей концепции и знает только концепции соседей, а не их
+        результат. Поэтому до `max_parallel_variants` вариантов создаются одновременно; к модели они идут
+        через общий предел `max_parallel_llm_requests`. Если модель недоступна или ключ не подходит
+        (`FATAL_MODEL_ERRORS`), остальные варианты не начинаются и останавливаются на следующем обращении
+        к модели - как раньше, когда после такой ошибки цикл по вариантам прерывался. Результат - в порядке
+        вариантов (v1, v2, v3), а не в порядке готовности.
+        """
+        workers = self._variant_workers(len(selected))
+        if workers == 1:
+            results = []
+            for concept in selected:
+                if self._fatal is not None:
+                    break
+                results.append(self._one_variant(n, concept, concepts, meta))
+        else:
+            with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="variant") as executor:
+                results = list(executor.map(lambda concept: self._one_variant(n, concept, concepts, meta), selected))
+        return [outcome for outcome in results if outcome is not None]
+
     def run(self, raw_request: dict[str, Any], *, job_id: str | None = None, project_id: str | None = None,
             context_mode: str = "full", cultural_context: bool = True, experiment_tag: str | None = None,
             experiment_pair_id: str | None = None) -> GenerationOutcome:
@@ -1258,24 +1332,7 @@ class Generator:
         else:
             concepts = concepts[: n.variants_count]
 
-        outcomes: list[VariantOutcome] = []
-        for concept in concepts[: n.variants_count]:
-            others = [c for c in concepts if c["variant_id"] != concept["variant_id"]]
-            try:
-                outcome = self.generate_variant(n, concept, others, meta)
-            except (StageFailed, LLMError) as exc:
-                outcome = VariantOutcome(concept["variant_id"], None, [], None, "failed", str(exc))
-                if isinstance(exc, LLMError) and exc.code in ("MODEL_UNAVAILABLE", "MODEL_AUTH_ERROR"):
-                    outcomes.append(outcome)
-                    self.trace.event("variant_failed", variant_id=concept["variant_id"], error=str(exc))
-                    break
-            outcomes.append(outcome)
-            if outcome.package:
-                self.trace.write_json(f"variants/{outcome.variant_id}/variant_package.json", outcome.package)
-            self.trace.write_json(f"variants/{outcome.variant_id}/validation.json",
-                                  {"status": outcome.status, "error": outcome.error, "issues": [i.to_dict() for i in outcome.issues]})
-            self.trace.event("variant_completed" if outcome.status == "completed" else "variant_failed",
-                             variant_id=outcome.variant_id, issues=len(outcome.issues))
+        outcomes = self._generate_variants(n, concepts[: n.variants_count], concepts, meta)
 
         model_key = getattr(self.client, "model_key", "unknown")
         project = render_project(job_id=job_id, project_id=project_id, n=n,
