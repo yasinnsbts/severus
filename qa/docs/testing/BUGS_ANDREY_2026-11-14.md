@@ -23,8 +23,9 @@
 ```
 data/runs/job_2dfc94e57e84454f8316660c8d51f60d   BUG-14, E2E-16 labour_day
 data/runs/job_3220de56ecc24792afee1786cbb14b41   BUG-17, UI 2 варианта, PARENTS-OVER
-data/runs/job_62fb272022d64997b1939c994210e975   BUG-09, BUG-16, BUG-11 (variants_3)
-data/runs/job_4372f3059b5e499695be8888589c0e03   BUG-16, BUG-11 (E2E-18)
+data/runs/job_62fb272022d64997b1939c994210e975   BUG-09, BUG-16, BUG-11 (variants_3, 2023)
+data/runs/job_11d9be74f8bc479aacb92ae25a607ca2   BUG-11, new_year 35 учеников, 1700
+data/runs/job_4372f3059b5e499695be8888589c0e03   BUG-16, BUG-11 (E2E-18, 2008)
 data/runs/job_20261114_143202_0dbaf1             BUG-13, q01 без PR #27
 data/runs/job_20261114_143305_7ed322             BUG-13, q02 без PR #27
 ```

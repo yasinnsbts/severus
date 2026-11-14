@@ -32,7 +32,7 @@ PR #27, #28 и #29 не влиты и не используются: они не
 | E2E-06 | День знаний, 60 | `completed` | `RESOURCE-UNKNOWN`, `PROFILE_MISMATCH` |
 | E2E-07 | День единства, 60 | `completed` | `INNER-TIMING` (4×3 = 12 при 10) — сработало правильно |
 | E2E-08 | День учителя, 30 | `completed` | — |
-| E2E-09 | Новый год, 45 | `completed` | `FACT-UNREGISTERED` (1700) |
+| E2E-09 | Новый год, 45 | `completed` | `FACT-UNREGISTERED` (1700, `job_11d9be74f8bc479aacb92ae25a607ca2`) |
 | E2E-10 | 8 учеников | `completed` | — |
 | E2E-11 | Последний звонок, 11 класс | `completed` | — |
 | E2E-12 | 8 Марта, 45 | `completed` | — |

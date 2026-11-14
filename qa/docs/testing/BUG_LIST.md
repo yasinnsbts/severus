@@ -75,7 +75,7 @@
 | BUG-04 | Fixture выбирает эталон по порядку, а не по `event_id` | `app/llm/fixture.py` | Обход: `LLM_SERVICE_FIXTURES=<один golden>` |
 | BUG-05 | `SCRIPT-SHORT` на `detailed` и граничных блоках 1–4 | `script_length.py`, `checks.py` | `q01` 560/700, `q03` 474/640, `q06` 216/233; standard 5–8 чистый |
 | BUG-07 | Демо-каталог: 2 события и `teacher_day`, в реальном — 14 и `teachers_day` | `frontend/src/api.ts` | Использовать реальный каталог или пометить демо |
-| BUG-11 | `FACT-UNREGISTERED` на даты вне `fact_claims` | `checks.py:466` | 1700, 2008, 2023; регистрировать дату или не подавать как факт |
+| BUG-11 | `FACT-UNREGISTERED` на даты вне `fact_claims` | `checks.py:466` | 1700 (`job_11d9be74f8bc479aacb92ae25a607ca2`, Новый год, 35 учеников), 2008, 2023; регистрировать дату или не подавать как факт |
 
 ## Закрыто
 
