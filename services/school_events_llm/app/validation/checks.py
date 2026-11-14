@@ -425,7 +425,8 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
     for index, b in enumerate(timeline):
         following = timeline[index + 1] if index + 1 < len(timeline) else {}
         for problem in inner_timing_problems(b, groups_count=groups_count, pairs_count=pairs_count,
-                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", "")):
+                                             next_duration=following.get("duration_minutes", 0), next_title=following.get("title", ""),
+                                             next_text=" ".join([following.get("teacher_script", ""), *(following.get("pupil_actions") or [])])):
             add("INNER-TIMING", "warning", f"timeline.{b['block_id']}", f"Время внутри этапа не сходится: {problem}", "blocks", repairable=False)
 
     # Технические обозначения в тексте для педагога (после замены известных ID на названия).

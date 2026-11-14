@@ -57,6 +57,26 @@ _INTERVAL = re.compile(
     re.I,
 )
 _SENTENCE = re.compile(r"[^.!?\n]+[.!?\n]?")
+# Выступления групп в следующем блоке: «Каждая группа коротко поделится своими находками», «выступление каждой группы»,
+# «Дети представляют результаты своего маршрута классу», «Первая команда, расскажите».
+_NEXT_PRESENTS = re.compile(
+    r"кажд\w*\s+(?:\w+\s+){0,2}?(?:групп|команд|отряд|экспедици)\w*\s+(?:\w+\s+){0,3}?(?:представ|выступ|расскаж|покаж|защит|подел)"
+    r"|(?:выступлени|презентаци|защит)\w*\s+(?:\w+\s+)?кажд\w*\s+(?:групп|команд)"
+    r"|(?:групп|команд|спикер)\w*\s+(?:\w+\s+){0,2}?(?:представляют|выступают|рассказывают|защищают)"
+    r"|(?:дети|ученики)\s+(?:\w+\s+)?представляют\s+(?:результат|итог|свои\s+(?:находк|работ|маршрут|проект))"
+    r"|(?:перв|втор)\w*\s+(?:групп|команд)\w*[,!]?\s+(?:\w+\s+){0,2}?(?:представ|выступ|расскаж|покаж|начина)",
+    re.I,
+)
+
+
+def _presented_next(next_text: str) -> bool:
+    """В следующем блоке выступают группы с тем, что сделали раньше, а не с новой работой этого блока.
+
+    «Каждая группа коротко поделится своими находками» - да. «Вам даётся 5 минут на план. Затем каждая группа
+    представит предложение» - нет: перед выступлением своя работа, выступают с ней.
+    """
+    match = _NEXT_PRESENTS.search(next_text)
+    return bool(match) and not _INTERVAL.search(next_text[:match.start()])
 
 
 def _value(token: str | None) -> float | None:
@@ -85,7 +105,7 @@ def _fmt(x: float) -> str:
 
 
 def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_count: int,
-                          next_duration: int = 0, next_title: str = "") -> list[str]:
+                          next_duration: int = 0, next_title: str = "", next_text: str = "") -> list[str]:
     """Явные противоречия времени внутри блока. Пустой список - противоречий не найдено.
 
     Параметры:
@@ -94,6 +114,9 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
         pairs_count: число пар, если класс работает парами (0, если нет).
         next_duration: длительность следующего блока (0 для последнего).
         next_title: название следующего блока: если это выступления, они не считаются частью текущего.
+        next_text: реплики и действия учеников следующего блока: если в нём выступают группы
+            («каждая группа поделится», «представляют результаты»), выступления тоже не считаются частью текущего,
+            даже когда название об этом не говорит («Встречи с прошлым: что увидели наши исследователи?»).
     """
     duration = block["duration_minutes"]
     text = block.get("teacher_script", "") + "\n" + "\n".join(block.get("pupil_actions") or [])
@@ -132,7 +155,8 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
     if first_interval and re.search(r"выступлен|презентац|защит|представлен", first_interval.group(0), re.I):
         first_interval = None
     if (not problems and groups_count > 1 and first_interval and not _PER_UNIT.search(text)
-            and not re.search(r"представлен|презентац|выступлен|защит", next_title, re.I)):
+            and not re.search(r"представлен|презентац|выступлен|защит", next_title, re.I)
+            and not _presented_next(next_text)):
         work = _first_number(first_interval) or 0
         after = text[first_interval.end():]
         presents = re.search(r"кажд\w*\s+(?:\w+\s+){0,2}?(?:команд|групп)\w*\s+(?:\w+\s+){0,3}?(?:представ|выступ|расскаж|покаж|защит)", after, re.I)

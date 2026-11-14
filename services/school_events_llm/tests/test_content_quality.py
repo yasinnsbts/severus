@@ -113,6 +113,14 @@ class MetaNotesTest(unittest.TestCase):
         self.assertIn("итого шесть минут.\nУчитель следит за временем", script)
         self.assertEqual(variant["materials"][0]["content"], "Символы области: герб и флаг. Герб - символ края.")
 
+    def test_card_side_labels_removed(self):
+        """Прогон 14.11 v4 (День знаний 2 кл): «1. side_a: Грязно в классе» в карточках для учеников."""
+        from app.generation.humanize import drop_meta_notes
+        variant = {"timeline": [], "teacher_instructions": [], "materials": [{"material_id": "problem_cards", "teacher_notes": "",
+                   "content": "1. side_a: Грязно в классе\n2. side_a: Некоторые забывают приносить тетради\nСторона А: вопрос."}]}
+        drop_meta_notes(variant)
+        self.assertEqual(variant["materials"][0]["content"], "1. Грязно в классе\n2. Некоторые забывают приносить тетради\nСторона А: вопрос.")
+
 
 class HumanizeVariantTest(unittest.TestCase):
     def test_replay_with_ids_in_model_text(self):
@@ -202,6 +210,27 @@ class InnerTimingTest(unittest.TestCase):
         self.assertEqual(self.problems(6, "Каждая команда выберет спикера, он расскажет о коллаже. Спикеру даётся две минуты.", groups=6),
                          ["выступления: 6 групп × 2 мин = 12 мин, а на блок 6 мин"])
         self.assertTrue(self.problems(4, "Команды по очереди представляют коллажи, по минуте на каждую группу.", groups=6))
+
+    def test_presentations_in_next_block(self):
+        """Прогон 14.11 v4: «каждая команда представит маршрут» после 12 минут работы, а выступления - в следующем блоке
+        «Встречи с прошлым…», хотя название об этом не говорит. Если в следующем блоке своя работа и выступают с ней,
+        или там только рефлексия, выступления по-прежнему считаются частью текущего блока."""
+        data = json.loads((FIXTURES / "qa_v4_timing_next_blocks.json").read_text(encoding="utf-8"))
+
+        def check(current, following):
+            return inner_timing_problems(current, groups_count=5, pairs_count=0,
+                                         next_duration=following["duration_minutes"], next_title=following["title"],
+                                         next_text=" ".join([following["teacher_script"], *following["pupil_actions"]]))
+
+        current, following = data["sverdlovsk_presentations_next"]
+        self.assertEqual(check(current, following), [])
+        current, following = data["unity_new_work_next"]
+        self.assertEqual(inner_timing_problems(current, groups_count=4, pairs_count=0, next_duration=10, next_title=following["title"],
+                                               next_text=" ".join([following["teacher_script"], *following["pupil_actions"]])),
+                         ["после 7 мин работы на выступления 4 групп остаётся 3 мин"])
+        reflection = "Что нового вы узнали сегодня? Дети делятся своими впечатлениями и выводами о прошедшем занятии."
+        self.assertTrue(inner_timing_problems(current, groups_count=4, pairs_count=0, next_duration=5, next_title="Подведение итогов",
+                                              next_text=reflection))
 
     def test_work_then_all_groups_present(self):
         text = "На выполнение задания вам даётся 10 минут. Затем каждая команда представит свой коллаж всему классу."

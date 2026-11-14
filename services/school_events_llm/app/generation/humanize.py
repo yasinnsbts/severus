@@ -220,12 +220,18 @@ def leftover_ids(text: str) -> list[str]:
 # Нужны и число символов (знаков), и слово о тексте: «символы области» и «герб - символ» не трогаются.
 _META_SENTENCE = re.compile(r"[^.!?\n]*[.!?]?")
 _META_SIZE = re.compile(r"\b\d{2,5}\s*(?:символ|знак)\w*", re.I)
+# Служебная пометка стороны карточки перед текстом: «1. side_a: Грязно в классе» (прогон 14.11, День знаний 2 кл).
+_SIDE_LABEL = re.compile(r"\b(?:side|сторона)_?[ab12]\s*[:\-]\s*", re.I)
 _META_WORD = re.compile(r"объ[её]м|длин\w*\s+(?:текст|реплик|сценари)|текст\w*\s+(?:сценари|реплик)|реплик\w*\s+педагог", re.I)
 
 
 def _drop_meta(text: str) -> tuple[str, list[str]]:
     removed: list[str] = []
     kept: list[str] = []
+    labels = _SIDE_LABEL.findall(text)
+    if labels:
+        text = _SIDE_LABEL.sub("", text)
+        removed.extend(label.strip() for label in labels)
     for line in text.split("\n"):
         parts = []
         for sentence in _META_SENTENCE.findall(line):
@@ -240,7 +246,8 @@ def _drop_meta(text: str) -> tuple[str, list[str]]:
 
 
 def drop_meta_notes(variant: dict[str, Any]) -> list[dict[str, Any]]:
-    """Убирает из текстов для педагога фразы о самом сценарии («объём текста… около 780 символов»).
+    """Убирает из текстов для педагога фразы о самом сценарии («объём текста… около 780 символов»)
+    и служебные пометки стороны карточки («side_a:»).
 
     Возвращает:
         Список изменений для трассы: поле и убранные фразы.
