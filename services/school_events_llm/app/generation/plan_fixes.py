@@ -16,6 +16,7 @@ GigaChat на просьбу исправить ответ часто возвр
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 # Типы материалов, которые можно узнать по `material_id`: модель называет материал по типу,
@@ -50,6 +51,25 @@ def fix_type_by_id(items: Any, where: str, key: str, changes: list[dict[str, Any
                 changes.append({"kind": "type_by_id", "field": f"{where}.{index}.{key}", "from": item.get(key), "to": type_name})
                 item[key] = type_name
                 break
+
+
+# Лист голосования с типом «викторина» (прогон qa_check_1114c, выпускной: «Выберите НОМЕР идеи… [ ] Идея №1»):
+# у голосования нет ключа ответов, и `QUIZ-KEY` срабатывал зря.
+_VOTE = re.compile(r"голосован|бюллетен|проголосу|выберите\s+(?:\w+\s+){0,2}?(?:номер|лучш|понравивш)|отметьте\s+(?:\w+\s+){0,2}?(?:номер|лучш|понравивш)", re.I)
+_QUIZ_LIKE = re.compile(r"правильн\w*\s+ответ|верн\w*\s+ответ|ключ\w*\s+(?:к\s+)?ответ|ответ\w*\s*:", re.I)
+
+
+def fix_vote_quiz(items: Any, where: str, changes: list[dict[str, Any]]) -> None:
+    """Материал-голосование с типом `quiz` - `handout` (раздаточный материал), если в нём нет вопросов с ответами."""
+    if not isinstance(items, list):
+        return
+    for index, item in enumerate(items):
+        if not isinstance(item, dict) or item.get("type") != "quiz":
+            continue
+        text = " ".join(str(item.get(k) or "") for k in ("material_id", "title", "purpose", "content"))
+        if _VOTE.search(text.replace("_", " ")) and not _QUIZ_LIKE.search(text):
+            changes.append({"kind": "vote_not_quiz", "field": f"{where}.{index}.type", "from": "quiz", "to": "handout"})
+            item["type"] = "handout"
 
 
 def fix_parent_role_counts(roles: Any, changes: list[dict[str, Any]]) -> None:

@@ -32,7 +32,7 @@ from ..usage import TokenTally
 from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
 from .grouping import compute_grouping, describe
 from .humanize import blank_template_dates, drop_meta_notes, humanize_variant
-from .plan_fixes import fallback_material, fix_parent_role_counts, fix_plan_for_request, fix_type_by_id
+from .plan_fixes import fallback_material, fix_parent_role_counts, fix_plan_for_request, fix_type_by_id, fix_vote_quiz
 from .source_refs import move_source_refs, register_fragment_facts
 from .ids import normalize_dependencies, normalize_ids, normalize_material_fields
 from .timing import build_grid, normalize_minutes
@@ -394,9 +394,11 @@ def prepare_stage_output(stage: str, data: Any, resources: set[str],
     # Тип материала по material_id («jury_scorecard» с типом «quiz»), число в роли родителей не меньше 1.
     if stage == "scenario_plan":
         fix_type_by_id(data.get("planned_materials"), "planned_materials", "type", changes)
+        fix_vote_quiz(data.get("planned_materials"), "planned_materials", changes)
         fix_parent_role_counts(data.get("roles"), changes)
     if stage == "materials":
         fix_type_by_id(data.get("materials"), "materials", "type", changes)
+        fix_vote_quiz(data.get("materials"), "materials", changes)
     if stage == "materials":
         normalize_material_fields(data, changes)
         if dependency_ids is not None:

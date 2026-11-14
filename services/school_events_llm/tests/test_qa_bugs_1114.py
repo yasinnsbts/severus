@@ -196,6 +196,35 @@ class Bug18StationsTest(unittest.TestCase):
         self.assertEqual(self.check("route_announced_next_blocks"), [])
 
 
+class GraduationRunTest(unittest.TestCase):
+    """Прогон qa_check_1114c (c06, выпускной, жюри): QUIZ-KEY на листе голосования учеников и RESOURCE-INTERNET
+    на вопросе «кто-то видел примеры в интернете?» - оба ложные."""
+
+    def test_recorded_run_clean(self):
+        outcome, _ = replay("replay_gigachat_c06_graduation")
+        variant = outcome.project["variants"][0]
+        self.assertEqual(variant["quality_report"]["issues"], [])
+        self.assertEqual({m["material_id"]: m["type"] for m in variant["materials"]}["vote_bulletins"], "handout")
+
+    def test_vote_is_not_quiz(self):
+        from app.generation.plan_fixes import fix_vote_quiz
+        items = [{"material_id": "vote_bulletins", "type": "quiz", "title": "Бюллетени", "content": "Выберите НОМЕР идеи: [ ] Идея №1"},
+                 {"material_id": "quiz_cards", "type": "quiz", "title": "Викторина", "content": "1. Когда День Победы? а) 9 мая. Правильный ответ: а"}]
+        fix_vote_quiz(items, "materials", [])
+        self.assertEqual([m["type"] for m in items], ["handout", "quiz"])
+
+    def test_online_task_not_mention(self):
+        from app.validation.checks import _ONLINE_TASK
+        for text in ("Найдите в интернете фото салюта.", "Вы можете воспользоваться интернетом, книгами.",
+                     "Используйте интернет-ресурсы и энциклопедии.", "Отсканируйте QR-код на карточке.", "Проведём онлайн-опрос."):
+            with self.subTest(text=text):
+                self.assertTrue(_ONLINE_TASK.search(text))
+        for text in ("Может быть, кто-то видел интересные примеры в интернете или книгах?",
+                     "Обсудите, как правильно общаться онлайн.", "Расскажите, какие сайты вы знаете."):
+            with self.subTest(text=text):
+                self.assertFalse(_ONLINE_TASK.search(text))
+
+
 class MechanicNotAllowedTest(unittest.TestCase):
     def test_val004_fixed_by_program(self):
         """Прогон qa_check_1114b (r02 v2): «citizenship: механика joint_product не из допустимых» - ближайшая разрешённая."""

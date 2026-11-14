@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.2",
+  "task": "variation_plan",
+  "concepts": [
+    {
+      "variant_id": "v1",
+      "title": "Выпускной проект: наш след в школе",
+      "summary": "На классном часу ученики делятся достижениями прошедшего года, обсуждают реальные способы выразить благодарность школе и учителям, формируют коллективный проект «Наш след в школе», объединяя личные инициативы каждого.",
+      "narrative_approach": "Мероприятие открывается обсуждением личных успехов выпускников, затем переходит к командному решению проблемы: каким образом вместе оставить памятный след в родной школе, завершаясь презентацией общего проекта и плана его реализации.",
+      "primary_mechanic": "class_collective_task",
+      "engagement_mode": "mixed",
+      "planned_structure": [
+        {
+          "order": 1,
+          "title": "Открытие: наши успехи",
+          "activity_type": "individual_task",
+          "approx_minutes": 5
+        },
+        {
+          "order": 2,
+          "title": "Обсуждение: почему важно благодарить?",
+          "activity_type": "discussion",
+          "approx_minutes": 10
+        },
+        {
+          "order": 3,
+          "title": "Командная работа: идеи нашего следа",
+          "activity_type": "team_task",
+          "approx_minutes": 15
+        },
+        {
+          "order": 4,
+          "title": "Выбор лучшего варианта",
+          "activity_type": "voting",
+          "approx_minutes": 10
+        },
+        {
+          "order": 5,
+          "title": "План реализации",
+          "activity_type": "collaborative_planning",
+          "approx_minutes": 15
+        },
+        {
+          "order": 6,
+          "title": "Рефлексия и закрытие",
+          "activity_type": "reflection",
+          "approx_minutes": 5
+        }
+      ],
+      "key_activities": [
+        {
+          "activity_type": "team_task",
+          "description": "Команды предлагают конкретные идеи, как совместно поблагодарить школу и учителей"
+        },
+        {
+          "activity_type": "collaborative_planning",
+          "description": "Класс создаёт единый план реализации выбранного проекта"
+        }
+      ],
+      "distinctive_result": "Коллективный проект «Наш след в школе»: оформленный план действий с конкретными инициативами учащихся",
+      "differs_from": [],
+      "values_to_mechanics": [
+        {
+          "value_id": "citizenship",
+          "mechanic_type": "real_problem_solving",
+          "mechanic": "Участники решают реальную общественную задачу: как они могут выразить благодарность школе и учителю"
+        },
+        {
+          "value_id": "mutual_aid",
+          "mechanic_type": "team_task",
+          "mechanic": "Работа в командах над идеями совместного проекта, распределение задач и помощь друг другу в создании единого плана"
+        }
+      ]
+    }
+  ]
+}

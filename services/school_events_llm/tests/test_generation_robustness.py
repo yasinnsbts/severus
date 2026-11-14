@@ -278,9 +278,31 @@ class BatchCliTest(unittest.TestCase):
             journal = (Path(tmp) / "runs" / "runs.jsonl").read_text(encoding="utf-8").splitlines()
         self.assertEqual(code, 0)
         self.assertIn("| ex1_knowledge_day.json | completed |", stdout.getvalue())
-        self.assertIn("Итого: completed 1 из 1.", stdout.getvalue())
+        self.assertIn("Итого: completed 1 из 1; всего", stdout.getvalue())
         self.assertEqual((rows[0]["status"], rows[0]["critical"]), ("completed", []))
         self.assertEqual(len(journal), 1)
+
+    def test_batch_parallel(self):
+        """`batch --parallel 3`: генерации идут одновременно, вывод каждой не смешивается, результаты - как по очереди."""
+        requests = [str(EXAMPLES / "requests" / name) for name in ("ex1_knowledge_day.json", "ex2_mothers_day.json", "ex3_labour_day.json")]
+        goldens = [str(EXAMPLES / "golden" / name) for name in ("ex1_knowledge_day.json", "ex2_mothers_day.json", "ex3_labour_day.json")]
+
+        def run(extra):
+            with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"DATA_DIR": tmp}):
+                stdout, stderr = io.StringIO(), io.StringIO()
+                with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                    main(["batch", *requests, "--fixture", *goldens, *extra])
+                rows = json.loads(next((Path(tmp) / "runs").glob("batch_*.json")).read_text(encoding="utf-8"))
+                return rows, stdout.getvalue(), stderr.getvalue()
+
+        sequential, _, _ = run([])
+        parallel, out, err = run(["--parallel", "3"])
+        self.assertIn("Параллельно: 3", err)
+        self.assertIn("(параллельно 3).", out)
+        self.assertEqual([(r["request"], r["status"], r["critical"]) for r in parallel],
+                         [(r["request"], r["status"], r["critical"]) for r in sequential])
+        self.assertEqual(len({r["job_id"] for r in parallel}), 3)
+        self.assertFalse(any(line.startswith("{") for line in out.splitlines()))  # JSON генераций не попал в таблицу
 
     def test_matrix_requests_are_valid(self):
         """Запросы матрицы E2E (возраст, длительность, родители) проходят нормализацию."""

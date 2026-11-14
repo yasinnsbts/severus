@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.2",
+  "task": "scenario_plan",
+  "variant_id": "v1",
+  "title": "Выпускной проект: наш след в школе",
+  "concept": {
+    "summary": "На классном часу ученики подводят итоги года, выражают благодарность школе и учителям через создание коллективного проекта «Наш след в школе», формируя план совместных действий.",
+    "goal": "Формирование гражданской ответственности и взаимопомощи через совместное проектирование и реализацию общественно значимого проекта.",
+    "tasks": [
+      "Развитие навыков совместной деятельности и принятия решений.",
+      "Осознание личной ответственности за вклад в школьное сообщество."
+    ],
+    "expected_outcomes": [
+      "Оформленный коллективный проект «Наш след в школе» с конкретными инициативами и планом реализации."
+    ],
+    "values_to_mechanics": [
+      {
+        "value_id": "citizenship",
+        "mechanic_type": "real_problem_solving",
+        "mechanic": "Решение участниками реальной задачи: разработка способа выражения благодарности школе и учителям.",
+        "block_ids": ["block_03"]
+      },
+      {
+        "value_id": "mutual_aid",
+        "mechanic_type": "team_task",
+        "mechanic": "Совместная работа в командах над созданием идей и общим планом проекта.",
+        "block_ids": ["block_03", "block_05"]
+      }
+    ]
+  },
+  "grouping_request": {
+    "mode": "small_groups",
+    "groups_count": 4,
+    "block_ids": ["block_03", "block_05"]
+  },
+  "roles": [
+    {"role_id": "teacher_1", "participant_type": "teacher", "title": "Ведущий педагог", "count": 1},
+    {"role_id": "pupils_all", "participant_type": "pupils_group", "title": "Учащиеся", "count": 26},
+    {"role_id": "parent_evaluators", "participant_type": "parent", "role_mode": "evaluator", "title": "Жюри", "count": 6}
+  ],
+  "blocks": [
+    {
+      "block_id": "block_01",
+      "title": "Приветствие и вступление",
+      "purpose": "Создание позитивного настроя, введение в тему мероприятия.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": []
+    },
+    {
+      "block_id": "block_02",
+      "title": "Наши достижения: индивидуальные презентации",
+      "purpose": "Подведение итогов года, осознание личного роста каждым учеником.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": ["achievement_cards"]
+    },
+    {
+      "block_id": "block_03",
+      "title": "Групповая работа: идеи нашего следа",
+      "purpose": "Генерация предложений по проекту «Наш след в школе», развитие навыков сотрудничества.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["idea_templates"]
+    },
+    {
+      "block_id": "block_04",
+      "title": "Голосование за лучший вариант",
+      "purpose": "Выявление наиболее поддерживаемого всеми варианта проекта.",
+      "proposed_minutes": 10,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": ["vote_bulletins", "jury_scorecard"]
+    },
+    {
+      "block_id": "block_05",
+      "title": "Составление единого плана реализации",
+      "purpose": "Объединение усилий всего класса для создания реализуемого плана проекта.",
+      "proposed_minutes": 15,
+      "role_ids": ["teacher_1", "pupils_all"],
+      "planned_material_ids": ["plan_template"]
+    },
+    {
+      "block_id": "block_06",
+      "title": "Рефлексия и закрытие",
+      "purpose": "Закрепление полученных впечатлений, выражение чувств по поводу завершения этапа обучения.",
+      "proposed_minutes": 5,
+      "role_ids": ["teacher_1", "pupils_all", "parent_evaluators"],
+      "planned_material_ids": []
+    }
+  ],
+  "planned_materials": [
+    {"material_id": "achievement_cards", "type": "worksheet", "title": "Карточки индивидуальных достижений", "purpose": "Для индивидуальной презентации успехов."},
+    {"material_id": "idea_templates", "type": "activity_card", "title": "Бланки идей проектов", "purpose": "Для фиксации предложенных командой идей."},
+    {"material_id": "vote_bulletins", "type": "quiz", "title": "Бюллетени для голосования", "purpose": "Для выбора лучшей идеи."},
+    {"material_id": "jury_scorecard", "type": "jury_scorecard", "title": "Листы оценки жюри", "purpose": "Для объективного выбора лучших идей родителями-жюри."},
+    {"material_id": "plan_template", "type": "handout", "title": "Шаблоны плана реализации", "purpose": "Для оформления окончательного плана проекта."}
+  ]
+}
