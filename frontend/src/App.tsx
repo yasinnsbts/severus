@@ -90,7 +90,7 @@ function clearCompletedGeneration() {
 }
 function App(){
  const [page,setPage]=useState<Page>('welcome');const [mode,setMode]=useState<'demo'|'api'>('demo');const [catalog,setCatalog]=useState<EventItem[]>(DEMO_EVENTS);const [options,setOptions]=useState<Options>(DEMO_OPTIONS);const [catalogError,setCatalogError]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [status,setStatus]=useState('queued');const [project,setProject]=useState<Project|null>(null);const [selectedVariant,setSelectedVariant]=useState(0);const [section,setSection]=useState<'timeline'|'materials'|'roles'>('timeline');
- const [form,setForm]=useState<RequestData>({event_id:'knowledge_day',region_id:'RU-SVE',grade:6,pupils_count:25,duration_minutes:45,format:'class_hour',participants:{teachers_count:1,parents_enabled:false,parents_count:0,parent_roles:[]},resources:{projector:true,printer:false,internet:true,audio:true,room:'classroom',available_materials:[]},teacher_preferences:{style:'interactive',script_detail:'detailed',difficulty:'standard',interaction_level:'medium',group_work:true,preparation_effort:'minimal',notes:null},generation:{variants_count:2,language:'ru'}});
+ const [form,setForm]=useState<RequestData>({event_id:'knowledge_day',region_id:'RU-SVE',grade:6,pupils_count:25,duration_minutes:45,format:'class_hour',participants:{teachers_count:1,parents_enabled:false,parents_count:0,parent_roles:[],parent_audience_engagement:'none'},resources:{projector:true,printer:false,internet:true,audio:true,room:'classroom',available_materials:[]},teacher_preferences:{style:'interactive',script_detail:'standard',difficulty:'standard',interaction_level:'medium',group_work:true,preparation_effort:'minimal',notes:null},generation:{variants_count:2,language:'ru'}});
  const patch=(value:Partial<RequestData>)=>setForm(old=>({...old,...value}));
  const selectedEvent=catalog.find(e=>e.id===form.event_id);const gradeGroup=form.grade<=4?'1-4':form.grade<=8?'5-8':'9-11';const allowedFormats=options.formats.filter(f=>!selectedEvent?.supported_formats?.length||selectedEvent.supported_formats.includes(f.value));const isAgeSupported=!selectedEvent?.supported_age_groups?.length||selectedEvent.supported_age_groups.includes(gradeGroup);
  useEffect(()=>{if(!allowedFormats.some(f=>f.value===form.format)&&allowedFormats.length){patch({format:allowedFormats[0].value})}},[form.event_id,catalog,options]);
@@ -110,14 +110,18 @@ function App(){
 }
 const saved = saveCompletedGeneration({project:result, form, catalog, options, mode});
 if (mode === 'api' && saved) clearActiveGeneration();
-await new Promise<void>(resolve=>setTimeout(resolve,Math.max(0,6800-(Date.now()-loadingStartedAt))));setProject(result);setSelectedVariant(0);setSection('timeline');setPage('result')}catch(e){if(e instanceof FinalGenerationError)clearActiveGeneration();setPage('form');setError(e instanceof Error?e.message:'Не удалось получить сценарий')}}
- const variant=project?.variants[selectedVariant];const mappedMaterials=useMemo(()=>new Map((variant?.materials||[]).map(m=>[m.material_id,m])),[variant]); 
+await new Promise<void>(resolve=>setTimeout(resolve,Math.max(0,6800-(Date.now()-loadingStartedAt))));setProject(result);setSelectedVariant(0);setSection('timeline');setPage('result')}catch(e){if(e instanceof FinalGenerationError)clearActiveGeneration();setPage('form');setError(
+  e instanceof Error && e.message === 'Сервис занят, попробуйте через минуту'
+    ? e.message
+    : `В лаборатории волшебства очень старались, но не смогли создать сценарий по следующей причине: ${e instanceof Error && e.message ? e.message : 'неизвестная ошибка'}`
+)}}
+ const variant=project?.variants[selectedVariant];const mappedMaterials=useMemo(()=>new Map((variant?.materials||[]).map(m=>[m.material_id,m])),[variant]);
 
  const [copied, setCopied] = useState(false);
 
- useEffect(() => {
+useEffect(() => {
   setCopied(false);
-}, [selectedVariant, project]);
+}, [selectedVariant, section, project]);
 
 useEffect(() => {
   const completed = readCompletedGeneration();
@@ -275,12 +279,28 @@ async function copyScenario() {
   }
 }
 
- return <div className="app"><div className="side-ornament left"><SideVines/></div><div className="side-ornament right"><SideVines/></div>
+ return <div className="app">
+  <div className="side-ornament left">
+    <SideVines/>
+    <div className="fireflies" aria-hidden="true">
+      {Array.from({ length: 10 }, (_, i) => (
+        <span className="firefly" key={i} />
+      ))}
+    </div>
+  </div>
+  <div className="side-ornament right">
+    <SideVines/>
+    <div className="fireflies" aria-hidden="true">
+      {Array.from({ length: 10 }, (_, i) => (
+        <span className="firefly" key={i} />
+      ))}
+    </div>
+  </div>
  <div className="app-shell">{page!=='welcome'&&<div className="glass-doe-bg" aria-hidden="true"/>}<div className="page-jewel page-jewel-top" aria-hidden="true"><span className="gem-wing left"/><span className="gem-core"/><span className="gem-wing right"/></div><div className="page-jewel page-jewel-bottom" aria-hidden="true"><span className="gem-wing left"/><span className="gem-core"/><span className="gem-wing right"/></div>
  {page!=='welcome'&&<header className="topbar"><button className="brand" onClick={()=>{clearCompletedGeneration();setPage('welcome')}} aria-label="На главную"><MagicStar small/><span>Северус</span></button><div className="topbar-mid"><MagicStar small/> <span className="selected-text-glint">Мастерская событий</span> <MagicStar small/></div><span className={'mode-badge '+(mode==='api'?'connected':'')}>{mode==='api'?'● API подключён':'◇ Демо-режим'}</span></header>}
  {page==='welcome'&&<main className="welcome"><div className="welcome-stars">✧ ✦ ✧</div><div className="welcome-overline">ВАША МАСТЕРСКАЯ ЧУДЕСНЫХ СОБЫТИЙ</div><div className="hero-logo-wrap"><img className="hero-logo" src="/assets/severus-logo.png" alt="Северус — магический логотип с календарём, волшебной палочкой и зелёной ланью"/></div><p className="welcome-subtitle">Пусть каждый школьный праздник станет маленькой историей,<br/> которую хочется помнить.</p><button className="primary hero-cta" onClick={()=>setPage('form')}><Sparkles size={18}/> Создать сценарий <ArrowRight size={18}/></button><div className="welcome-foot">ИДЕЯ <span>✧</span> ВОЛШЕБСТВО <span>✧</span> ВАШЕ СОБЫТИЕ</div></main>}
  {page==='form'&&<main className="page-content"><div className="heading"><span className="eyebrow"><MagicStar small/> <span className="selected-text-glint">КОНСТРУКТОР МЕРОПРИЯТИЯ</span></span><h1>Создадим немного <em>волшебства</em></h1><p>Расскажите о вашем событии — мы подготовим сценарий, наполненный идеями.</p></div>
- <div className="mode-switch"><div><b>Источник сценария</b><span>{mode==='demo'?'Учебный каталог (2 примера). Не совпадает с полным каталогом API; сервер не требуется.':'Сценарий создаётся через API с использованием подключённого сервиса генерации.'}</span></div><div className="mode-actions"><button className={mode==='demo'?'active':''} onClick={useDemo}>Демо</button><button className={mode==='api'?'active':''} onClick={connect} disabled={busy}>{busy?<LoaderCircle size={14} className="spin"/>:null} API</button></div></div>
+ <div className="mode-switch"><div><b>Источник сценария</b><span>{mode==='demo'?'Демонстрационный каталог (14 мероприятий). Сервер не требуется.':'Сценарий создаётся через API с использованием подключённого сервиса генерации.'}</span></div><div className="mode-actions"><button className={mode==='demo'?'active':''} onClick={useDemo}>Демо</button><button className={mode==='api'?'active':''} onClick={connect} disabled={busy}>{busy?<LoaderCircle size={14} className="spin"/>:null} API</button></div></div>
  {catalogError&&<div className="notice error"><b>Сервер недоступен:</b> {catalogError}. Можно продолжить в демо-режиме.</div>}
  {error&&<div role="alert" className="notice error">{error.startsWith('Тестовая ошибка:') ? (
   <>
@@ -291,19 +311,120 @@ async function copyScenario() {
   </>
 ) : error}</div>}
  <div className="form-grid"><div className="form-main"><section className="panel"><div className="panel-heading"><span className="step-icon"><CalendarDays size={20}/></span><div><span className="step-label">ШАГ 01</span><h2>О событии</h2></div></div><div className="fields two"><Select label="Школьное мероприятие" value={form.event_id} onChange={v=>patch({event_id:v})} options={catalog.map(e=>({value:e.id,label:mode==='demo'?`${e.title} (учебный пример)`:e.title}))}/><Select label="Регион" value={form.region_id} onChange={v=>patch({region_id:v})} options={options.regions}/><Select label="Класс" value={String(form.grade)} onChange={v=>patch({grade:Number(v)})} options={options.grades.map(g=>({value:String(g),label:`${g} класс`}))}/><NumberField label="Количество учеников" value={form.pupils_count} min={1} max={35} onChange={v=>patch({pupils_count:v})}/><Select label="Формат мероприятия" value={form.format} onChange={v=>patch({format:v})} options={allowedFormats}/><Select label="Продолжительность" value={String(form.duration_minutes)} onChange={v=>patch({duration_minutes:Number(v)})} options={options.duration_minutes.map(o=>({value:String(o.value),label:o.label}))}/></div>{!isAgeSupported&&<div className="notice error">Выбранное мероприятие не поддерживает {form.grade} класс. Выберите другой класс или мероприятие.</div>}</section>
- <section className="panel"><div className="panel-heading"><span className="step-icon"><Users size={20}/></span><div><span className="step-label">ШАГ 02</span><h2>Участники и пространство</h2></div></div><div className="fields two"><NumberField label="Количество педагогов" value={form.participants.teachers_count} min={1} max={100} onChange={v=>patch({participants:{...form.participants,teachers_count:v}})}/><Select label="Помещение" value={form.resources.room} onChange={v=>patch({resources:{...form.resources,room:v}})} options={options.rooms}/></div><div className="toggles">{([['projector','Проектор'],['internet','Интернет'],['audio','Аудиосистема'],['printer','Принтер']] as const).map(([key,label])=><label className="check" key={key}><input type="checkbox" checked={form.resources[key]} onChange={e=>patch({resources:{...form.resources,[key]:e.target.checked}})}/><span className="check-icon"><Check size={12}/></span>{label}</label>)}</div><div className="form-divider"/><label className="check parent-check"><input type="checkbox" checked={form.participants.parents_enabled} onChange={e=>patch({participants:{...form.participants,parents_enabled:e.target.checked,parents_count:e.target.checked?1:0,parent_roles:e.target.checked?['audience']:[]}})}/><span className="check-icon"><Check size={12}/></span>В мероприятии участвуют родители</label>{form.participants.parents_enabled&&<div className="fields two extra"><NumberField label="Количество родителей" value={form.participants.parents_count} min={1} max={100} onChange={v=>patch({participants:{...form.participants,parents_count:v}})}/><fieldset className="parent-role-fieldset"><legend>Роли родителей (можно выбрать несколько)</legend>{([['audience','Зрители'],['helper','Помощники'],['active_participant','Активные участники'],['evaluator','Жюри / оценщики']] as const).map(([role,label])=><label className="check" key={role}><input type="checkbox" checked={form.participants.parent_roles.includes(role)} onChange={e=>patch({participants:{...form.participants,parent_roles:e.target.checked?[...form.participants.parent_roles,role]:form.participants.parent_roles.length > 1
-  ? form.participants.parent_roles.filter(r => r !== role)
-  : form.participants.parent_roles}})}/><span className="check-icon"><Check size={12}/></span>{label}</label>)}</fieldset></div>}</section>
+ <section className="panel"><div className="panel-heading"><span className="step-icon"><Users size={20}/></span><div><span className="step-label">ШАГ 02</span><h2>Участники и пространство</h2></div></div><div className="fields two"><NumberField label="Количество педагогов" value={form.participants.teachers_count} min={1} max={100} onChange={v=>patch({participants:{...form.participants,teachers_count:v}})}/><Select label="Помещение" value={form.resources.room} onChange={v=>patch({resources:{...form.resources,room:v}})} options={options.rooms}/></div><div className="toggles">{([['projector','Проектор'],['internet','Интернет'],['audio','Аудиосистема'],['printer','Принтер']] as const).map(([key,label])=><label className="check" key={key}><input type="checkbox" checked={form.resources[key]} onChange={e=>patch({resources:{...form.resources,[key]:e.target.checked}})}/><span className="check-icon"><Check size={12}/></span>{label}</label>)}</div><div className="form-divider"/><label className="check parent-check"><input type="checkbox" checked={form.participants.parents_enabled} onChange={e=>patch({participants:{...form.participants,parents_enabled:e.target.checked,parents_count:e.target.checked?1:0,parent_roles:e.target.checked?['audience']:[],
+parent_audience_engagement:'none'}})}/><span className="check-icon"><Check size={12}/></span>В мероприятии участвуют родители</label>{form.participants.parents_enabled&&<div className="fields two extra"><NumberField
+  label="Количество родителей"
+  value={form.participants.parents_count}
+  min={1}
+  max={100}
+  onChange={v=>patch({
+    participants:{...form.participants,parents_count:v}
+  })}
+/>
+
+<fieldset className="parent-role-fieldset">
+  <legend>Роли родителей (можно выбрать несколько)</legend>
+
+  {([
+    ['audience','Зрители'],
+    ['helper','Помощники'],
+    ['active_participant','Активные участники'],
+    ['evaluator','Жюри / оценщики']
+  ] as const).map(([role,label])=>{
+    const locked =
+      role === 'audience' &&
+      form.participants.parent_audience_engagement !== 'none';
+
+    return (
+      <label className="check" key={role}>
+        <input
+          type="checkbox"
+          checked={form.participants.parent_roles.includes(role)}
+          disabled={locked}
+          onChange={e=>{
+            const roles = form.participants.parent_roles;
+            const nextRoles = e.target.checked
+              ? [...roles,role]
+              : roles.filter(r=>r!==role);
+
+            if (!nextRoles.length || locked) return;
+
+            patch({
+              participants:{
+                ...form.participants,
+                parent_roles:nextRoles
+              }
+            });
+          }}
+        />
+        <span className="check-icon">
+          <Check size={12}/>
+        </span>
+        {label}
+      </label>
+    );
+  })}
+
+  {form.participants.parent_audience_engagement !== 'none' && (
+    <p>
+      Роль «Зрители» обязательна для выбранного способа участия родителей.
+    </p>
+  )}
+</fieldset>
+<Select
+  label="Способ участия родителей"
+  value={form.participants.parent_audience_engagement}
+  onChange={v=>patch({participants:{
+    ...form.participants,
+    parent_audience_engagement:v as RequestData['participants']['parent_audience_engagement'],
+    parent_roles:v==='none'
+      ? form.participants.parent_roles
+      : [...new Set([...form.participants.parent_roles,'audience'])]
+  }})}
+  options={[
+    {value:'none',label:'Без дополнительного участия'},
+    {value:'feedback',label:'Обратная связь'},
+    {value:'vote',label:'Голосование'},
+    {value:'audience_award',label:'Приз зрительских симпатий'}
+  ]}
+/>
+</div>}</section>
  <section className="panel"><div className="panel-heading"><span className="step-icon"><WandSparkles size={20}/></span><div><span className="step-label">ШАГ 03</span><h2>Ваши пожелания</h2></div></div><div className="fields two"><Select label="Стиль сценария" value={form.teacher_preferences.style} onChange={v=>patch({teacher_preferences:{...form.teacher_preferences,style:v}})} options={options.teacher_preferences.style||DEMO_OPTIONS.teacher_preferences.style}/><Select label="Детализация сценария" value={form.teacher_preferences.script_detail} onChange={v=>patch({teacher_preferences:{...form.teacher_preferences,script_detail:v}})} options={(options.teacher_preferences.script_detail||DEMO_OPTIONS.teacher_preferences.script_detail).map(option=>({...option,label:({brief:'Краткая',standard:'Стандартная',detailed:'Подробная'} as Record<string,string>)[option.value]||option.label}))}/></div><label className="field full"><span>Особые идеи и пожелания</span><textarea rows={3} placeholder="Например, добавить больше командных заданий…" value={form.teacher_preferences.notes||''} onChange={e=>patch({teacher_preferences:{...form.teacher_preferences,notes:e.target.value||null}})}/></label><div className="variant-choices"><div><b>Количество вариантов</b><span>Сколько сценариев подготовить?</span></div><div className="segment">{[1,2,3].map(n=><button key={n} type="button" className={form.generation.variants_count===n?'selected':''} onClick={()=>patch({generation:{...form.generation,variants_count:n}})}>{n}</button>)}</div></div></section></div>
- <aside className="form-aside"><div className="aside-card"><span className="aside-decoration">✦</span><div className="aside-calendar"><CalendarDays size={30}/></div><h3>Каждое событие —<br/><em>особенная история</em></h3><p>Магия начинается с одной идеи. Выберите параметры, а Северус подскажет, как воплотить её в жизнь.</p><div className="gold-rule"/><ul><li><Check size={15}/> Сценарий по вашим запросам</li><li><Check size={15}/> Пошаговый план мероприятия</li><li><Check size={15}/> Идеи и материалы для педагога</li></ul></div><div className="tip"><Lightbulb size={18}/><span>Для первого знакомства рекомендуем <b>демо-режим</b>. Он работает без подключения к серверу.</span></div></aside></div>
+ <aside className="form-aside">
+  <div className="aside-card">
+    <span className="aside-decoration">✦</span>
+    <div className="aside-calendar"><CalendarDays size={30}/></div>
+    <h3>Каждое событие —<br/><em>особенная история</em></h3>
+    <p>Магия начинается с одной идеи. Выберите параметры, а Северус подскажет, как воплотить её в жизнь.</p>
+    <div className="gold-rule"/>
+    <ul>
+      <li><Check size={15}/> Сценарий по вашим запросам</li>
+      <li><Check size={15}/> Пошаговый план мероприятия</li>
+      <li><Check size={15}/> Идеи и материалы для педагога</li>
+    </ul>
+  </div>
+ <div className="tip">
+  <Lightbulb size={18}/>
+  <span>
+    {mode === 'demo' ? (
+      <>Вы используете <b>демонстрационный режим</b>. Сценарии создаются без подключения к серверу.</>
+    ) : (
+      <>Вы используете <b>генерацию через API</b>. Доступность сервера не гарантирует доступность модели. Проверяйте готовый сценарий перед использованием.</>
+    )}
+  </span>
+</div>
+</aside></div>
  <div className="form-bottom"><button className="secondary" onClick={()=>setPage('welcome')}><ArrowLeft size={16}/> На главную</button><button className="primary" disabled={!valid} onClick={generate}><WandSparkles size={19}/> Сотворить сценарий <ArrowRight size={18}/></button></div></main>}
- {page==='loading'&&<main className="loader-page"><Loader caption={mode==='demo'?'Волшебная палочка создаёт пробную историю…':status==='queued'?'Ожидаем начала генерации…':'Сервер создаёт сценарии вашего мероприятия…'}/></main>}
+ {page==='loading'&&<main className="loader-page"><Loader caption={mode==='demo'?'Создается пробная версия сценария вашего мероприятия...':status==='queued'?'Ожидаем начала генерации…':'Создается сценарий вашего мероприятия...'}/></main>}
  {page==='result'&&variant&&<main className="page-content results"><div className="heading"><span className="eyebrow result-overline"><WandSparkles size={18}/> <span className="selected-text-glint">{project?.status==="partial"?"ГОТОВА ЧАСТЬ СЦЕНАРИЕВ":"ВАШ СЦЕНАРИЙ ГОТОВ"}</span></span><h1>История начинается <em>здесь</em></h1><p>{selectedEvent?.title||'Школьное мероприятие'} · {form.grade} класс · {form.duration_minutes} минут</p></div>{mode==='demo'&&<div className="notice demo-notice"><Sparkles size={16}/> Демо-результат: создан локально, не получен от бэкенда или LLM.</div>}{project?.status==="partial"&&<div role="status" className="notice error"><b>Сценарии готовы частично.</b> Не все варианты удалось сформировать. Ниже показаны только готовые сценарии.{!!project.variant_statuses?.length&&<ul>{project.variant_statuses.filter(v=>v.status!=="completed").map(v=><li key={v.variant_id}>Вариант {v.variant_id}: {v.status==="failed"?"не сформирован":v.status}</li>)}</ul>}{!!project.generation_issues?.length?<ul>{project.generation_issues.map((issue,i)=><li key={i}>{issue.variant_id?`Вариант ${issue.variant_id}: `:""}{issue.message||issue.code||"Причина не указана"}</li>)}</ul>:<p>Сервис не передал подробные причины отклонения вариантов.</p>}</div>}{!!project?.generation_warnings?.length&&<div role="status" className="notice generation-warnings"><b>Предупреждения сервера</b><ul>{project.generation_warnings.map((warning,i)=><li key={i}>{typeof warning==='string'?warning:warning.message||warning.code||'Предупреждение без описания'}</li>)}</ul></div>}<div className="results-header"><div><span className="step-label">ВАРИАНТЫ СЦЕНАРИЯ</span><div className="tabs">{project?.variants.map((v,i)=><button key={v.variant_id} onClick={()=>{setSelectedVariant(i);setSection('timeline')}} className={i===selectedVariant?'current':''}>Вариант {i+1}</button>)}</div></div><button className="primary new-scenario" onClick={newScenario}><RefreshCw size={15}/> Новый сценарий</button></div>
  <section className="panel result-hero"><div className="result-hero-star">✧</div><span className="step-label">{variant.variant_id.toUpperCase()} · ГОТОВЫЙ СЦЕНАРИЙ</span><h2>{variant.title}</h2><p>{variant.concept?.summary}</p><div className="concept-goal"><Gem size={17}/><span><b>Цель:</b> {variant.concept?.goal}</span></div></section>
  <div className="result-layout"><div className="panel result-main"><div className="result-tabs"><button className={section==='timeline'?'current':''} onClick={()=>setSection('timeline')}><ClipboardList size={17}/> Этапы</button><button className={section==='materials'?'current':''} onClick={()=>setSection('materials')}><BookOpen size={17}/> Материалы</button><button className={section==='roles'?'current':''} onClick={()=>setSection('roles')}><Users size={17}/> Участники</button></div>
  {section==='timeline'&&<div className="timeline">{variant.timeline?.map((block,i)=><article className="timeline-step" key={block.block_id}><span className="timeline-index">{String(i+1).padStart(2,'0')}</span><div className="timeline-body"><div className="timeline-top"><h3>{block.title}</h3><span>{block.start_minute}–{block.start_minute+block.duration_minutes} мин</span></div>{block.purpose&&<p className="purpose">{block.purpose}</p>}{block.teacher_script&&<div className="teacher-script"><b>Слова и действия педагога</b><p>{block.teacher_script}</p></div>}{!!block.pupil_actions?.length&&<div className="pupil-actions"><b>Что делают ученики</b><ul>{block.pupil_actions.map((a,j)=><li key={j}>{a}</li>)}</ul></div>}{!!block.material_ids?.length&&<div className="material-links">{block.material_ids.map(id=>mappedMaterials.get(id)).filter(Boolean).map(m=><span key={m!.material_id}><FileText size={13}/>{m!.title}</span>)}</div>}</div></article>)}</div>}
  {section==='materials'&&<div className="material-grid">{!variant.materials?.length?<p>Дополнительные материалы не требуются.</p>:variant.materials.map(m=><article className="material-card" key={m.material_id}><FileText size={22}/><h3>{m.title}</h3><p>{m.content||'Материал к сценарию'}</p></article>)}</div>}
- {section==='roles'&&<div className="role-list">{variant.roles?.map(r=><div key={r.role_id}><Users size={19}/><b>{r.title}</b><span>{r.count} чел.</span></div>)}</div>}</div><aside className="result-aside"><div className="panel summary"><h3><Stars size={18}/> Ожидаемые результаты</h3><ul>{variant.concept?.expected_outcomes?.map((x,i)=><li key={i}><Check size={14}/>{x}</li>)}</ul></div><div className="panel summary"><h3><GraduationCap size={19}/> Памятка педагогу</h3><ul>{variant.teacher_instructions?.map((x,i)=><li key={i}><Check size={14}/>{x}</li>)}</ul></div>
+ {section==='roles'&&<div className="role-list">{!variant.roles?.length
+  ? <p>Информация о ролях участников отсутствует.</p>
+  : variant.roles.map(r=><div key={r.role_id}><Users size={19}/><b>{r.title}</b><span>{r.count} чел.</span></div>)
+}</div>}</div><aside className="result-aside"><div className="panel summary"><h3><Stars size={18}/> Ожидаемые результаты</h3><ul>{variant.concept?.expected_outcomes?.map((x,i)=><li key={i}><Check size={14}/>{x}</li>)}</ul></div><div className="panel summary"><h3><GraduationCap size={19}/> Памятка педагогу</h3><ul>{variant.teacher_instructions?.map((x,i)=><li key={i}><Check size={14}/>{x}</li>)}</ul></div>
  {variant.quality_report?.issues
   ?.filter(issue =>
     ![
@@ -317,7 +438,13 @@ async function copyScenario() {
       <p>{issue.message}</p>
     </div>
   ))}
- <button className="secondary copy" onClick={copyScenario}><ClipboardList size={15}/> {copied ? 'Скопировано!' : 'Копировать сценарий'}</button></aside></div></main>}
+ <button className="secondary copy" onClick={copyScenario}><ClipboardList size={15}/> {copied ? 'Скопировано!' : 'Копировать сценарий'}</button></aside></div>
+</main>}
+{page === 'result' && mode === 'api' && (
+  <p className="ai-disclaimer">
+    Искусственный интеллект может допускать ошибки. Проверяйте важную информацию.
+  </p>
+)}
  <footer className="footer"><span>✦</span> Северус · Волшебство школьных событий <span>✦</span></footer></div></div>
 }
 export default App;

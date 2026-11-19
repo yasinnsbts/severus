@@ -1529,3 +1529,167 @@ box-shadow: 0 8px 24px rgba(28, 72, 61, 0.08) !important;
 .app-shell {
   box-shadow: none !important;
 }
+
+/* Предупреждение об ИИ над нижней линией */
+.app-shell .ai-disclaimer {
+  margin: 0 auto 12px;
+  padding: 0 20px;
+  text-align: center;
+  color: #10263d;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+/* Сохраняем абзацы и переносы строк в инструкциях педагога */
+.app-shell .teacher-script p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Адаптация вкладок результата для смартфонов */
+@media (max-width: 480px) {
+  .app-shell .result-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px !important;
+    padding: 12px 0 !important;
+    width: 100%;
+  }
+
+  .app-shell .result-tabs button {
+    min-width: 0 !important;
+    width: 100%;
+    padding: 10px 4px !important;
+    font-size: 12px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+}
+/* Убираем боковые декоративные полосы на смартфонах */
+@media (max-width: 480px) {
+  .app .side-ornament {
+    display: none !important;
+  }
+
+  .app::before,
+  .app::after {
+    display: none !important;
+  }
+}
+/* Светлячки в боковых полосах Северуса */
+.side-ornament .fireflies {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.side-ornament .firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffe6a0;
+  box-shadow:
+    0 0 5px 2px rgba(255, 223, 132, .75),
+    0 0 14px 5px rgba(246, 188, 75, .28);
+  animation:
+    firefly-float 8s ease-in-out infinite alternate,
+    firefly-glow 3.5s ease-in-out infinite;
+}
+
+/* Неравномерное расположение */
+.firefly:nth-child(1)  { left: 25%; top: 9%; }
+.firefly:nth-child(2)  { left: 72%; top: 17%; }
+.firefly:nth-child(3)  { left: 42%; top: 27%; }
+.firefly:nth-child(4)  { left: 83%; top: 36%; }
+.firefly:nth-child(5)  { left: 18%; top: 45%; }
+.firefly:nth-child(6)  { left: 60%; top: 54%; }
+.firefly:nth-child(7)  { left: 30%; top: 65%; }
+.firefly:nth-child(8)  { left: 78%; top: 73%; }
+.firefly:nth-child(9)  { left: 45%; top: 84%; }
+.firefly:nth-child(10) { left: 68%; top: 94%; }
+
+/* Разная скорость и яркость */
+.firefly:nth-child(2n) {
+  animation-duration: 11s, 4.2s;
+  animation-delay: -3s, -1s;
+}
+
+.firefly:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  opacity: .65;
+  animation-duration: 7s, 5s;
+  animation-delay: -5s, -2s;
+}
+
+.firefly:nth-child(5n) {
+  width: 5px;
+  height: 5px;
+  animation-duration: 13s, 3s;
+  animation-delay: -8s, -1.5s;
+}
+
+/* Различия между сторонами */
+.side-ornament.right .firefly:nth-child(odd) {
+  left: 55%;
+  animation-delay: -6s, -2s;
+}
+
+@keyframes firefly-float {
+  0% {
+    transform: translate(-5px, 8px);
+  }
+  50% {
+    transform: translate(7px, -12px);
+  }
+  100% {
+    transform: translate(-3px, -24px);
+  }
+}
+
+@keyframes firefly-glow {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+
+/* Уважение к настройкам уменьшения анимации */
+@media (prefers-reduced-motion: reduce) {
+  .side-ornament .firefly {
+    animation: none;
+    opacity: .6;
+  }
+}
+/* Увеличенная карточка рекомендаций в конструкторе */
+@media (min-width: 951px) {
+  .app-shell .form-grid {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+
+  .app-shell .form-aside .aside-card {
+    padding: 29px 24px 27px;
+  }
+
+  .app-shell .form-aside .aside-card p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .app-shell .form-aside .aside-card li {
+    font-size: 14px;
+    line-height: 1.6;
+    gap: 11px;
+  }
+
+  .app-shell .form-aside .aside-card li svg {
+    width: 18px;
+    height: 18px;
+  }
+}

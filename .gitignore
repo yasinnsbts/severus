@@ -21,3 +21,6 @@ qa/docs/review/generated/
 qa/tools/
 qa/docs/testing/e2e_results_*.json
 qa/docs/testing/e2e_extra_events_*.json
+
+# Резервная копия фронтенда
+/severus_frontend_v30/

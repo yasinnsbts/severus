@@ -5,3 +5,11 @@ dist/
 *.log
 
 tsconfig.tsbuildinfo
+# Playwright
+test-results/
+playwright-report/
+playwright-check.png
+
+# Local UI backups
+src/*.before-*
+public/assets/*.before-*
