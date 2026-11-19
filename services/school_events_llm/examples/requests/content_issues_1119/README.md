@@ -28,3 +28,7 @@
 ## Баги
 
 BUG-25, BUG-26, BUG-27, BUG-28 в `qa/docs/testing/BUG_LIST.md`.
+
+## QA-тесты
+
+`services/school_events_llm/tests/test_content_issues_1119.py` — по одному тесту на каждую проблему. Пока проверок нет, тесты помечены `expectedFailure`; после фикса становятся обычными.
