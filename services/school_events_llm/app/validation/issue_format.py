@@ -21,6 +21,8 @@ _CATEGORIES = (
     (("VAL-", "GOAL-UNCOVERED"), "values"),
     (("DIV-", "CONCEPT-COUNT"), "diversity"),
     (("TECH-ID-IN-TEXT", "SCRIPT-SHORT", "PUPIL-ACTIONS-FEW"), "text"),
+    (("FOOD-TASK",), "safety"),
+    (("PROPS-MISSING",), "materials"),
     (("ID-DUP", "REF-BLOCK", "SCHEMA", "PLAN-", "GROUPING-NOTE"), "structure"),
     (("FRAGMENT-", "SOURCE-DUPLICATE", "SOURCE-ID-MISSING"), "sources"),
     (("LLM-",), "review"),
@@ -46,6 +48,8 @@ _ACTIONS = {
     "BALLOT-MISSING": "Добавить бюллетень для голосования",
     "PUPIL-ACTIONS-FEW": "Добавить действия учеников в этапе",
     "PARENT-INSTRUCTION": "Добавить памятку для родителей",
+    "FOOD-TASK": "Заменить настоящую еду муляжами или рецептом на карточке, либо проверить условия и пищевые ограничения",
+    "PROPS-MISSING": "Добавить реквизит в материалы или памятку, либо убрать его из реплик",
 }
 
 

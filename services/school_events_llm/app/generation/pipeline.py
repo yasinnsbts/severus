@@ -33,7 +33,7 @@ from ..settings import Settings, sha256_file
 from ..trace import RunTrace
 from ..usage import TokenTally
 from ..validation.checks import FAMILY_ALTERNATIVE, Issue, diversity_issues, report_status, validate_variant
-from .grouping import compute_grouping, describe, presentation_budget
+from .grouping import compute_grouping, describe, presentation_budget, station_budget
 from .lenient import fix_output
 from .humanize import MATERIAL_TYPE_TITLES, blank_template_dates, drop_meta_notes, humanize_variant
 from .plan_fixes import (declare_parent_roles, fallback_material, fix_parent_role_counts, fix_plan_for_request,
@@ -899,7 +899,8 @@ class Generator:
             mark = "  ← ТЕКУЩИЙ БЛОК" if focus_block == b["block_id"] else ""
             size = f" | реплики педагога: {script_chars(dur)}" if script_chars else ""
             mats = ", ".join(titles.get(mid, mid) for mid in b["planned_material_ids"]) or "-"
-            budget = (presentation_budget(mode, sizes, b, dur, plan["grouping_request"].get("block_ids", []), plan["blocks"][index + 1:])
+            budget = (station_budget(mode, sizes, b, dur)
+                      or presentation_budget(mode, sizes, b, dur, plan["grouping_request"].get("block_ids", []), plan["blocks"][index + 1:])
                       if timing_hints else "")
             budget = f" | {budget}" if budget else ""
             lines.append(f"- `{b['block_id']}` | {start}–{start + dur} мин ({dur}) | {b['title']} | цель: {b['purpose']} | "

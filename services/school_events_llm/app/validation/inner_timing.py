@@ -96,8 +96,12 @@ _WHOLE_LESSON = re.compile(
     re.I,
 )
 # Переход команд между станциями: «перемещаетесь на следующую станцию», «по кругу», «маршрут».
-_ROTATION = re.compile(r"(?:перемещ|переход|перейд|меня)\w*\s+(?:\w+\s+){0,3}?(?:на\s+)?следующ\w*\s+станци|по\s+кругу|по\s+маршрут|станци\w*\s+по\s+очеред", re.I)
-_STATION_TIME = re.compile(r"(?:на\s+)?кажд\w*\s+станци\w*\s+(?:\w+\s+){0,4}?" + _RANGE + _MIN + r"|" + _RANGE + _MIN + r"\s+на\s+(?:кажд\w*\s+)?станци", re.I)
+# «Через семь минут команды меняются местами», «Каждая команда посетит все три станции» - тоже круг
+# (тестовый сценарий аналитика 20.11: 4 группы на 3 станции по 6-7 минут в блоке на 20 минут, проверка молчала).
+_ROTATION = re.compile(r"(?:перемещ|переход|перейд|меня)\w*\s+(?:\w+\s+){0,3}?(?:на\s+)?следующ\w*\s+станци|по\s+кругу|по\s+маршрут|станци\w*\s+по\s+очеред"
+                       r"|меня\w*\s+местами|посет\w*\s+(?:\w+\s+){0,2}?(?:все|каждую)\s+(?:\w+\s+)?станци", re.I)
+_STATION_TIME = re.compile(r"(?:на\s+)?кажд\w*\s+станци\w*\s+(?:\w+\s+){0,4}?" + _RANGE + _MIN + r"|" + _RANGE + _MIN + r"\s+на\s+(?:кажд\w*\s+)?станци"
+                           r"|" + _RANGE + _MIN + r"\s+на\s+кажд(?:ой|ую)\b(?!\s+(?:групп|команд|пар))", re.I)
 _STATION_ORDINAL = re.compile(r"\b(перв|втор|трет|четв[её]рт|пят|шест|седьм|восьм)(?:ая|ой|ую|ья|ей|ью)\s+станци", re.I)
 _STATION_CARDINAL = re.compile(r"\b(\d+|две|двух|три|тр[её]х|четыре|четыр[её]х|пять|пяти|шесть|шести|семь|семи)\s+(?:\w+\s+)?станци", re.I)
 _CARDINALS = {"две": 2, "двух": 2, "три": 3, "трех": 3, "трёх": 3, "четыре": 4, "четырех": 4, "четырёх": 4,
@@ -220,14 +224,28 @@ def inner_timing_problems(block: dict[str, Any], *, groups_count: int, pairs_cou
     # занимает «число станций × минуты на станцию» (замечание QA 14.11, BUG-18: сообщение говорило о выступлениях групп).
     # Если станции идут в следующих этапах («Станция первая: …»), этот этап только объявляет маршрут.
     if _ROTATION.search(text) and not re.search(r"станци", next_title, re.I):
-        for match in _STATION_TIME.finditer(text):
-            minutes = _first_number(match)
-            stations = _station_count(text) or (groups_count if groups_count > 1 else 0)
-            if minutes and stations > 1 and stations * minutes > duration:
-                problems.append(f"станции по кругу: каждая команда проходит {stations} {plural(stations, 'станцию', 'станции', 'станций')} "
-                                f"× {_fmt(minutes)} мин = {_fmt(stations * minutes)} мин, "
-                                f"а на блок {duration} мин")
-            break
+        named = _station_count(text)
+        stations = named or (groups_count if groups_count > 1 else 0)
+        # «Групп больше станций» - только когда число станций названо («три станции»): «Первая станция… Переходим ко
+        # второй станции» - это станции по очереди всем классом, без ожидания.
+        cardinal = next((int(m.group(1)) if m.group(1).isdigit() else _CARDINALS.get(m.group(1).lower(), 0)
+                         for m in _STATION_CARDINAL.finditer(text)), 0)
+        match = _STATION_TIME.search(text)
+        minutes = _first_number(match) if match else None
+        # Групп больше, чем станций: пока остальные на станциях, одна группа ждёт целую смену, и смен столько же,
+        # сколько групп («4 группы на 3 станции по 6-7 минут» - 24 минуты, а на блок 20).
+        if cardinal > 1 and groups_count > cardinal and (not minutes or groups_count * minutes > duration):
+            named = cardinal
+            wait = (f"{groups_count} {plural(groups_count, 'группа', 'группы', 'групп')} на {named} "
+                    f"{plural(named, 'станцию', 'станции', 'станций')}: одна группа всё время ждёт")
+            problems.append(f"станции по кругу: {wait}, смен {groups_count} × {_fmt(minutes)} мин = "
+                            f"{_fmt(groups_count * minutes)} мин, а на блок {duration} мин" if minutes else
+                            f"станции по кругу: {wait}; нужно {groups_count} {plural(groups_count, 'станция', 'станции', 'станций')} "
+                            f"или меньше групп")
+        elif minutes and stations > 1 and stations * minutes > duration:
+            problems.append(f"станции по кругу: каждая команда проходит {stations} {plural(stations, 'станцию', 'станции', 'станций')} "
+                            f"× {_fmt(minutes)} мин = {_fmt(stations * minutes)} мин, "
+                            f"а на блок {duration} мин")
         if problems or _STATION_TIME.search(text):
             return problems + _intervals(text, duration, next_duration)
 
