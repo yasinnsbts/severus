@@ -1,13 +1,13 @@
 """QA-кейс 19.11: содержательные ошибки из `test_case.docx`.
 
 Сценарий: Праздник Весны и Труда, 7 класс, 19 учеников, 60 минут.
-Каждый тест описывает, что сервис должен замечать. Пока проверки нет, тест помечен
-`expectedFailure` и ссылается на баг. Когда проверка появится, тест начнёт проходить —
-декоратор нужно снять.
+Станции, еда и реквизит уже ловятся (PR #35); дубль финала пока помечен `expectedFailure`.
+Когда проверка появится, тест начнёт проходить — декоратор нужно снять.
 """
 
 import unittest
 
+from app.generation.humanize import drop_meta_notes
 from app.validation.checks import validate_variant
 from app.validation.inner_timing import inner_timing_problems
 from tests.helpers import catalog, settings
@@ -32,7 +32,6 @@ def messages(v, n):
 class StationRotationTest(unittest.TestCase):
     """BUG-25: 4 группы, 3 станции, 20 минут, 6-7 минут на станцию."""
 
-    @unittest.expectedFailure
     def test_four_groups_three_stations_do_not_fit_twenty_minutes(self):
         block = {"duration_minutes": 20, "teacher_script": STATION_TEXT, "pupil_actions": []}
         problems = inner_timing_problems(
@@ -45,7 +44,6 @@ class StationRotationTest(unittest.TestCase):
 class MaterialsConsistencyTest(unittest.TestCase):
     """BUG-26: сувениры и открытки упомянуты в финале, но не заявлены в материалах."""
 
-    @unittest.expectedFailure
     def test_souvenirs_mentioned_but_not_declared(self):
         n, v = setup("ex3_labour_day")
         v["timeline"][-1]["teacher_script"] += " В конце педагог раздаёт сувениры и благодарственные открытки."
@@ -56,7 +54,6 @@ class MaterialsConsistencyTest(unittest.TestCase):
 class FoodSafetyTest(unittest.TestCase):
     """BUG-27: приготовление еды без условий гигиены и пищевых ограничений."""
 
-    @unittest.expectedFailure
     def test_cooking_task_requires_safety_conditions(self):
         n, v = setup("ex3_labour_day")
         v["timeline"][0]["teacher_script"] += " На станции «Повара» приготовьте салат из нарезанных овощей."
@@ -66,17 +63,22 @@ class FoodSafetyTest(unittest.TestCase):
 
 
 class FinaleDuplicateTest(unittest.TestCase):
-    """BUG-28: два финальных блока дублируются, остаётся техническая фраза перехода."""
+    """BUG-28: служебная фраза перехода и дубль финала."""
+
+    def test_technical_phrase_removed_from_script(self):
+        n, v = setup("ex3_labour_day")
+        v["timeline"][-2]["teacher_script"] += " (Переходит к подготовке следующего блока.)"
+        drop_meta_notes(v)
+        text = " ".join(b["teacher_script"] for b in v["timeline"]).lower()
+        self.assertNotIn("следующего блока", text, "служебная фраза не должна попадать в сценарий")
 
     @unittest.expectedFailure
-    def test_duplicate_finale_and_technical_phrase(self):
+    def test_duplicate_finale(self):
         n, v = setup("ex3_labour_day")
         v["timeline"][-2]["title"] = "Подведение итогов и рефлексия"
         v["timeline"][-1]["title"] = "Заключительная церемония"
-        v["timeline"][-2]["teacher_script"] += " (Переходит к подготовке следующего блока.)"
         text = messages(v, n).lower()
-        self.assertTrue("следующего блока" in text or "дублир" in text,
-                        "сервис должен замечать дубль финала и служебную фразу перехода")
+        self.assertIn("дублир", text, "сервис должен замечать дубль финала")
 
 
 if __name__ == "__main__":
