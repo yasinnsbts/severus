@@ -3,8 +3,8 @@
 import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
 
-const require = createRequire('C:/GitHub/severus/frontend/package.json');
-const { chromium } = require('playwright');
+const require = createRequire(new URL('../../../frontend/package.json', import.meta.url));
+const { chromium } = require('@playwright/test');
 
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const OUT = 'C:\\Users\\user\\AppData\\Local\\Temp\\opencode\\ui_regression_results.json';
