@@ -82,6 +82,36 @@ def _presents(block: dict) -> bool:
     return bool(_PRESENT.search(title)) or (bool(_PRESENT.search(purpose)) and not _PREPARE.search(title))
 
 
+# Блок, где группы по кругу проходят несколько станций: «Ярмарка профессий (работа на станциях)», «Квест по станциям».
+# Один блок-станция («Станция Ремёсел») - не круг: там своя строка про выступления.
+_STATION_ROUND = re.compile(r"на\s+станциях|по\s+станциям|станций|станции\s+по\s+кругу|смен\w*\s+станци|ротаци", re.I)
+
+
+def station_budget(mode: str, sizes: list[int], block: dict, minutes: int) -> str:
+    """Строка для блока станций по кругу: станций столько же, сколько групп, и минуты на станцию.
+
+    Тестовый сценарий аналитика 20.11: 4 группы на 3 станции по 6-7 минут в блоке на 20 минут - одна группа ждёт
+    целую смену, и круг не помещается. Число групп программа знает до этапа блоков, поэтому числа даёт она.
+    """
+    if mode == "whole_class" or len(sizes) < 2 or minutes < 4:
+        return ""
+    title = str(block.get("title") or "")
+    # Объяснение правил и знакомство со станциями («Объяснение условий квеста», «Представление станций») - не сам круг.
+    if _ORGANIZE.search(title) or re.search(r"представлени\w*\s+станци", title, re.I):
+        return ""
+    if not _STATION_ROUND.search(f"{title} {block.get('purpose') or ''}"):
+        return ""
+    units = len(sizes)
+    per = math.floor((minutes - 1) / units * 2) / 2
+    per_txt = str(int(per)) if per == int(per) else str(per).replace(".", ",")
+    who = f"{units} {plural(units, 'пара', 'пары', 'пар') if mode == 'pairs' else plural(units, 'группа', 'группы', 'групп')}"
+    if per < 2:
+        teams = max(2, (minutes - 1) // 3)
+        return (f"станции по кругу: {who} - станций столько же, но на каждую выйдет меньше 2 мин; "
+                f"лучше {teams} {plural(teams, 'станция', 'станции', 'станций')} и столько же групп")
+    return f"станции по кругу: {who} - {units} {plural(units, 'станция', 'станции', 'станций')}, не больше {per_txt} мин на станцию с переходом"
+
+
 def presentation_budget(mode: str, sizes: list[int], block: dict, minutes: int, grouping_block_ids: list[str],
                         later_blocks: list[dict] | None = None) -> str:
     """Минуты на выступление каждой группы или пары для строки блока в промпте; не тот блок - пустая строка.

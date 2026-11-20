@@ -399,10 +399,18 @@ def _relabel(match: re.Match[str], removed: list[str]) -> str:
 _META_WORD = re.compile(r"объ[её]м|длин\w*\s+(?:текст|реплик|сценари)|текст\w*\s+(?:сценари|реплик)|реплик\w*\s+педагог", re.I)
 
 
+# Ремарка о переходе между частями сценария: «(Переходит к подготовке следующего блока.)» - «блок» и «этап» - наши
+# внутренние слова, педагогу эта ремарка не нужна (тестовый сценарий аналитика 20.11).
+_STAGE_DIRECTION = re.compile(r"\s*\(\s*(?:переходит|переход|переходим)\s+к\s+(?:подготовке\s+)?следующ\w+\s+(?:блок|этап)\w*\s*\.?\s*\)", re.I)
+
+
 def _drop_meta(text: str) -> tuple[str, list[str]]:
     removed: list[str] = []
     kept: list[str] = []
     text = _FIELD_LABEL.sub(lambda m: _relabel(m, removed), text)
+    for match in _STAGE_DIRECTION.finditer(text):
+        removed.append(match.group(0).strip())
+    text = _STAGE_DIRECTION.sub("", text)
     for line in text.split("\n"):
         parts = []
         for sentence in _META_SENTENCE.findall(line):

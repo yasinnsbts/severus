@@ -15,6 +15,7 @@ from ..catalog import Catalog
 from ..generation.dates import DATE as _DATE, YEAR as _YEAR, day_month as _day_month
 from ..generation.humanize import leftover_ids
 from ..generation.ids import untranslated_things
+from .content_rules import covered_text, food_tasks, missing_props
 from ..generation.source_refs import document_confirmed, document_mentions
 from ..generation.timing import check_grid
 from ..normalize import NormalizedRequest
@@ -481,6 +482,24 @@ def validate_variant(v: dict[str, Any], n: NormalizedRequest, catalog: Catalog, 
                    ([f"В заметке «Также понадобится» остались слова не по-русски: {', '.join(words[:5])}"] if words else [])
         if messages:
             add("TECH-ID-IN-TEXT", "warning", loc, ". ".join(messages), "blocks", repairable=False)
+
+    # Настоящая еда в задании и реквизит из реплик, которого нет в материалах (тестовый сценарий аналитика 20.11).
+    covered = covered_text(v, {key: str(item.get("label") or key) for key, item in catalog.dependencies.items()})
+    for b in timeline:
+        loc = f"timeline.{b['block_id']}"
+        food = food_tasks(list(b["pupil_actions"]), [b["teacher_script"]])
+        if food:
+            add("FOOD-TASK", "warning", loc, f"Задание с настоящей едой («{food[0]}»): нужны условия, гигиена и учёт пищевых ограничений; "
+                "безопаснее муляжи или рецепт на карточке", "blocks", repairable=False)
+        props = missing_props([b["teacher_script"], *b["pupil_actions"]], covered)
+        if props:
+            add("PROPS-MISSING", "warning", loc, f"Педагог раздаёт {', '.join('«' + p + '»' for p in props[:4])}, "
+                "а в материалах и памятке этого нет", "blocks", repairable=False)
+    for m in materials:
+        food = food_tasks([], [m["content"]])
+        if food:
+            add("FOOD-TASK", "warning", f"materials.{m['material_id']}", f"Материал с настоящей едой («{food[0]}»): нужны условия, гигиена "
+                "и учёт пищевых ограничений; безопаснее муляжи или рецепт на карточке", "materials", repairable=False)
 
     # Проверка связи ценностей с механиками по правилам VAL-001..VAL-004.
     vtm = v["concept"].get("values_to_mechanics", [])
